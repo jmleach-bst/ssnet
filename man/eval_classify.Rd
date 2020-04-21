@@ -4,7 +4,16 @@
 \alias{eval_classify}
 \title{Extract True/False Positive/Negative Measures After Classification}
 \usage{
-eval_classify(num.class = 2, classify.rule, beta.hat, x, y, family)
+eval_classify(
+  num.class = 2,
+  classify.rule,
+  beta.hat,
+  x,
+  y,
+  family,
+  make.x0 = TRUE,
+  gamma.link = "log"
+)
 }
 \arguments{
 \item{num.class}{A scalar value defining the number of classes. Default value is two.}
@@ -24,7 +33,8 @@ from which \code{y} is assumed to be drawn.}
 
 \item{make.x0}{Logical. When \code{TRUE}, creates a column of ones for the intercept. Default is \code{TRUE}.}
 
-\item{gamma.link}{Defines the link function for the mean in gamma GLM'. One of \code{c("inverse", "log", "identity")}.}
+\item{gamma.link}{Defines the link function in gamma GLM's. One of \code{c("inverse", "log", "identity")}.
+The default is \code{"log"}.}
 }
 \value{
 A data frame with a single row containing columns for sensitivity, specificity, ppv, npv, and accuracy,
@@ -33,4 +43,30 @@ only accuracy is returned.
 }
 \description{
 After fitting GLM's with, set a classification  rule, and obtain measures for classification effectiveness.
+}
+\examples{
+set.seed(72874)
+
+# sample size
+n <- 10
+
+# true betas
+b <- c(1, 0.1, 0.5, 0, -0.1, -0.5)
+
+# observed predictors
+x <- matrix(rnorm(n * (length(b) - 1)), nrow = n, ncol = length(b) - 1)
+x0 <- rep(1, n)
+
+# observed outcomes
+y <- cbind(x0, x) \%*\% b + rnorm(n, 0, 2.5)
+y <- ifelse(y > 0, 1, 0)
+
+# fitted model
+yx.df <- data.frame(y, x)
+beta.hat <- glm(y ~ ., data = yx.df , family = "binomial")$coefficients
+
+# evaluate classification
+eval_classify(classify.rule = 0.5, beta.hat = beta.hat, x = x, y = y, family = "binomial")
+
+ @export
 }

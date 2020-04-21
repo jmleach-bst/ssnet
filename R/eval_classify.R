@@ -12,12 +12,38 @@
 #' @param y A numeric vector of outcome measurements. The length of this vector must equal \code{nrow(x)}.
 #' @param family One of \code{"gaussian", "gamma", "poisson", "binomial"}, which determines the distribution
 #' from which \code{y} is assumed to be drawn.
-#' @param gamma.link Defines the link function for the mean in gamma GLM'. One of \code{c("inverse", "log", "identity")}.
+#' @param gamma.link Defines the link function in gamma GLM's. One of \code{c("inverse", "log", "identity")}.
+#' The default is \code{"log"}.
 #' @return A data frame with a single row containing columns for sensitivity, specificity, ppv, npv, and accuracy,
 #' where ppv is positive predictive value and npv is negative predictive value. When there are 3 or more classes,
 #' only accuracy is returned.
-#' @export
-eval_classify <- function(num.class = 2, classify.rule, beta.hat, x, y, family) {
+#' @examples
+#' set.seed(72874)
+#'
+#' # sample size
+#' n <- 10
+#'
+#' # true betas
+#' b <- c(1, 0.1, 0.5, 0, -0.1, -0.5)
+#'
+#' # observed predictors
+#' x <- matrix(rnorm(n * (length(b) - 1)), nrow = n, ncol = length(b) - 1)
+#' x0 <- rep(1, n)
+#'
+#' # observed outcomes
+#' y <- cbind(x0, x) %*% b + rnorm(n, 0, 2.5)
+#' y <- ifelse(y > 0, 1, 0)
+#'
+#' # fitted model
+#' yx.df <- data.frame(y, x)
+#' beta.hat <- glm(y ~ ., data = yx.df , family = "binomial")$coefficients
+#'
+#' # evaluate classification
+#' eval_classify(classify.rule = 0.5, beta.hat = beta.hat, x = x, y = y, family = "binomial")
+#'
+#'  @export
+eval_classify <- function(num.class = 2, classify.rule, beta.hat, x, y, family,
+                          make.x0 = TRUE, gamma.link = "log") {
   # checks
   if (num.class < 2) {
     stop("Require at least 2 classes.")
@@ -101,8 +127,8 @@ eval_classify <- function(num.class = 2, classify.rule, beta.hat, x, y, family) 
 
     sensitivity <- sum(tp) / op
     specificity <- sum(tn) / on
-    ppv <- tp / pp
-    npv <- tn / pn
+    ppv <- sum(tp) / pp
+    npv <- sum(tn) / pn
 
     return(data.frame(accuracy = accuracy,
                       sensitivity = sensitivity, specificity = specificity,

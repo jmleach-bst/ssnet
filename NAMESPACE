@@ -2,7 +2,6 @@
 
 export(compare_ssnet)
 export(cv.bh3)
-export(eval_classify)
 export(glmnet_measure)
 export(max_q2_iar)
 export(mungeCARdata4stan)
