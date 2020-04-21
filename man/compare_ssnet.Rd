@@ -180,7 +180,7 @@ a list whose first element is a dataframe whose rows contain parameter estimates
 second element is a dataframe of model fitness summaries.
 }
 \description{
-Fit \code{glmnet()} and/or \code{ssnet()} models and output measures of model fit for each. Allows multiple
+Fit \code{\link[glmnet]{glmnet}} and/or \code{\link[ssnet]{ssnet}} models and output measures of model fit for each. Allows multiple
 scale values for spike-and-slab models.
 }
 \note{

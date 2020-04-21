@@ -1,6 +1,6 @@
 #' Fit Several Models and Compare
 #'
-#' Fit \code{glmnet()} and/or \code{ssnet()} models and output measures of model fit for each. Allows multiple
+#' Fit \code{\link[glmnet]{glmnet}} and/or \code{\link[ssnet]{ssnet}} models and output measures of model fit for each. Allows multiple
 #' scale values for spike-and-slab models.
 #'
 #' @importFrom glmnet glmnet
