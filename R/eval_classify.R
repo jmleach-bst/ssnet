@@ -40,8 +40,7 @@
 #'
 #' # evaluate classification
 #' eval_classify(classify.rule = 0.5, beta.hat = beta.hat, x = x, y = y, family = "binomial")
-#'
-#'  @export
+#' @export
 eval_classify <- function(num.class = 2, classify.rule, beta.hat, x, y, family,
                           make.x0 = TRUE, gamma.link = "log") {
   # checks

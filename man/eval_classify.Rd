@@ -67,6 +67,4 @@ beta.hat <- glm(y ~ ., data = yx.df , family = "binomial")$coefficients
 
 # evaluate classification
 eval_classify(classify.rule = 0.5, beta.hat = beta.hat, x = x, y = y, family = "binomial")
-
- @export
 }
