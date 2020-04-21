@@ -8,7 +8,8 @@
 <!-- badges: end -->
 
 The goal of `ssnet` is to fit spike-and-slab elastic net GLM’s with or
-without spatially structured priors.
+without spatially structured priors. The package is in development, so
+we’re still working bugs and so forth.
 
 ## Installation
 
