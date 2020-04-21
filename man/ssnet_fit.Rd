@@ -2,7 +2,7 @@
 % Please edit documentation in R/ssnet_fit.R
 \name{ssnet_fit}
 \alias{ssnet_fit}
-\title{Fit the Spike-and-Slab Elastic Net GLM with Intrinsic Autoregression Prior}
+\title{Fit the Spike-and-Slab Elastic Net GLM with Intrinsic Autoregressive Prior}
 \usage{
 ssnet_fit(
   x,
@@ -96,26 +96,20 @@ at each step of the algorithm. This should NOT be used for 3D data.}
 is the number of "columns" in each subject's "image". Default is \code{NULL}.}
 }
 \value{
-An object of class ...
+The fitted model for the spike-and-slab elastic net. An object of class \code{c("elnet", "glmnet"}.
 }
 \description{
-Fit the Spike-and-Slab Elastic Net GLM with Intrinsic Autoregression Prior
+Fit the Spike-and-Slab Elastic Net GLM with Intrinsic Autoregressive Prior
 }
 \note{
-Currently, \code{ssnet_iar()} can only handle 2D data. Future versions will allow images to be 3D.
+Currently, the \code{ssnet()} \code{im.res} can only handle 2D data. Future versions may allow
+images to be 3D. However, the function will work given any appropriately specified neighborhood matrix,
+whatever the original dimension.
 }
 \examples{
-## build adjacency matrix
-adjmat10x10 <- binary_adjacency(im.res = c(10, 10), type = "sparse")
-
-## stan model information
-model_info10x10 <- mungeCARdata4stan(adjmat10x10$nb.index,
-                                     table(adjmat10x10$location.index))
-## fit model
 cn <- c()
 for (i in 1:100) cn[i] <- paste0("x", i)
-bml_model <- ssnet_iar_fit(x = matrix(rnorm(10000), nrow = 100, ncol = 100,
+bml_model <- ssnet_fit(x = matrix(rnorm(10000), nrow = 100, ncol = 100,
                              dimnames = list(1:100, cn)), family = "gaussian",
-                             y = rnorm(100), iar.data = model_info10x10,
-                             stan_local = TRUE)
+                             y = rnorm(100))
 }

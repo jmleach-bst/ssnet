@@ -9,10 +9,12 @@
 #' @importFrom Rdpack reprompt
 #' @importFrom stats sd
 #' @importFrom utils install.packages
-#' @return An object of class ...
+#' @return An object of class \code{c("elnet"   "glmnet"  "bmlasso" "GLM")}.
 #' @note If \code{iar.data = NULL}, i.e. is left unspecified, then provided that \code{im.res} is specified, the function
-#' \code{binary_adjacency()} from the package \code{sim2Dpredictr} builds the appropriate list of data for
-#' optimization with \code{stan}.
+#' \code{proximity_builder()} from the package \code{sim2Dpredictr} builds the appropriate list of data for
+#' optimization with \code{stan}. Currently, \code{im.res} can only handle 2D data. Future versions may allow
+#' images to be 3D. However, the function will work given any appropriately specified neighborhood matrix,
+#' whatever the original dimension.
 #' @examples
 #' library(sim2Dpredictr)
 #' ## build adjacency matrix

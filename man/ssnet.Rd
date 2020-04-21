@@ -99,7 +99,7 @@ at each step of the algorithm. This should NOT be used for 3D data.}
 is the number of "columns" in each subject's "image". Default is \code{NULL}.}
 }
 \value{
-An object of class ...
+An object of class \code{c("elnet"   "glmnet"  "bmlasso" "GLM")}.
 }
 \description{
 Fits generalized linear models with spike-and-slab priors whose (logit of) probability of inclusion in the model
@@ -109,8 +109,10 @@ The model is fit using an EM algorithm where the E-step is fit by \code{glmnet()
 }
 \note{
 If \code{iar.data = NULL}, i.e. is left unspecified, then provided that \code{im.res} is specified, the function
-\code{binary_adjacency()} from the package \code{sim2Dpredictr} builds the appropriate list of data for
-optimization with \code{stan}.
+\code{proximity_builder()} from the package \code{sim2Dpredictr} builds the appropriate list of data for
+optimization with \code{stan}. Currently, \code{im.res} can only handle 2D data. Future versions may allow
+images to be 3D. However, the function will work given any appropriately specified neighborhood matrix,
+whatever the original dimension.
 }
 \examples{
 library(sim2Dpredictr)

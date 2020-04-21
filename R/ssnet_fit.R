@@ -1,4 +1,4 @@
-#' Fit the Spike-and-Slab Elastic Net GLM with Intrinsic Autoregression Prior
+#' Fit the Spike-and-Slab Elastic Net GLM with Intrinsic Autoregressive Prior
 #'
 #' @importFrom rstan optimizing
 #' @importFrom stats coef deviance predict sd
@@ -52,22 +52,16 @@
 #' succession, specifying the the \code{stan} model outside this "loop" may avoid errors.
 #' @param stan_local Logical. Defaults to \code{FALSE}, but when \code{TRUE}, uses locally stored \code{stan} files.
 #' This option will eventually be removed once the package is more stable.
-#' @return An object of class ...
-#' @note Currently, \code{ssnet_iar()} can only handle 2D data. Future versions will allow images to be 3D.
+#' @return The fitted model for the spike-and-slab elastic net. An object of class \code{c("elnet", "glmnet"}.
+#' @note Currently, the \code{ssnet()} \code{im.res} can only handle 2D data. Future versions may allow
+#' images to be 3D. However, the function will work given any appropriately specified neighborhood matrix,
+#' whatever the original dimension.
 #' @examples
-#' ## build adjacency matrix
-#' adjmat10x10 <- binary_adjacency(im.res = c(10, 10), type = "sparse")
-#'
-#' ## stan model information
-#' model_info10x10 <- mungeCARdata4stan(adjmat10x10$nb.index,
-#'                                      table(adjmat10x10$location.index))
-#' ## fit model
 #' cn <- c()
 #' for (i in 1:100) cn[i] <- paste0("x", i)
-#' bml_model <- ssnet_iar_fit(x = matrix(rnorm(10000), nrow = 100, ncol = 100,
+#' bml_model <- ssnet_fit(x = matrix(rnorm(10000), nrow = 100, ncol = 100,
 #'                              dimnames = list(1:100, cn)), family = "gaussian",
-#'                              y = rnorm(100), iar.data = model_info10x10,
-#'                              stan_local = TRUE)
+#'                              y = rnorm(100))
 #' @export
 ssnet_fit <- function (x, y, family = c("gaussian", "binomial", "poisson", "cox"),
                        offset = NULL, epsilon = 1e-04, alpha = 0.5,
