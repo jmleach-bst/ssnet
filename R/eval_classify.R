@@ -49,11 +49,27 @@ eval_classify <- function(num.class = 2, classify.rule, beta.hat, x, y, family,
   }
 
   if (is.numeric(beta.hat) == FALSE) {
-    stop("Parameter vector beta.hat must be numeric.")
+    if (is.numeric(t(beta.hat)) == TRUE) {
+      beta.hat = t(beta.hat)
+    } else {
+      stop("Parameter vector beta.hat must contain only numeric values.")
+    }
   }
 
-  if (is.numeric(x) == FALSE | is.numeric(y) == FALSE) {
-    stop("Both x and y must be numeric.")
+  if (is.numeric(y) == FALSE) {
+    if (is.numeric(t(y)) == TRUE) {
+      y = t(y)
+    } else {
+      stop("y must contain only numeric values.")
+    }
+  }
+
+  if (is.numeric(x) == FALSE) {
+    if (is.numeric(as.matrix(x)) == TRUE) {
+      x <- as.matrix(x)
+    } else {
+      stop("x must contain only numeric values.")
+    }
   }
 
   # create vector of ones for intercept when necessary
