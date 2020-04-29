@@ -4,7 +4,14 @@
 \alias{measure_glm_raw}
 \title{Evaluating Fitted Models}
 \usage{
-measure_glm_raw(y, y.fitted, family, dispersion = 1)
+measure_glm_raw(
+  y,
+  y.fitted,
+  family,
+  dispersion = 1,
+  classify = FALSE,
+  classify.rule = 0.5
+)
 }
 \arguments{
 \item{y}{This is an outcome/response vector.}
@@ -16,6 +23,14 @@ response values for ordinal models from a fitted model or cross-validation.}
 
 \item{dispersion}{A scalar defining the dispersion parameter from a GLM, or \eqn{theta}
 for negative binomial.}
+
+\item{classify}{Logical. When \code{TRUE} and \code{family = "binomial"} applies a classification
+rule given by the argument \code{classify.rule}, and outputs accuracy, sensitivity, specificity,
+positive predictive value (ppv), and negative predictive value (npv).}
+
+\item{classify.rule}{A value between 0 and 1. For a given predicted value from a logistic regression,
+if the value is above \code{classify.rule}, then the predicted class is 1; otherwise the predicted
+class is 0. The default is 0.5.}
 }
 \value{
 A vector.
@@ -25,5 +40,5 @@ Evaluating Fitted Models
 }
 \note{
 This function is taken directly from \code{measure.glm} in \code{BhGLM}, with the modification that
-measures are no longer rounded.
+measures are no longer rounded, and classification evaluation is possible for binary outcomes.
 }

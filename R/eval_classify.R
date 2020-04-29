@@ -14,9 +14,14 @@
 #' from which \code{y} is assumed to be drawn.
 #' @param gamma.link Defines the link function in gamma GLM's. One of \code{c("inverse", "log", "identity")}.
 #' The default is \code{"log"}.
+#' @param extra.measures Logical. When \code{TRUE}, also returns mean squared error (mse) and mean absolute error (mae),
+#' and when \code{family = "binomial"}, returns AUC and misclassification. Default is \code{FALSE}.
 #' @return A data frame with a single row containing columns for sensitivity, specificity, ppv, npv, and accuracy,
 #' where ppv is positive predictive value and npv is negative predictive value. When there are 3 or more classes,
-#' only accuracy is returned.
+#' only accuracy, and possibly mse and mae, are returned.
+#' @details Note that \code{y} and \code{x} may be the same outcomes/design matrix used to generate \code{beta.hat},
+#' but they may also, and perhaps more appropriately, be a held-out/independent data set on which to test the
+#' classification performance of whatever model was used to obtain \code{beta.hat}.
 #' @examples
 #' set.seed(72874)
 #'
@@ -39,10 +44,12 @@
 #' beta.hat <- glm(y ~ ., data = yx.df , family = "binomial")$coefficients
 #'
 #' # evaluate classification
-#' eval_classify(classify.rule = 0.5, beta.hat = beta.hat, x = x, y = y, family = "binomial")
+#' eval_classify(classify.rule = 0.5, beta.hat = beta.hat,
+#'               x = x, y = y, family = "binomial",
+#'               extra.measures = TRUE)
 #' @export
 eval_classify <- function(num.class = 2, classify.rule, beta.hat, x, y, family,
-                          make.x0 = TRUE, gamma.link = "log") {
+                          make.x0 = TRUE, gamma.link = "log", extra.measures = FALSE) {
   # checks
   if (num.class < 2) {
     stop("Require at least 2 classes.")
@@ -145,13 +152,40 @@ eval_classify <- function(num.class = 2, classify.rule, beta.hat, x, y, family,
     ppv <- sum(tp) / pp
     npv <- sum(tn) / pn
 
-    return(data.frame(accuracy = accuracy,
-                      sensitivity = sensitivity, specificity = specificity,
-                      ppv = ppv, npv = npv)
-           )
+    predm <- data.frame(accuracy = accuracy,
+                        sensitivity = sensitivity, specificity = specificity,
+                        ppv = ppv, npv = npv)
   } else {
-    return(data.frame(accuracy == accuracy))
+    predm <- data.frame(accuracy == accuracy)
   }
+
+  if (extra.measures == TRUE) {
+    # mean square error
+    mse <- mean((y - y.hat) ^ 2)
+
+    # mean absolute error
+    mae <- mean(abs(y - y.hat))
+
+    m.df <- data.frame(mse = mse, mae = mae)
+
+    if (family == "binomial") {
+      # auc
+      yhatn <- as.numeric(y.hat)
+      yn <- as.numeric(y)
+      AUC <- suppressMessages(pROC::auc(yn, yhatn))
+      auc <- as.numeric(AUC)
+
+      # misclassification
+      ae <- abs(y - y.hat)
+      aei <- rep(0, length(y))
+      aei[ae > 0.5] <- 1
+      misclassification <- mean(aei)
+    }
+
+    predm <- cbind(auc, m.df, misclassification, predm)
+  }
+
+  return(predm)
 }
 
 

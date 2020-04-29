@@ -12,7 +12,8 @@ eval_classify(
   y,
   family,
   make.x0 = TRUE,
-  gamma.link = "log"
+  gamma.link = "log",
+  extra.measures = FALSE
 )
 }
 \arguments{
@@ -35,14 +36,22 @@ from which \code{y} is assumed to be drawn.}
 
 \item{gamma.link}{Defines the link function in gamma GLM's. One of \code{c("inverse", "log", "identity")}.
 The default is \code{"log"}.}
+
+\item{extra.measures}{Logical. When \code{TRUE}, also returns mean squared error (mse) and mean absolute error (mae),
+and when \code{family = "binomial"}, returns AUC and misclassification. Default is \code{FALSE}.}
 }
 \value{
 A data frame with a single row containing columns for sensitivity, specificity, ppv, npv, and accuracy,
 where ppv is positive predictive value and npv is negative predictive value. When there are 3 or more classes,
-only accuracy is returned.
+only accuracy, and possibly mse and mae, are returned.
 }
 \description{
 After fitting GLM's with, set a classification  rule, and obtain measures for classification effectiveness.
+}
+\details{
+Note that \code{y} and \code{x} may be the same outcomes/design matrix used to generate \code{beta.hat},
+but they may also, and perhaps more appropriately, be a held-out/independent data set on which to test the
+classification performance of whatever model was used to obtain \code{beta.hat}.
 }
 \examples{
 set.seed(72874)
@@ -66,5 +75,7 @@ yx.df <- data.frame(y, x)
 beta.hat <- glm(y ~ ., data = yx.df , family = "binomial")$coefficients
 
 # evaluate classification
-eval_classify(classify.rule = 0.5, beta.hat = beta.hat, x = x, y = y, family = "binomial")
+eval_classify(classify.rule = 0.5, beta.hat = beta.hat,
+              x = x, y = y, family = "binomial",
+              extra.measures = TRUE)
 }

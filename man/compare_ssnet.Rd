@@ -9,6 +9,8 @@ compare_ssnet(
   alpha = c(0, 0.5, 1),
   model_fit = "all",
   variable_selection = FALSE,
+  classify = FALSE,
+  classify.rule = 0.5,
   type_error = "kcv",
   nfolds = 10,
   ncv = 1,
@@ -54,6 +56,14 @@ then all appropriate measures of model fit are output.}
 \item{variable_selection}{Logical. When \code{TRUE}, outputs the false dicovery proportion (FDP), family-wise error (FWE),
 and power for the model. Requires that parameter vector \code{B} be specified. Default is \code{FALSE}, and is only
 appropriate for simulated data, when the true and false positives can be known.}
+
+\item{classify}{Logical. When \code{TRUE} and \code{family = "binomial"} applies a classification
+rule given by the argument \code{classify.rule}, and outputs accuracy, sensitivity, specificity,
+positive predictive value (ppv), and negative predictive value (npv).}
+
+\item{classify.rule}{A value between 0 and 1. For a given predicted value from a logistic regression,
+if the value is above \code{classify.rule}, then the predicted class is 1; otherwise the predicted
+class is 0. The default is 0.5.}
 
 \item{type_error}{Determines whether models are selected based on training error (\code{"training"})
 or k-fold cross validated estimates of prediction error (\code{"kcv"}). Defaults to \code{"kcv"}, which

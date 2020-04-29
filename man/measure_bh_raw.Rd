@@ -4,7 +4,14 @@
 \alias{measure_bh_raw}
 \title{Obtain Measures of Model Fitness}
 \usage{
-measure_bh_raw(object, new.x, new.y, new.offset)
+measure_bh_raw(
+  object,
+  new.x,
+  new.y,
+  new.offset,
+  classify = FALSE,
+  classify.rule = 0.5
+)
 }
 \arguments{
 \item{object}{A fitted object..}
@@ -18,6 +25,14 @@ or \code{new.y} are omitted, the fitted linear predictors are used for predictio
 
 \item{new.offset}{A data frame or vector of offset values for new data points.
 If \code{new.x} includes offset, do not need to set \code{new.offset}.}
+
+\item{classify}{Logical. When \code{TRUE} and \code{family = "binomial"} applies a classification
+rule given by the argument \code{classify.rule}, and outputs accuracy, sensitivity, specificity,
+positive predictive value (ppv), and negative predictive value (npv).}
+
+\item{classify.rule}{A value between 0 and 1. For a given predicted value from a logistic regression,
+if the value is above \code{classify.rule}, then the predicted class is 1; otherwise the predicted
+class is 0. The default is 0.5.}
 }
 \value{
 A vector.
@@ -27,5 +42,5 @@ Obtain Measures of Model Fitness
 }
 \note{
 This function is taken directly from \code{measure.bh} in \code{BhGLM}, with the modification that
-measures are no longer rounded.
+measures are no longer rounded, and classification evaluation is possible for binary outcomes..
 }

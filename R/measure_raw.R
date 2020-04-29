@@ -1,7 +1,7 @@
 #' Evaluating Fitted Models
 #'
 #' @note This function is taken directly from \code{measure.glm} in \code{BhGLM}, with the modification that
-#' measures are no longer rounded.
+#' measures are no longer rounded, and classification evaluation is possible for binary outcomes.
 #'
 #' @param y This is an outcome/response vector.
 #' @param y.fitted This predicted (estimated) response values for GLMs or probabilties of
@@ -9,8 +9,15 @@
 #' @param family A character stating to which family the model belongs.
 #' @param dispersion A scalar defining the dispersion parameter from a GLM, or \eqn{theta}
 #' for negative binomial.
+#' @param classify Logical. When \code{TRUE} and \code{family = "binomial"} applies a classification
+#' rule given by the argument \code{classify.rule}, and outputs accuracy, sensitivity, specificity,
+#' positive predictive value (ppv), and negative predictive value (npv).
+#' @param classify.rule A value between 0 and 1. For a given predicted value from a logistic regression,
+#' if the value is above \code{classify.rule}, then the predicted class is 1; otherwise the predicted
+#' class is 0. The default is 0.5.
 #' @return A vector.
-measure_glm_raw <- function(y, y.fitted, family, dispersion = 1)
+measure_glm_raw <- function(y, y.fitted, family, dispersion = 1,
+                            classify = FALSE, classify.rule = 0.5)
 {
   if (NROW(y) != NROW(y.fitted))
     stop("y and y.fitted should be of the same length",
@@ -64,6 +71,45 @@ measure_glm_raw <- function(y, y.fitted, family, dispersion = 1)
     misclassification <- mean(abs(y - mu) >= 0.5, na.rm = TRUE)
     measures <- list(deviance = deviance, auc = AUC, mse = mse,
                      mae = mae, misclassification = misclassification)
+
+    if (classify == TRUE) {
+      predicted.class <- rep(0, length(y))
+      predicted.class[y.fitted > classify.rule] <- 1
+      observed.class <- y
+
+      # obtain classification performance measures
+      accuracy <- length(which(predicted.class == observed.class)) / length(y)
+
+      # calculate true/false positive/negative
+      fp <- rep(0, length(y))
+      tp <- rep(0, length(y))
+      fn <- rep(0, length(y))
+      tn <- rep(0, length(y))
+
+      fp[predicted.class == 1 & observed.class == 0] <- 1
+      tp[predicted.class == 1 & observed.class == 1] <- 1
+      fn[predicted.class == 0 & observed.class == 1] <- 1
+      tn[predicted.class == 0 & observed.class == 0] <- 1
+
+      # number of observed positives/negatives
+      op <- sum(observed.class)
+      on <- length(observed.class) - op
+
+      # number of predicted positives/negatives
+      pp <- sum(predicted.class)
+      pn <- length(predicted.class) - pp
+
+      sensitivity <- sum(tp) / op
+      specificity <- sum(tn) / on
+      ppv <- sum(tp) / pp
+      npv <- sum(tn) / pn
+
+      predm <- list(accuracy = accuracy,
+                    sensitivity = sensitivity, specificity = specificity,
+                    ppv = ppv, npv = npv)
+      measures <- c(measures, predm)
+
+    }
   }
   # round(unlist(measures), digits = 3)
   unlist(measures)
@@ -72,7 +118,7 @@ measure_glm_raw <- function(y, y.fitted, family, dispersion = 1)
 #' Obtain Measures of Model Fitness
 #'
 #' @note This function is taken directly from \code{measure.bh} in \code{BhGLM}, with the modification that
-#' measures are no longer rounded.
+#' measures are no longer rounded, and classification evaluation is possible for binary outcomes..
 #'
 #' @param object A fitted object..
 #' @param new.x A data frame or matrix of new values for variables used in object.
@@ -82,8 +128,15 @@ measure_glm_raw <- function(y, y.fitted, family, dispersion = 1)
 #' or \code{new.y} are omitted, the fitted linear predictors are used for prediction.
 #' @param new.offset A data frame or vector of offset values for new data points.
 #' If \code{new.x} includes offset, do not need to set \code{new.offset}.
+#' @param classify Logical. When \code{TRUE} and \code{family = "binomial"} applies a classification
+#' rule given by the argument \code{classify.rule}, and outputs accuracy, sensitivity, specificity,
+#' positive predictive value (ppv), and negative predictive value (npv).
+#' @param classify.rule A value between 0 and 1. For a given predicted value from a logistic regression,
+#' if the value is above \code{classify.rule}, then the predicted class is 1; otherwise the predicted
+#' class is 0. The default is 0.5.
 #' @return A vector.
-measure_bh_raw <- function (object, new.x, new.y, new.offset)
+measure_bh_raw <- function (object, new.x, new.y, new.offset,
+                            classify = FALSE, classify.rule = 0.5)
 {
   if (missing(new.y)) {
     y <- object$y
@@ -132,7 +185,8 @@ measure_bh_raw <- function (object, new.x, new.y, new.offset)
       mu <- predict(object, newx = newx, newoffset = new.offset,
                     type = "response")
       mu <- as.vector(mu)
-      measures <- measure_glm_raw(y, mu, family = family, dispersion = object$dispersion)
+      measures <- measure_glm_raw(y, mu, family = family, dispersion = object$dispersion,
+                                  classify = classify, classify.rule = classify.rule)
     }
   }
   if (any(class(object) %in% "coxph")) {

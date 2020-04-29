@@ -28,6 +28,7 @@
 #' @inheritParams glmnet::glmnet
 #' @inheritParams glmnet::cv.glmnet
 #' @inheritParams glmnet_measure
+#' @inheritParams measure_glm_raw
 #' @param criteria Specifies the criteria for model selection. Options are \code{"deviance"}, \code{"mse"},
 #' \code{"mae"} for deviance, mean-square error, and mean absolute error, respectively. When
 #' \code{family = "binomial"}, additional options are \code{"auc"} and \code{"misclassification"}, for
@@ -75,6 +76,7 @@
 compare_ssnet <- function(models = c("glmnet", "ss", "ss_iar"),
                           alpha = c(0, 0.5, 1),
                           model_fit = "all", variable_selection = FALSE,
+                          classify = FALSE, classify.rule = 0.5,
                           type_error = "kcv", nfolds = 10, ncv = 1,
                           s0 = seq(0.01, 0.2, 0.02), s1 = 1, B = NULL,
                           x, y, family = "gaussian",
@@ -152,9 +154,13 @@ compare_ssnet <- function(models = c("glmnet", "ss", "ss_iar"),
                                     nfolds = nfolds, ncv = ncv,
                                     verbose = verbose)
         if (ncv == 1) {
-          glmnet.mp.a <- as.data.frame(t(cv.bh3(glmnet.fit.a, nfolds = nfolds, ncv = ncv, verbose = verbose)$measures))
+          glmnet.mp.a <- as.data.frame(t(cv.bh3(glmnet.fit.a, nfolds = nfolds, ncv = ncv,
+                                                classify = classify, classify.rule = classify.rule,
+                                                verbose = verbose)$measures))
         } else {
-          glmnet.mp.a <- as.data.frame(t(cv.bh3(glmnet.fit.a, nfolds = nfolds, ncv = ncv, verbose = verbose)$measures[1, ]))
+          glmnet.mp.a <- as.data.frame(t(cv.bh3(glmnet.fit.a, nfolds = nfolds, ncv = ncv,
+                                                classify = classify, classify.rule = classify.rule,
+                                                verbose = verbose)$measures[1, ]))
         }
         glmnet.mp.a <- cbind(model = "glmnet", alpha = alpha[a], s0 = glmnet.fit.a$lambda, glmnet.mp.a)
         if (output_param_est == TRUE) {
@@ -230,6 +236,8 @@ compare_ssnet <- function(models = c("glmnet", "ss", "ss_iar"),
                                            cv.bh3(ss.fit.i.a,
                                                   nfolds = nfolds,
                                                   ncv = ncv,
+                                                  classify = classify,
+                                                  classify.rule = classify.rule,
                                                   verbose = verbose)$measures)))
           } else {
             ss.mp.i.a <- as.data.frame(t(c(alpha = alpha[a],
@@ -237,6 +245,8 @@ compare_ssnet <- function(models = c("glmnet", "ss", "ss_iar"),
                                            cv.bh3(ss.fit.i.a,
                                                   nfolds = nfolds,
                                                   ncv = ncv,
+                                                  classify = classify,
+                                                  classify.rule = classify.rule,
                                                   verbose = verbose)$measures[1, ])))
           }
         }
@@ -310,6 +320,8 @@ compare_ssnet <- function(models = c("glmnet", "ss", "ss_iar"),
                                            cv.bh3(ssiar.fit.i.a,
                                                   nfolds = nfolds,
                                                   ncv = ncv,
+                                                  classify = classify,
+                                                  classify.rule = classify.rule,
                                                   verbose = verbose)$measures)))
           } else {
             ssiar.mp.i.a <- as.data.frame(t(c(alpha = alpha[a],
@@ -317,6 +329,8 @@ compare_ssnet <- function(models = c("glmnet", "ss", "ss_iar"),
                                            cv.bh3(ssiar.fit.i.a,
                                                   nfolds = nfolds,
                                                   ncv = ncv,
+                                                  classify = classify,
+                                                  classify.rule = classify.rule,
                                                   verbose = verbose)$measures[1, ])))
           }
         }

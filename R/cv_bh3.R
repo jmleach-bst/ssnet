@@ -1,20 +1,25 @@
 #' Cross Validation for Bayesian Models or Elastic Net
 #'
 #' Several alterations to \code{cv.bh()} were necessary to ensure that \code{update()} works in
-#' the functions \code{compare_ssnet()}. The arguments and functionality
-#' are the same as \code{cv.bh()}. See \code{\link[BhGLM]{cv.bh}} for details.
+#' the functions \code{compare_ssnet()}. Many arguments and functionality are the same as \code{cv.bh()}.
+#' See \code{\link[BhGLM]{cv.bh}} for details. An addition in this version is also that for binary
+#' outcomes classification and observed accuracy, sensitivity, specificity, and positive and negative
+#' predictive values can be output as well as the orginally included measures.
 #'
 #' @inheritParams BhGLM::cv.bh
+#' @inheritParams measure_glm_raw
 #' @note The package \code{pROC} will not calculate the AUC when a fold does does not have
 #' at least one observation of each level. This can largely be avoided by selecting the number
 #' of folds so that such circumstances are rare. When such does occur, the current result is
 #' to assign AUC <- NA.
 #' @export
-cv.bh3 <- function (object, nfolds = 10, foldid = NULL, ncv = 1, verbose = TRUE)
+cv.bh3 <- function (object, nfolds = 10, foldid = NULL, ncv = 1, verbose = TRUE,
+                    classify = FALSE, classify.rule = 0.5)
 {
   start.time <- Sys.time()
   out <- cv.bh.lasso2(object = object, nfolds = nfolds,
-                          foldid = foldid, ncv = ncv, verbose = verbose)
+                      foldid = foldid, ncv = ncv, verbose = verbose,
+                      classify = classify, classify.rule = classify.rule)
   stop.time <- Sys.time()
   Time <- round(difftime(stop.time, start.time, units = "min"),
                 3)
@@ -22,7 +27,8 @@ cv.bh3 <- function (object, nfolds = 10, foldid = NULL, ncv = 1, verbose = TRUE)
     cat("\n Cross-validation time:", Time, "minutes \n")
   out
 }
-cv.bh.lasso2 <- function (object, nfolds = 10, foldid = NULL, ncv = 1, verbose = TRUE)
+cv.bh.lasso2 <- function (object, nfolds = 10, foldid = NULL, ncv = 1, verbose = TRUE,
+                          classify = FALSE, classify.rule = 0.5)
 {
   family <- object$family
   x.obj <- object$x
@@ -79,8 +85,10 @@ cv.bh.lasso2 <- function (object, nfolds = 10, foldid = NULL, ncv = 1, verbose =
       if (any(class(object) %in% "GLM")) {
         y.fitted[omit] <- as.vector(predict(fit, newx = xx,
                                             type = "response", newoffset = off))
-        dd <- suppressWarnings(measure_glm_raw(y.obj[omit],
-                                           y.fitted[omit], family = family, dispersion = fit$dispersion))
+        dd <- suppressWarnings(measure_glm_raw(
+                                           y.obj[omit],
+                                           y.fitted[omit], family = family, dispersion = fit$dispersion,
+                                           classify = classify, classify.rule = classify.rule))
         deviance <- c(deviance, dd["deviance"])
       }
       if (verbose) {
@@ -89,7 +97,8 @@ cv.bh.lasso2 <- function (object, nfolds = 10, foldid = NULL, ncv = 1, verbose =
       }
     }
     if (any(class(object) %in% "GLM")) {
-      measures <- measure_glm_raw(y.obj, y.fitted, family = family)
+      measures <- measure_glm_raw(y.obj, y.fitted, family = family,
+                                  classify = classify, classify.rule = classify.rule)
       measures["deviance"] <- sum(deviance)
       y.fitted0 <- cbind(y.fitted0, y.fitted)
     }

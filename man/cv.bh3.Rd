@@ -4,7 +4,15 @@
 \alias{cv.bh3}
 \title{Cross Validation for Bayesian Models or Elastic Net}
 \usage{
-cv.bh3(object, nfolds = 10, foldid = NULL, ncv = 1, verbose = TRUE)
+cv.bh3(
+  object,
+  nfolds = 10,
+  foldid = NULL,
+  ncv = 1,
+  verbose = TRUE,
+  classify = FALSE,
+  classify.rule = 0.5
+)
 }
 \arguments{
 \item{object}{ 
@@ -28,11 +36,21 @@ cv.bh3(object, nfolds = 10, foldid = NULL, ncv = 1, verbose = TRUE)
 \item{verbose}{
   logical. If \code{TRUE}, print out computational time and progress.
   }
+
+\item{classify}{Logical. When \code{TRUE} and \code{family = "binomial"} applies a classification
+rule given by the argument \code{classify.rule}, and outputs accuracy, sensitivity, specificity,
+positive predictive value (ppv), and negative predictive value (npv).}
+
+\item{classify.rule}{A value between 0 and 1. For a given predicted value from a logistic regression,
+if the value is above \code{classify.rule}, then the predicted class is 1; otherwise the predicted
+class is 0. The default is 0.5.}
 }
 \description{
 Several alterations to \code{cv.bh()} were necessary to ensure that \code{update()} works in
-the functions \code{compare_ssnet()}. The arguments and functionality
-are the same as \code{cv.bh()}. See \code{\link[BhGLM]{cv.bh}} for details.
+the functions \code{compare_ssnet()}. Many arguments and functionality are the same as \code{cv.bh()}.
+See \code{\link[BhGLM]{cv.bh}} for details. An addition in this version is also that for binary
+outcomes classification and observed accuracy, sensitivity, specificity, and positive and negative
+predictive values can be output as well as the orginally included measures.
 }
 \note{
 The package \code{pROC} will not calculate the AUC when a fold does does not have
