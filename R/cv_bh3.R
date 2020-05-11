@@ -35,7 +35,8 @@ cv.bh.lasso2 <- function (object, nfolds = 10, foldid = NULL, ncv = 1, verbose =
   y.obj <- object$y
   ss <- object$ss
   group <- object$group
-  n <- NROW(y.obj)
+  # n <- NROW(y.obj)
+  n <- length(y.obj)
   offset <- object$offset
   init <- object$coefficients
   init <- init[!names(init) %in% "(Intercept)"]
@@ -68,12 +69,12 @@ cv.bh.lasso2 <- function (object, nfolds = 10, foldid = NULL, ncv = 1, verbose =
       omit <- which(foldid[, k] == i)
       subset1[omit] <- FALSE
       if (any(class(object) %in% "glmNet"))
-        fit <- update(object, x = x.obj[-omit, ], y = y.obj[-omit],
+        fit <- stats::update(object, x = x.obj[-omit, ], y = y.obj[-omit],
                       offset = offset[-omit], lambda = object$lambda,
                       alpha = object$alpha,
                       verbose = FALSE)
       if (any(class(object) %in% "bmlasso"))
-        fit <- update(object, x = x.obj[-omit, ], y = y.obj[-omit],
+        fit <- stats::update(object, x = x.obj[-omit, ], y = y.obj[-omit],
                       alpha = object$alpha,
                       offset = offset[-omit], init = init, verbose = FALSE)
       if (is.null(fit$offset))
@@ -103,7 +104,7 @@ cv.bh.lasso2 <- function (object, nfolds = 10, foldid = NULL, ncv = 1, verbose =
       y.fitted0 <- cbind(y.fitted0, y.fitted)
     }
     if (any(class(object) %in% "COXPH"))
-      measures <- measure.cox(y.obj, lp)
+      measures <- BhGLM::measure.cox(y.obj, lp)
     measures0 <- rbind(measures0, measures)
     lp0 <- cbind(lp0, lp)
   }
@@ -115,7 +116,7 @@ cv.bh.lasso2 <- function (object, nfolds = 10, foldid = NULL, ncv = 1, verbose =
                           apply(measures0, 2, sd, na.rm = TRUE))
     rownames(out$measures) <- c("mean", "sd")
   }
-  out$measures <- round(out$measures, digits = 3)
+  # out$measures <- round(out$measures, digits = 3)
   out$y.obs <- y.obj
   out$lp <- lp0
   if (any(class(object) %in% "GLM"))
