@@ -31,7 +31,9 @@
 #' mq2 <- max_q2_iar(iar.data = model_info10x10, p = rbeta(100, 1, 1))
 #'
 #' ## specify stan model ahead of time
-#' sm <- stan_model(file = "C:/Users/Justin/Documents/BST/Dissertation_in_Latex/stan models/iar_incl_prob_notau.stan")
+#' sm <- rstan::stan_model(file =
+#' "C:/Users/Justin/Documents/BST/Dissertation_in_Latex/stan models/iar_incl_prob_notau.stan"
+#' )
 #' mq2 <- max_q2_iar(iar.data = model_info10x10, p = rbeta(100, 1, 1), stan_manual = sm)
 #' @references
 #'
@@ -57,17 +59,17 @@ max_q2_iar <- function(iar.data, p,
   } else {
     if (stan_local == TRUE) {
       if (tau.prior == "cauchy") {
-        Q2 <- rstan::optimizing(object = stan_model(file = "C:/Users/Justin/Documents/BST/Dissertation_in_Latex/stan models/iar_incl_prob_current.stan"),
+        Q2 <- rstan::optimizing(object = rstan::stan_model(file = "C:/Users/Justin/Documents/BST/Dissertation_in_Latex/stan models/iar_incl_prob_current.stan"),
                                 data = iar.data,
                                 algorithm = opt.algorithm)
       }
       if (tau.prior == "manual") {
-        Q2 <- rstan::optimizing(object = stan_model(file = "C:/Users/Justin/Documents/BST/Dissertation_in_Latex/stan models/iar_incl_prob_manual_tau.stan"),
+        Q2 <- rstan::optimizing(object = rstan::stan_model(file = "C:/Users/Justin/Documents/BST/Dissertation_in_Latex/stan models/iar_incl_prob_manual_tau.stan"),
                                 data = iar.data,
                                 algorithm = opt.algorithm)
       }
       if (tau.prior == "none") {
-        Q2 <- rstan::optimizing(object = stan_model(file = "C:/Users/Justin/Documents/BST/Dissertation_in_Latex/stan models/iar_incl_prob_notau.stan"),
+        Q2 <- rstan::optimizing(object = rstan::stan_model(file = "C:/Users/Justin/Documents/BST/Dissertation_in_Latex/stan models/iar_incl_prob_notau.stan"),
                                 data = iar.data,
                                 algorithm = opt.algorithm)
       }

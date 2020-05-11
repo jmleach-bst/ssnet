@@ -1,6 +1,9 @@
 #' Generate Folds for K-Fold Cross Validation
 #'
 #' Unchanged from \code{BhGLM}, but was not in NAMESPACE, so reproduced here.
+#' @param nobs The number of observations.
+#' @param foldid An array of fold identifiers. If not supplied by the user, generated within function.
+#' @inheritParams BhGLM::glmNet
 #'
 generate.foldid <- function (nobs, nfolds = 10, foldid = NULL, ncv = 1)
 {

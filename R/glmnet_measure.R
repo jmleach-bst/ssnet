@@ -9,6 +9,7 @@
 #' When \code{"lambda.1se"} the final model is selected based on the smallest value of lambda that
 #' is within one standard error of the minimal measure given in \code{type.measure}.
 #' @inheritParams glmnet::glmnet
+#' @inheritParams glmnet::cv.glmnet
 #' @return A data frame containing measures of model fitness.
 #' @note This function is primarily used within \code{\link[ssnet]{compare_ssnet}}, but perhaps could be useful elsewhere.
 #' @examples
@@ -38,15 +39,14 @@ glmnet_measure <- function(cv.model, x = NULL, y = NULL,
   if (lambda.criteria == "lambda.1se") {
     lambda = cv.model$lambda.1se
   }
-  original.fit <- glmnet(x = x, y = y, family = family,
-                         type.measure = type.measure,
-                         alpha = alpha, lambda = lambda)
+  original.fit <- glmnet::glmnet(x = x, y = y, family = family,
+                                 alpha = alpha, lambda = lambda)
 
   # model deviance
-  deviance <- deviance(original.fit)
+  deviance <- stats::deviance(original.fit)
 
   # calculate predicted values for observed design matrix
-  yhat <- predict(cv.model, newx = x, s = lambda.criteria)
+  yhat <- stats::predict(cv.model, newx = x, s = lambda.criteria)
 
   # mean square error
   mse <- mean((y - yhat) ^ 2)

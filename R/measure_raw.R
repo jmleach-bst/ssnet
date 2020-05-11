@@ -33,25 +33,25 @@ measure_glm_raw <- function(y, y.fitted, family, dispersion = 1,
   if (!family %in% fam)
     stop("Measures for this family have not been implemented yet")
   if (family == "gaussian")
-    logL <- dnorm(y, mean = mu, sd = sqrt(dispersion), log = TRUE)
+    logL <- stats::dnorm(y, mean = mu, sd = sqrt(dispersion), log = TRUE)
   if (family == "binomial" | family == "quasibinomial") {
     if (is.factor(y))
       y <- as.numeric(y) - 1
-    L <- dbinom(y, size = 1, prob = mu, log = FALSE)
+    L <- stats::dbinom(y, size = 1, prob = mu, log = FALSE)
     L <- ifelse(L == 0, 1e-04, L)
     logL <- log(L)
   }
   if (family == "poisson" | family == "quasipoisson")
-    logL <- dpois(y, lambda = mu, log = TRUE)
+    logL <- stats::dpois(y, lambda = mu, log = TRUE)
   if (family == "NegBin")
-    logL <- dnbinom(y, size = dispersion, mu = mu, log = TRUE)
+    logL <- stats::dbinom(y, size = dispersion, mu = mu, log = TRUE)
   logL <- sum(logL, na.rm = TRUE)
   deviance <- -2 * logL
   mse <- mean((y - mu)^2, na.rm = TRUE)
   mae <- mean(abs(y - mu), na.rm = TRUE)
   measures <- list(deviance = deviance, mse = mse, mae = mae)
   if (family == "gaussian") {
-    R2 <- (var(y, na.rm = TRUE) - mse)/var(y, na.rm = TRUE)
+    R2 <- (stats::var(y, na.rm = TRUE) - mse)/stats::var(y, na.rm = TRUE)
     measures <- list(deviance = deviance, R2 = R2, mse = mse,
                      mae = mae)
   }
@@ -161,7 +161,7 @@ measure_bh_raw <- function (object, new.x, new.y, new.offset,
     mu <- predict(object, newdata = new.x, type = "response")
     if (any(class(object) %in% "negbin"))
       object$dispersion <- object$theta
-    measures <- measure.glm(y, mu, family = object$family$family,
+    measures <- BhGLM::measure.glm(y, mu, family = object$family$family,
                             dispersion = object$dispersion)
   }
   if (any(class(object) %in% "glmNet") | any(class(object) %in%
@@ -179,7 +179,7 @@ measure_bh_raw <- function (object, new.x, new.y, new.offset,
     if (family == "cox") {
       lp <- predict(object, newx = newx, newoffset = new.offset)
       lp <- as.vector(lp)
-      measures <- measure.cox(y, lp)
+      measures <- BhGLM::measure.cox(y, lp)
     }
     else {
       mu <- predict(object, newx = newx, newoffset = new.offset,
@@ -193,13 +193,13 @@ measure_bh_raw <- function (object, new.x, new.y, new.offset,
     if (!is.Surv(y))
       stop("'new.y' must be a Surv object")
     lp <- predict(object, newdata = new.x)
-    measures <- measure.cox(y, lp)
+    measures <- BhGLM::measure.cox(y, lp)
   }
   if (any(class(object) %in% "polr")) {
     if (!is.factor(y))
       stop("'new.y' must be a factor")
     probs <- predict(object, newdata = new.x, type = "probs")
-    measures <- measure.polr(y, probs)
+    measures <- BhGLM::measure.polr(y, probs)
   }
   measures
 }

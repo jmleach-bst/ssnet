@@ -4,8 +4,6 @@
 #'
 #' @param data A data frame whose first column should be named \code{"model"} and contain model names, and whose
 #' remaining columns contain the probabilities that the models included that parameter.
-#' @param summary Determines which summary measure to take for each parameter. Options are probability of inclusion,
-#' \code{"prob"}, \code{"mean"}, \code{"median"}, \code{"sd"}, \code{"IQR"}.
 #' @param grp.col A vector of color names that will correspond to each model.
 #' @param remove.int Logical. When \code{TRUE} assumes that the second column is for the intercept and removes it.
 #' The default is \code{FALSE}.
@@ -36,11 +34,14 @@ plot_param <- function(data, grp.col, remove.int = FALSE) {
   names(dfp2) <- c("Probability", "Model", "x.index")
 
   # obtain the plots
-  ggplot2::ggplot(data = dfp2, mapping = ggplot2::aes(y = Probability, x = x.index, color = Model)) +
+  ggplot2::ggplot(data = dfp2,
+                  mapping = ggplot2::aes(y = dfp2$Probability,
+                                         x = dfp2$x.index,
+                                         color = dfp2$Model)) +
     ggplot2::geom_point() +
     ggplot2::scale_color_manual(values = grp.col) +
     ggplot2::scale_x_continuous(name = "Parameter Index") +
     ggplot2::scale_y_continuous(breaks = seq(0, 1, 0.25), limits = c(0, 1)) +
     ggplot2::ggtitle("Probability the Parameter is Left in the Model") +
-    ggplot2::theme(plot.title = element_text(hjust = 0.5), text = element_text(size = 12))
+    ggplot2::theme(plot.title = element_text(hjust = 0.5), text = ggplot2::element_text(size = 12))
 }

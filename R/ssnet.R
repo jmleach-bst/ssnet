@@ -24,7 +24,9 @@
 #' model_info10x10 <- mungeCARdata4stan(adjmat10x10$nb.index,
 #'                                      table(adjmat10x10$location.index))
 #' ## pre-specify stan model
-#' sm <- stan_model(file = "C:/Users/Justin/Documents/BST/Dissertation_in_Latex/stan models/iar_incl_prob_notau.stan")
+#' sm <- stan_model(file =
+#' "C:/Users/Justin/Documents/BST/Dissertation_in_Latex/stan models/iar_incl_prob_notau.stan"
+#' )
 #'
 #' ## fit model
 #' cn <- c()

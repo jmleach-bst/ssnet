@@ -69,16 +69,17 @@ smry_ssnet <- function(sim.data, output = "raw") {
   }
   # group by model and spike scale, then nest
   ssnet.sim <- sim.data %>%
-      dplyr::group_by(model, s0) %>%
+      dplyr::group_by(sim.data$model, sim.data$s0) %>%
       tidyr::nest() %>%
-      dplyr::mutate(sim.mean = map(data, .f = function(x) map_df(x, .f = mean)),
-                    sim.sd = map(data, .f = function(x) map_df(x, .f = sd)))
+      # if error here, note that we used to have "data" not "sim.data" in first argument...
+      dplyr::mutate(sim.mean = purrr::map(sim.data, .f = function(x) purrr::map_df(x, .f = mean)),
+                    sim.sd = purrr::map(sim.data, .f = function(x) purrr::map_df(x, .f = sd)))
 
   if (output == "raw") {
     return(ssnet.sim)
   } else {
     if (output == "mean") {
-      extr.mean <- map_dfr(ssnet.sim$sim.mean, rbind)
+      extr.mean <- purrr::map_dfr(ssnet.sim$sim.mean, rbind)
       out.mean <- cbind(model = ssnet.sim$model,
                      s0 = ssnet.sim$s0,
                      extr.mean)

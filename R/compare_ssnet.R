@@ -27,6 +27,7 @@
 #' @inheritParams ssnet
 #' @inheritParams glmnet::glmnet
 #' @inheritParams glmnet::cv.glmnet
+#' @inheritParams BhGLM::glmNet
 #' @inheritParams glmnet_measure
 #' @inheritParams measure_glm_raw
 #' @param criteria Specifies the criteria for model selection. Options are \code{"deviance"}, \code{"mse"},
@@ -34,12 +35,6 @@
 #' \code{family = "binomial"}, additional options are \code{"auc"} and \code{"misclassification"}, for
 #' Area under the ROC curve and the percentage of cases where the difference between the observed and
 #' predicted values is greater than 1/2.
-#' @param multiple_extrema One of \code{"min", "max"}. In some circumstances multiple spike scale priors
-#' will correspond to to the "ideal" model based on the selected criteria. Currently, the available options
-#' to handle this situation are to manually selected the smallest or largest spike scale that corresponds to
-#' the best fit, respectively.
-#' @param print_criteria Logial. When \code{TRUE}, prints the model selection criteria for each
-#' option in \code{s0}.
 #' @return When \code{output_param_est = FALSE} returns a data frame of model fitness summaries. Otherwise, returns
 #' a list whose first element is a dataframe whose rows contain parameter estimates for each model fit, and whose
 #' second element is a dataframe of model fitness summaries.
@@ -49,6 +44,7 @@
 #' even if comparisons with other models is not.
 #' @examples
 #' library(sim2Dpredictr)
+#' library(ssnet)
 #' ## generate data (no intercept)
 #' set.seed(4799623)
 #' cn <- c()
@@ -64,7 +60,9 @@
 #' model_info <- mungeCARdata4stan(adjmat$nb.index,
 #'                                 table(adjmat$location.index))
 #' ## pre-specify stan model
-#' sm <- stan_model(file = "C:/Users/Justin/Documents/BST/Dissertation_in_Latex/stan models/iar_incl_prob_notau.stan")
+#' sm <- stan_model(file =
+#' "C:/Users/Justin/Documents/BST/Dissertation_in_Latex/stan models/iar_incl_prob_notau.stan"
+#' )
 #'
 #' ## fit multiple models and compare
 #' compare_ssnet(x = tx, y = ty, alpha = c(0, 0.5, 1),
