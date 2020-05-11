@@ -71,7 +71,7 @@ optimal_s0 <- function(sim.data, criteria,
     # }
     if (print.details == TRUE & (mod.m$s0 == max(sim.data.m$s0) | mod.m$s0 == min(sim.data.m$s0))) {
       if (suppress.warnings == FALSE) {
-        warning(at("Simulation run ", m, "selected minimum or maximum allowable s0 = ", mod.m$s0, ". \n "))
+        warning(cat("Simulation run ", m, "selected minimum or maximum allowable s0 = ", mod.m$s0, ". \n "))
         print(sim.data.m)
       }
     }
