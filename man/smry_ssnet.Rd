@@ -25,7 +25,7 @@ Using the tidyverse to summarize simulation results.
 ## number of simulations
 M <- 2
 ## subj/sim
-N <- 100
+N <- 50
 ## image resolution for spatial predictors
 ir <- c(10, 10)
 L = sim2Dpredictr::chol_s2Dp(im.res = ir, rho = 0.90,
@@ -44,10 +44,12 @@ betas <- sim2Dpredictr::beta_builder(index.type = "ellipse",
 set.seed(68741)
 for (m in 1:M) {
   datm <- sim2Dpredictr::sim_Y_MVN_X(N = N, dist = "binomial",
-                                     L = L, B = betas$B)
+                                     L = L$L, S = L$S,
+                                     B = betas$B)
 
  mod.out.m <- compare_ssnet(x = as.matrix(datm[, grep("X.*", names(datm), perl = TRUE)]),
-                         y = datm$Y, models = c("glmnet", "ss", "ss_iar"),
+                         y = datm$Y, models = c("glmnet", "ss"),
+                         s0 = seq(0.01, 0.16, 0.05), nfolds = 3,
                          family = "binomial", model_fit = "all", variable_selection = TRUE,
                          B = betas$B[-1], iar.data = model_info, stan_manual = sm)
  if (m > 1) {

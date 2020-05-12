@@ -17,7 +17,7 @@
 #' ## number of simulations
 #' M <- 2
 #' ## subj/sim
-#' N <- 100
+#' N <- 50
 #' ## image resolution for spatial predictors
 #' ir <- c(10, 10)
 # ## Obtain Cholesky decompostion of the covariance matrix
@@ -37,10 +37,12 @@
 #' set.seed(68741)
 #' for (m in 1:M) {
 #'   datm <- sim2Dpredictr::sim_Y_MVN_X(N = N, dist = "binomial",
-#'                                      L = L, B = betas$B)
+#'                                      L = L$L, S = L$S,
+#'                                      B = betas$B)
 #'
 #'  mod.out.m <- compare_ssnet(x = as.matrix(datm[, grep("X.*", names(datm), perl = TRUE)]),
-#'                          y = datm$Y, models = c("glmnet", "ss", "ss_iar"),
+#'                          y = datm$Y, models = c("glmnet", "ss"),
+#'                          s0 = seq(0.01, 0.16, 0.05), nfolds = 3,
 #'                          family = "binomial", model_fit = "all", variable_selection = TRUE,
 #'                          B = betas$B[-1], iar.data = model_info, stan_manual = sm)
 #'  if (m > 1) {
@@ -69,11 +71,10 @@ smry_ssnet <- function(sim.data, output = "raw") {
   }
   # group by model and spike scale, then nest
   ssnet.sim <- sim.data %>%
-      dplyr::group_by(sim.data$model, sim.data$s0) %>%
+      dplyr::group_by(model, s0) %>%
       tidyr::nest() %>%
-      # if error here, note that we used to have "data" not "sim.data" in first argument...
-      dplyr::mutate(sim.mean = purrr::map(sim.data, .f = function(x) purrr::map_df(x, .f = mean)),
-                    sim.sd = purrr::map(sim.data, .f = function(x) purrr::map_df(x, .f = sd)))
+      dplyr::mutate(sim.mean = purrr::map(data, .f = function(x) purrr::map_df(x, .f = mean)),
+                    sim.sd = purrr::map(data, .f = function(x) purrr::map_df(x, .f = sd)))
 
   if (output == "raw") {
     return(ssnet.sim)
