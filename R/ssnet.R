@@ -91,7 +91,7 @@ plot.pj = FALSE, im.res = NULL)
     if (is.null(im.res) == TRUE) {
       stop("Require image dimensions, im.res, to create adjacency matrix. \n")
     } else {
-      adjmat <- sim2Dpredictr::binary_adjacency(im.res = im.res, type = "sparse")
+      adjmat <- sim2Dpredictr::proximity_builder(im.res = im.res, type = "sparse")
       iar.data = mungeCARdata4stan(adjmat$nb.index,
                                    table(adjmat$location.index))
     }
