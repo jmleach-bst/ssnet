@@ -37,7 +37,7 @@ model_info <- mungeCARdata4stan(adjmat$nb.index,
                                table(adjmat$location.index))
 ## generate non-zero parameters with spatial clustering
 betas <- sim2Dpredictr::beta_builder(index.type = "ellipse",
-                      width = 2, height = 2,
+                      w = 2, h = 2,
                       row.index = 4, col.index = 4,
                       B.values = 0.5, im.res = ir)
 ## generate data
