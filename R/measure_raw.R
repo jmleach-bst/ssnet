@@ -56,9 +56,9 @@ measure_glm_raw <- function(y, y.fitted, family, dispersion = 1,
                      mae = mae)
   }
   if (family == "binomial" | family == "quasibinomial") {
-    if (!requireNamespace("pROC"))
-      install.packages("pROC")
-    require(pROC)
+    # if (!requireNamespace("pROC"))
+    #   install.packages("pROC")
+    # require(pROC)
     # print(y)
     if (length(unique(y)) != 2) {
       # at present we cannot obtain AUC when all(y) == 1 or all(y) == 0
