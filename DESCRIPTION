@@ -1,5 +1,5 @@
 Package: ssnet
-Title: Fit Spike-and-Slab LASSO GLM With Spatial Priors on Parameters
+Title: Fit Spike-and-Slab Elastic Net GLM With Spatial Priors on Parameters
 Version: 0.0.0.9000
 Authors@R: 
     person(given = "Justin",
@@ -8,7 +8,7 @@ Authors@R:
            email = "jleach@uab.edu",
            comment = c(ORCID = "YOUR-ORCID-ID"))
 Description: This package fits generalized linear models in situations where spatial data are used as predictors of scalar outcomes. Spike-and-Slab LASSO priors are used for model selection and intrinsic conditional autoregressive regressions are used to account for spatial information in the prior probabilities for inclusion in the model.
-License: MIT
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Biarch: true
@@ -19,6 +19,7 @@ Depends:
 	survival (>= 3.1.0),
 	BhGLM
 Imports: 
+	sim2Dpredictr,
     methods,
     Rcpp (>= 0.12.0),
     rstantools (>= 2.0.0),
@@ -36,7 +37,6 @@ LinkingTo:
     rstan (>= 2.18.1),
     StanHeaders (>= 2.18.0)
 Suggests:
-    sim2Dpredictr,
     testthat
 Remotes: nyiuab/BhGLM
 SystemRequirements: GNU make
