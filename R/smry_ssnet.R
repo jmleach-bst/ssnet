@@ -25,7 +25,7 @@
 #'                              corr.structure = "ar1",
 #'                              triangle = "lower")
 #' ## stan info for IAR
-#' adjmat <- proximity_builder(im.res = ir, type = "sparse")
+#' adjmat <- sim2Dpredictr::proximity_builder(im.res = ir, type = "sparse")
 #' model_info <- mungeCARdata4stan(adjmat$nb.index,
 #'                                table(adjmat$location.index))
 #' ## generate non-zero parameters with spatial clustering

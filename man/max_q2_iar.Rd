@@ -49,7 +49,7 @@ in \code{stan} \insertCite{Morris:2017,Morris:2019}{ssnet}.
 }
 \examples{
 ## build adjacency matrix
-adjmat10x10 <- proximity_builder(im.res = c(10, 10), type = "sparse")
+adjmat10x10 <- sim2Dpredictr::proximity_builder(im.res = c(10, 10), type = "sparse")
 model_info10x10 <- mungeCARdata4stan(adjmat10x10$nb.index,
                                      table(adjmat10x10$location.index))
 
