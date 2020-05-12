@@ -7,10 +7,12 @@
 using namespace Rcpp;
 
 
+RcppExport SEXP _rcpp_module_boot_stan_fit4iar_incl_prob_current_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4iar_incl_prob_manual_tau_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4iar_incl_prob_notau_mod();
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_rcpp_module_boot_stan_fit4iar_incl_prob_current_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4iar_incl_prob_current_mod, 0},
     {"_rcpp_module_boot_stan_fit4iar_incl_prob_manual_tau_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4iar_incl_prob_manual_tau_mod, 0},
     {"_rcpp_module_boot_stan_fit4iar_incl_prob_notau_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4iar_incl_prob_notau_mod, 0},
     {NULL, NULL, 0}
