@@ -8,7 +8,7 @@
 generate.foldid <- function (nobs, nfolds = 10, foldid = NULL, ncv = 1)
 {
   if (nfolds > nobs)
-    nfolds <- n
+    nfolds <- nobs
   if (nfolds == nobs)
     ncv <- 1
   if (is.null(foldid)) {
