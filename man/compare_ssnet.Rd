@@ -74,6 +74,10 @@ is recommended because training error tends to underestimate the generalization 
 as large as the sample size (leave-one-out CV), it is not recommended for
 large datasets. Smallest value allowable is \code{nfolds=3}}
 
+\item{ncv}{
+  repeated number of cross-validation.  
+  }
+
 \item{s0}{A vector of user-selected possible values for the spike scale parameter. The default
 is \code{s0 = seq(0.01, 0.1, 0.01)}.}
 
@@ -175,14 +179,6 @@ for each model fit. Defaults to \code{FALSE}.}
 \code{family = "binomial"}, additional options are \code{"auc"} and \code{"misclassification"}, for
 Area under the ROC curve and the percentage of cases where the difference between the observed and
 predicted values is greater than 1/2.}
-
-\item{multiple_extrema}{One of \code{"min", "max"}. In some circumstances multiple spike scale priors
-will correspond to to the "ideal" model based on the selected criteria. Currently, the available options
-to handle this situation are to manually selected the smallest or largest spike scale that corresponds to
-the best fit, respectively.}
-
-\item{print_criteria}{Logial. When \code{TRUE}, prints the model selection criteria for each
-option in \code{s0}.}
 }
 \value{
 When \code{output_param_est = FALSE} returns a data frame of model fitness summaries. Otherwise, returns
@@ -201,6 +197,7 @@ even if comparisons with other models is not.
 }
 \examples{
 library(sim2Dpredictr)
+library(ssnet)
 ## generate data (no intercept)
 set.seed(4799623)
 cn <- c()
@@ -216,7 +213,9 @@ adjmat <- proximity_builder(im.res = c(10, 10), type = "sparse")
 model_info <- mungeCARdata4stan(adjmat$nb.index,
                                 table(adjmat$location.index))
 ## pre-specify stan model
-sm <- stan_model(file = "C:/Users/Justin/Documents/BST/Dissertation_in_Latex/stan models/iar_incl_prob_notau.stan")
+sm <- stan_model(file =
+"C:/Users/Justin/Documents/BST/Dissertation_in_Latex/stan models/iar_incl_prob_notau.stan"
+)
 
 ## fit multiple models and compare
 compare_ssnet(x = tx, y = ty, alpha = c(0, 0.5, 1),
