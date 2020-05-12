@@ -57,7 +57,9 @@ model_info10x10 <- mungeCARdata4stan(adjmat10x10$nb.index,
 mq2 <- max_q2_iar(iar.data = model_info10x10, p = rbeta(100, 1, 1))
 
 ## specify stan model ahead of time
-sm <- stan_model(file = "C:/Users/Justin/Documents/BST/Dissertation_in_Latex/stan models/iar_incl_prob_notau.stan")
+sm <- rstan::stan_model(file =
+"C:/Users/Justin/Documents/BST/Dissertation_in_Latex/stan models/iar_incl_prob_notau.stan"
+)
 mq2 <- max_q2_iar(iar.data = model_info10x10, p = rbeta(100, 1, 1), stan_manual = sm)
 }
 \references{

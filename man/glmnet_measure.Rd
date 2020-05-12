@@ -42,6 +42,20 @@ final model is selected based on the penalty that minimizes the measure given in
 When \code{"lambda.1se"} the final model is selected based on the smallest value of lambda that
 is within one standard error of the minimal measure given in \code{type.measure}.}
 
+\item{type.measure}{loss to use for cross-validation. Currently five
+options, not all available for all models. The default is
+\code{type.measure="deviance"}, which uses squared-error for gaussian models
+(a.k.a \code{type.measure="mse"} there), deviance for logistic and poisson
+regression, and partial-likelihood for the Cox model.
+\code{type.measure="class"} applies to binomial and multinomial logistic
+regression only, and gives misclassification error.
+\code{type.measure="auc"} is for two-class logistic regression only, and
+gives area under the ROC curve. \code{type.measure="mse"} or
+\code{type.measure="mae"} (mean absolute error) can be used by all models
+except the \code{"cox"}; they measure the deviation from the fitted mean to
+the response.
+\code{type.measure="C"} is Harrel's concordance measure, only available for \code{cox} models.}
+
 \item{family}{Response type (see above)}
 
 \item{alpha}{The elasticnet mixing parameter, with \eqn{0\le\alpha\le 1}.

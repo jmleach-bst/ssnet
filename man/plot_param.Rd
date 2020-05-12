@@ -14,9 +14,6 @@ remaining columns contain the probabilities that the models included that parame
 
 \item{remove.int}{Logical. When \code{TRUE} assumes that the second column is for the intercept and removes it.
 The default is \code{FALSE}.}
-
-\item{summary}{Determines which summary measure to take for each parameter. Options are probability of inclusion,
-\code{"prob"}, \code{"mean"}, \code{"median"}, \code{"sd"}, \code{"IQR"}.}
 }
 \value{
 An object of class gg and ggplot.

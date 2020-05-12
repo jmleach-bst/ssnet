@@ -6,6 +6,19 @@
 \usage{
 generate.foldid(nobs, nfolds = 10, foldid = NULL, ncv = 1)
 }
+\arguments{
+\item{nobs}{The number of observations.}
+
+\item{nfolds}{ 
+  These arguments are the same as in the functions \code{\link{glmnet}} and \code{\link{cv.glmnet}} in the package \bold{glmnet}.
+  }
+
+\item{foldid}{An array of fold identifiers. If not supplied by the user, generated within function.}
+
+\item{ncv}{
+  repeated number of cross-validation.  
+  }
+}
 \description{
 Unchanged from \code{BhGLM}, but was not in NAMESPACE, so reproduced here.
 }
