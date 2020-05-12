@@ -19,6 +19,7 @@
 #' dfp$model <- factor(dfp$model, levels = c("glmnet", "bmlasso", "bmlasso_iar"))
 #' plot_param(data = dfp, grp.col = c("#E69F00", "#56B4E9", "#009E73"))
 #'
+#'@export
 plot_param <- function(data, grp.col, remove.int = FALSE) {
 
   # remove intercept
@@ -33,11 +34,16 @@ plot_param <- function(data, grp.col, remove.int = FALSE) {
   dfp2 <- data.frame(cbind(prob, mi))
   names(dfp2) <- c("Probability", "Model", "x.index")
 
+  # this is silly, but otherwise "no visible binding" warning
+  Probability <- dfp2$Probability
+  x.index <- dfp2$x.index
+  Model <- dfp2$Model
+
   # obtain the plots
   ggplot2::ggplot(data = dfp2,
-                  mapping = ggplot2::aes(y = dfp2$Probability,
-                                         x = dfp2$x.index,
-                                         color = dfp2$Model)) +
+                  mapping = ggplot2::aes(y = Probability,
+                                         x = x.index,
+                                         color = Model)) +
     ggplot2::geom_point() +
     ggplot2::scale_color_manual(values = grp.col) +
     ggplot2::scale_x_continuous(name = "Parameter Index") +
