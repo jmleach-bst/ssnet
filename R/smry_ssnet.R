@@ -86,7 +86,7 @@ smry_ssnet <- function(sim.data, output = "raw") {
       return(out.mean)
     }
     if (output == "sd") {
-      extr.sd <- map_dfr(ssnet.sim$sim.sd, rbind)
+      extr.sd <- purrr::map_dfr(ssnet.sim$sim.sd, rbind)
       out.sd <- cbind(model = ssnet.sim$model,
                      s0 = ssnet.sim$s0,
                      extr.sd)

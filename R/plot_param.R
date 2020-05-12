@@ -43,5 +43,5 @@ plot_param <- function(data, grp.col, remove.int = FALSE) {
     ggplot2::scale_x_continuous(name = "Parameter Index") +
     ggplot2::scale_y_continuous(breaks = seq(0, 1, 0.25), limits = c(0, 1)) +
     ggplot2::ggtitle("Probability the Parameter is Left in the Model") +
-    ggplot2::theme(plot.title = element_text(hjust = 0.5), text = ggplot2::element_text(size = 12))
+    ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5), text = ggplot2::element_text(size = 12))
 }

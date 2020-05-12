@@ -133,7 +133,7 @@ compare_ssnet <- function(models = c("glmnet", "ss", "ss_iar"),
                                       type.measure = type.measure,
                                       lambda.criteria = lambda.criteria, alpha = alpha[a])
         if (output_param_est == TRUE) {
-          glmnet.params.a <- as.vector(coef.glmnet(glmnet.fit.a, s = lambda.criteria))
+          glmnet.params.a <- as.vector(glmnet::coef.glmnet(glmnet.fit.a, s = lambda.criteria))
           glmnet.params.a <- data.frame(model = "glmnet",
                                       alpha = alpha[a],
                                       s0 = glmnet.fit.a[[lambda.criteria]],
@@ -174,7 +174,7 @@ compare_ssnet <- function(models = c("glmnet", "ss", "ss_iar"),
 
       if (variable_selection == TRUE) {
         glmnet.rej.a <- rep(0, ncol(x))
-        glmnet.est.a <- coef(glmnet.fit.a, s = lambda.criteria)[-1]
+        glmnet.est.a <- stats::coef(glmnet.fit.a, s = lambda.criteria)[-1]
         glmnet.rej.a[glmnet.est.a != 0] = 1
         glmnet.vs.a <- sim2Dpredictr::sample_FP_Power(rejections = glmnet.rej.a, B = B, B.incl.B0 = FALSE)
         glmnet.mp.a <- cbind(glmnet.mp.a, glmnet.vs.a)
