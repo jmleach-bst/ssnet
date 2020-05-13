@@ -5,11 +5,17 @@
 
 <!-- badges: start -->
 
+[![Lifecycle:
+maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
+[![R build
+status](https://github.com/jmleach-bst/ssnet/workflows/R-CMD-check/badge.svg)](https://github.com/jmleach-bst/ssnet/actions)
 <!-- badges: end -->
 
 The goal of `ssnet` is to fit spike-and-slab elastic net GLM’s with or
-without spatially structured priors. The package is in development, so
-we’re still working bugs and so forth.
+without spatially structured priors. An expectation maximization (EM)
+algorithm is used to fit the models, and spatial structure is
+incorporated by using Intrinsic Autoregressions (IAR) as priors for
+inclusion probabilities.
 
 ## Installation
 
@@ -31,4 +37,6 @@ devtools::install_github("jmleach-bst/ssnet")
 
 ## Example
 
-Coming soon - examples and vignette.
+Coming soon - examples and vignette. However, note that the
+documentation is thorough (in my opinion), and the most useful
+functions’ documentation contain examples.
