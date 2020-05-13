@@ -17,25 +17,36 @@
 #' whatever the original dimension.
 #' @examples
 #' library(sim2Dpredictr)
-#' ## build adjacency matrix
-#' adjmat10x10 <- sim2Dpredictr::proximity_builder(im.res = c(10, 10), type = "sparse")
+#' set.seed(27723)
 #'
+#' ## sample size
+#' n <- 30
+#' ## image dims
+#' nr <- 4
+#' nc <- 4
+#'
+#' ## generate data
+#' cn <- c()
+#' for (i in 1:(nr * nc)) cn[i] <- paste0("x", i)
+#' tb <- rbinom(nr * nc, 1, 0.05)
+#' tx <- matrix(rnorm(n * nr * nc), nrow = n, ncol = nr * nc,
+#'              dimnames = list(1:n, cn))
+#' ty <- tx %*% tb + rnorm(n)
+#'
+#' ## build adjacency matrix
+#' adjmat <- proximity_builder(im.res = c(nr, nc), type = "sparse")
 #' ## stan model information
-#' model_info10x10 <- mungeCARdata4stan(adjmat10x10$nb.index,
-#'                                      table(adjmat10x10$location.index))
+#' model_info <- mungeCARdata4stan(adjmat$nb.index,
+#'                                 table(adjmat$location.index))
 #' ## pre-specify stan model
 #' sm <- stan_model(file =
 #' "C:/Users/Justin/Documents/BST/Dissertation_in_Latex/stan models/iar_incl_prob_notau.stan"
 #' )
 #'
 #' ## fit model
-#' cn <- c()
-#' for (i in 1:100) cn[i] <- paste0("x", i)
-#' bmn_model <- ssnet(x = matrix(rnorm(10000), nrow = 100, ncol = 100,
-#'                    dimnames = list(1:100, cn)), alpha = 0.5,
-#'                    iar.prior = TRUE,
-#'                    y = rnorm(100), iar.data = model_info10x10,
-#'                    family = "gaussian", stan_manual = sm)
+#' ex_model <- ssnet(x = tx, y = ty, alpha = 0.5,
+#'                   iar.prior = TRUE, iar.data = model_info,
+#'                   family = "gaussian", stan_manual = sm)
 #' @references
 #' \insertRef{Banerjee:2015}{ssnet}
 #'

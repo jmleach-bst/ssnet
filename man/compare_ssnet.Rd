@@ -200,15 +200,23 @@ library(sim2Dpredictr)
 library(ssnet)
 ## generate data (no intercept)
 set.seed(4799623)
+
+## sample size
+n <- 30
+## image dims
+nr <- 4
+nc <- 4
+
+## generate data
 cn <- c()
-for (i in 1:100) cn[i] <- paste0("x", i)
-tb <- rbinom(100, 1, 0.05)
-tx <- matrix(rnorm(10000), nrow = 100, ncol = 100,
-             dimnames = list(1:100, cn))
-ty <- tx \%*\% tb + rnorm(100)
+for (i in 1:(nr * nc)) cn[i] <- paste0("x", i)
+tb <- rbinom(nr * nc, 1, 0.05)
+tx <- matrix(rnorm(n * nr * nc), nrow = n, ncol = nr * nc,
+             dimnames = list(1:n, cn))
+ty <- tx \%*\% tb + rnorm(n)
 
 ## build adjacency matrix
-adjmat <- proximity_builder(im.res = c(10, 10), type = "sparse")
+adjmat <- proximity_builder(im.res = c(nr, nc), type = "sparse")
 ## stan model information
 model_info <- mungeCARdata4stan(adjmat$nb.index,
                                 table(adjmat$location.index))
@@ -218,9 +226,9 @@ sm <- stan_model(file =
 )
 
 ## fit multiple models and compare
-compare_ssnet(x = tx, y = ty, alpha = c(0, 0.5, 1),
-              s0 = c(0.01, 0.05, 0.1),
-              family = "gaussian", type_error = "kcv",
+compare_ssnet(x = tx, y = ty, family = "gaussian",
+              alpha = c(0.5, 1), s0 = c(0.01, 0.05),
+              type_error = "kcv", nfolds = 3,
               model_fit = "all", variable_selection = TRUE,
               B = tb, iar.data = model_info, stan_manual = sm)
 }

@@ -22,19 +22,23 @@
 #' @note This function borrows from the work of Mitzi Morris, who describes how to fit an intrisic autoregression
 #' in \code{stan} \insertCite{Morris:2017,Morris:2019}{ssnet}.
 #' @examples
+#' ## image dim
+#' nr <- 4
+#' nc <- 4
+#'
 #' ## build adjacency matrix
-#' adjmat10x10 <- sim2Dpredictr::proximity_builder(im.res = c(10, 10), type = "sparse")
-#' model_info10x10 <- mungeCARdata4stan(adjmat10x10$nb.index,
-#'                                      table(adjmat10x10$location.index))
+#' adjmat <- sim2Dpredictr::proximity_builder(im.res = c(nr, nc), type = "sparse")
+#' model_info <- mungeCARdata4stan(adjmat$nb.index,
+#'                                 table(adjmat$location.index))
 #'
 #' ## let function call stan model
-#' mq2 <- max_q2_iar(iar.data = model_info10x10, p = rbeta(100, 1, 1))
+#' mq2 <- max_q2_iar(iar.data = model_info, p = rbeta(nr * nc, 1, 1))
 #'
 #' ## specify stan model ahead of time
 #' sm <- rstan::stan_model(file =
 #' "C:/Users/Justin/Documents/BST/Dissertation_in_Latex/stan models/iar_incl_prob_notau.stan"
 #' )
-#' mq2 <- max_q2_iar(iar.data = model_info10x10, p = rbeta(100, 1, 1), stan_manual = sm)
+#' mq2 <- max_q2_iar(iar.data = model_info, p = rbeta(nr * nc, 1, 1), stan_manual = sm)
 #' @references
 #'
 #' \insertRef{Morris:2017}{ssnet}
