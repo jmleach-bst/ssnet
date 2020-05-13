@@ -1,10 +1,10 @@
 #' The 'ssnet' package.
 #'
-#' @description A DESCRIPTION OF THE PACKAGE
+#' @description Fit Spike-and-Slab Elastic Net Models
 #'
 #' @docType package
 #' @name ssnet-package
-#' @aliases ssnet
+#' @aliases ssnet-package
 #' @useDynLib ssnet, .registration = TRUE
 #' @import methods
 #' @import Rcpp

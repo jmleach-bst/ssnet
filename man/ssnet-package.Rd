@@ -3,10 +3,9 @@
 \docType{package}
 \name{ssnet-package}
 \alias{ssnet-package}
-\alias{ssnet}
 \title{The 'ssnet' package.}
 \description{
-A DESCRIPTION OF THE PACKAGE
+Fit Spike-and-Slab Elastic Net Models
 }
 \references{
 Stan Development Team (2020). RStan: the R interface to Stan. R package version 2.19.3. https://mc-stan.org
