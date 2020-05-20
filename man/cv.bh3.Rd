@@ -56,5 +56,7 @@ predictive values can be output as well as the orginally included measures.
 The package \code{pROC} will not calculate the AUC when a fold does does not have
 at least one observation of each level. This can largely be avoided by selecting the number
 of folds so that such circumstances are rare. When such does occur, the current result is
-to assign AUC <- NA.
+to assign AUC <- NA. Note that during cross validation, the initialization values for the
+algorithm to re-fit the model are the initial estimates for the \code{object}. This follows
+\code{\link[BhGLM]{cv.bh}}.
 }
