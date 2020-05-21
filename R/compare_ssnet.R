@@ -134,6 +134,19 @@ compare_ssnet <- function(models = c("glmnet", "ss", "ss_iar"),
     xi <- c(xi, paste0("x", i))
   }
 
+  if (output_cv == TRUE) {
+    # column names for data frame containing cv output
+    # each u is the id for a separate run of k-fold cv
+    y.fitted.lab <- c()
+    lp.lab <- c()
+    foldid.lab <- c()
+    for (u in 1:ncv){
+      y.fitted.lab[u] <- paste0("y.fitted_", u)
+      lp.lab[u] <- paste0("lp_", u)
+      foldid.lab[u] <- paste0("foldid_", u)
+    }
+  }
+
   # fit glmnet
   if ("glmnet" %in% models) {
 
@@ -172,14 +185,22 @@ compare_ssnet <- function(models = c("glmnet", "ss", "ss_iar"),
                               classify = classify, classify.rule = classify.rule,
                               verbose = verbose)
         if(output_cv == TRUE) {
+          # label location in list
           gfa <- paste0("glmnet_", alpha[a])
+
+          # extract output
+          y.obs.a <- data.frame(y.obs = glmnet.cv.a$y.obs)
+          y.fitted.a <- data.frame(glmnet.cv.a$y.fitted)
+            names(y.fitted.a) <- y.fitted.lab
+          lp.a <- data.frame(glmnet.cv.a$lp)
+            names(lp.a) <- lp.lab
+          foldid.a <- data.frame(glmnet.cv.a$foldid)
+            names(foldid.a) <- foldid.lab
+
+          # merge output into data frame
           glmnet.cv.a.red <- list(measures = glmnet.cv.a[[1]],
-                                  cv.estimates = data.frame(
-                                    y.obs = glmnet.cv.a$y.obs,
-                                    y.fitted = glmnet.cv.a$y.fitted,
-                                    lp = glmnet.cv.a$lp,
-                                    foldid = glmnet.cv.a$foldid
-                                  ))
+                                  cv.estimates = cbind(y.obs.a, y.fitted.a, lp.a, foldid.a)
+                                  )
           cv_bh3_out[[gfa]] <- glmnet.cv.a.red
         }
         if (ncv == 1) {
@@ -263,12 +284,23 @@ compare_ssnet <- function(models = c("glmnet", "ss", "ss_iar"),
                               verbose = verbose)
           if(output_cv == TRUE) {
             ss.cv.i.a.lab <- paste0("ss_s0=", s0[i], "_alpha=", alpha[a])
+
+            # extract output
+            y.obs.ss.i.a <- data.frame(y.obs = ss.cv.i.a$y.obs)
+            y.fitted.ss.i.a <- data.frame(ss.cv.i.a$y.fitted)
+              names(y.fitted.ss.i.a) <- y.fitted.lab
+            lp.ss.i.a <- data.frame(ss.cv.i.a$lp)
+              names(lp.ss.i.a) <- lp.lab
+            foldid.ss.i.a <- data.frame(ss.cv.i.a$foldid)
+              names(foldid.ss.i.a) <- foldid.lab
+
+            # merge output into data frame
             ss.cv.i.a.red <- list(measures = ss.cv.i.a[[1]],
-                                    cv.estimates = data.frame(
-                                      y.obs = ss.cv.i.a$y.obs,
-                                      y.fitted = ss.cv.i.a$y.fitted,
-                                      lp = ss.cv.i.a$lp,
-                                      foldid = ss.cv.i.a$foldid
+                                    cv.estimates = cbind(
+                                      y.obs.ss.i.a,
+                                      y.fitted.ss.i.a,
+                                      lp.ss.i.a,
+                                      foldid.ss.i.a
                                     ))
             cv_bh3_out[[ss.cv.i.a.lab]] <- ss.cv.i.a.red
           }
@@ -357,12 +389,23 @@ compare_ssnet <- function(models = c("glmnet", "ss", "ss_iar"),
                                  verbose = verbose)
           if(output_cv == TRUE) {
             ssiar.cv.i.a.lab <- paste0("ssiar_s0=", s0[i], "_alpha=", alpha[a])
+
+            # extract output
+            y.obs.ssiar.i.a <- data.frame(y.obs = ssiar.cv.i.a$y.obs)
+            y.fitted.ssiar.i.a <- data.frame(ssiar.cv.i.a$y.fitted)
+              names(y.fitted.ssiar.i.a) <- y.fitted.lab
+            lp.ssiar.i.a <- data.frame(ssiar.cv.i.a$lp)
+              names(lp.ssiar.i.a) <- lp.lab
+            foldid.ssiar.i.a <- data.frame(ssiar.cv.i.a$foldid)
+              names(foldid.ssiar.i.a) <- foldid.lab
+
+            # merge into data frame
             ssiar.cv.i.a.red <- list(measures = ssiar.cv.i.a[[1]],
                                      cv.estimates = data.frame(
-                                       y.obs = ssiar.cv.i.a$y.obs,
-                                       y.fitted = ssiar.cv.i.a$y.fitted,
-                                       lp = ssiar.cv.i.a$lp,
-                                       foldid = ssiar.cv.i.a$foldid
+                                       y.obs.ssiar.i.a,
+                                       y.fitted.ssiar.i.a,
+                                       lp.ssiar.i.a,
+                                       foldid.ssiar.i.a
                                      ))
             cv_bh3_out[[ssiar.cv.i.a.lab]] <- ssiar.cv.i.a.red
           }
@@ -413,7 +456,7 @@ compare_ssnet <- function(models = c("glmnet", "ss", "ss_iar"),
     return(out)
   } else {
 
-    out <- list(infererence = out)
+    out <- list(inference = out)
 
     if(output_param_est == TRUE) {
       out$estimates = param.est
