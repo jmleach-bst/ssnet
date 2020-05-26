@@ -14,6 +14,8 @@ compare_ssnet(
   type_error = "kcv",
   nfolds = 10,
   ncv = 1,
+  foldid = NULL,
+  fold.seed = NULL,
   s0 = seq(0.01, 0.1, 0.01),
   s1 = 1,
   B = NULL,
@@ -78,6 +80,13 @@ large datasets. Smallest value allowable is \code{nfolds=3}}
 \item{ncv}{
   repeated number of cross-validation.  
   }
+
+\item{foldid}{an optional vector of values between 1 and \code{nfold}
+identifying what fold each observation is in. If supplied, \code{nfold} can
+be missing.}
+
+\item{fold.seed}{A scalar seed value for cross validation; ensures the folds are the same upon re-running
+the function. Alternatively, use \code{foldid} to manually specify folds.}
 
 \item{s0, s1}{A vector of user-selected possible values for the spike scale and slab scale parameter, respectively.
 The default is \code{s0 = seq(0.01, 0.1, 0.01)} and \code{s1 = 1}. However, the user should select values informed
@@ -204,7 +213,6 @@ even if comparisons with other models is not.
 }
 \examples{
 library(sim2Dpredictr)
-library(ssnet)
 ## generate data (no intercept)
 set.seed(4799623)
 
