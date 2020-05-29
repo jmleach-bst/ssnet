@@ -4,7 +4,7 @@
 \alias{generate.foldid}
 \title{Generate Folds for K-Fold Cross Validation}
 \usage{
-generate.foldid(nobs, nfolds = 10, foldid = NULL, ncv = 1)
+generate.foldid(nobs, nfolds = 10, foldid = NULL, ncv = 1, fold.seed = NULL)
 }
 \arguments{
 \item{nobs}{The number of observations.}
@@ -18,6 +18,8 @@ generate.foldid(nobs, nfolds = 10, foldid = NULL, ncv = 1)
 \item{ncv}{
   repeated number of cross-validation.  
   }
+
+\item{fold.seed}{An integer that sets the seed for generating folds.}
 }
 \description{
 Unchanged from \code{BhGLM}, but was not in NAMESPACE, so reproduced here.

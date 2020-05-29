@@ -8,6 +8,7 @@
 #'
 #' @inheritParams BhGLM::cv.bh
 #' @inheritParams measure_glm_raw
+#' @param fold.seed An integer that sets the seed for generating folds.
 #' @note The package \code{pROC} will not calculate the AUC when a fold does does not have
 #' at least one observation of each level. This can largely be avoided by selecting the number
 #' of folds so that such circumstances are rare. When such does occur, the current result is
@@ -15,11 +16,11 @@
 #' algorithm to re-fit the model are the initial estimates for the \code{object}. This follows
 #' \code{\link[BhGLM]{cv.bh}}.
 #' @export
-cv.bh3 <- function (object, nfolds = 10, foldid = NULL, ncv = 1, verbose = TRUE,
-                    classify = FALSE, classify.rule = 0.5)
+cv.bh3 <- function (object, nfolds = 10, foldid = NULL, fold.seed = NULL, ncv = 1,
+                    verbose = TRUE, classify = FALSE, classify.rule = 0.5)
 {
   start.time <- Sys.time()
-  out <- cv.bh.lasso2(object = object, nfolds = nfolds,
+  out <- cv.bh.lasso2(object = object, nfolds = nfolds, fold.seed = fold.seed,
                       foldid = foldid, ncv = ncv, verbose = verbose,
                       classify = classify, classify.rule = classify.rule)
   stop.time <- Sys.time()
@@ -30,7 +31,7 @@ cv.bh3 <- function (object, nfolds = 10, foldid = NULL, ncv = 1, verbose = TRUE,
   out
 }
 cv.bh.lasso2 <- function (object, nfolds = 10, foldid = NULL, ncv = 1, verbose = TRUE,
-                          classify = FALSE, classify.rule = 0.5)
+                          classify = FALSE, classify.rule = 0.5, fold.seed = NULL)
 {
   family <- object$family
   x.obj <- object$x
@@ -54,7 +55,7 @@ cv.bh.lasso2 <- function (object, nfolds = 10, foldid = NULL, ncv = 1, verbose =
   opt.algorithm <- object$opt.algorithm
 
   fol <- generate.foldid(nobs = n, nfolds = nfolds, foldid = foldid,
-                         ncv = ncv)
+                         ncv = ncv, fold.seed = fold.seed)
   foldid <- fol$foldid
   nfolds <- fol$nfolds
   ncv <- fol$ncv

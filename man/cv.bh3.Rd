@@ -8,6 +8,7 @@ cv.bh3(
   object,
   nfolds = 10,
   foldid = NULL,
+  fold.seed = NULL,
   ncv = 1,
   verbose = TRUE,
   classify = FALSE,
@@ -28,6 +29,8 @@ cv.bh3(
   an optional vector (if ncv = 1) or matrix (if ncv > 1) of values between 1 and nfolds identifying what fold each observation is in. 
   If supplied, nfolds can be missing.If \code{foldid = NULL}, \code{nfolds} subsets will be generated randomly.  
   }
+
+\item{fold.seed}{An integer that sets the seed for generating folds.}
 
 \item{ncv}{
   repeated number of cross-validation.  

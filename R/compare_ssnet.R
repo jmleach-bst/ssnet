@@ -127,18 +127,6 @@ compare_ssnet <- function(models = c("glmnet", "ss", "ss_iar"),
     }
   }
 
-  # make sure the folds are the same for each
-  nobs <- length(y)
-  if (is.null(foldid) == TRUE) {
-    if (is.null(fold.seed) == FALSE) {
-      set.seed(fold.seed)
-    }
-    foldid <- array(NA, c(nobs, ncv))
-    for (j in 1:ncv) {
-      foldid[, j] <-  sample(rep(seq(nfolds), length = nobs))
-    }
-  }
-
   out <- NULL
   glmnet.fit.a <- NULL
 
@@ -200,9 +188,10 @@ compare_ssnet <- function(models = c("glmnet", "ss", "ss_iar"),
                                     alpha = alpha[a],
                                     nfolds = nfolds, ncv = ncv,
                                     verbose = verbose)
+
         glmnet.cv.a <- cv.bh3(glmnet.fit.a, nfolds = nfolds, ncv = ncv, foldid = foldid,
                               classify = classify, classify.rule = classify.rule,
-                              verbose = verbose)
+                              verbose = verbose, fold.seed = fold.seed)
         if(output_cv == TRUE) {
           # label location in list
           gfa <- paste0("glmnet_", alpha[a])
@@ -306,6 +295,7 @@ compare_ssnet <- function(models = c("glmnet", "ss", "ss_iar"),
                                 nfolds = nfolds,
                                 ncv = ncv,
                                 foldid = foldid,
+                                fold.seed = fold.seed,
                                 classify = classify,
                                 classify.rule = classify.rule,
                                 verbose = verbose)
@@ -416,6 +406,7 @@ compare_ssnet <- function(models = c("glmnet", "ss", "ss_iar"),
                                     nfolds = nfolds,
                                     ncv = ncv,
                                     foldid = foldid,
+                                    fold.seed = fold.seed,
                                     classify = classify,
                                     classify.rule = classify.rule,
                                     verbose = verbose)
