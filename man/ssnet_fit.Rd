@@ -28,8 +28,9 @@ ssnet_fit(
 )
 }
 \arguments{
-\item{x}{Design, or input, matrix, of dimension nobs x nvars; each row is an observation vector. NOte that the columns of
-\code{x} must be named.}
+\item{x}{Design, or input, matrix, of dimension nobs x nvars; each row is an observation vector. It is recommended that
+\code{x} have user-defined column names for ease of identifying variables. If missing \code{colnames} are internally
+assigned \code{x1}, \code{x2}, ... and so forth.}
 
 \item{y}{Scalar response variable. Quantitative for \code{family = "gaussian"}, or \code{family = "poisson"}
 (non-negative counts). For \code{family = "gaussian"}, \code{y} is always standardized. For \code{family = "binomial"},
@@ -60,7 +61,9 @@ includes variables in the k-th group. The mixture double-exponential prior is on
 predictors. For ungrouped predictors, the prior is double-exponential with scale \code{ss[2]} and mean 0.}
 
 \item{ss}{A vector of two positive scale values for the spike-and-slab mixture double-exponential prior, allowing for different
-scales for different predictors, leading to different amount of shrinkage. Smaller scale values give stronger shrinkage.}
+scales for different predictors, leading to different amount of shrinkage. Smaller scale values give stronger shrinkage. While
+the smaller of the two input values will be treated as the spike scale, it is recommended to specify the spike scale as the
+first element of the vector.}
 
 \item{Warning}{Logical. If \code{TRUE}, shows the error messages of not convergence and identifiability.}
 
@@ -68,7 +71,9 @@ scales for different predictors, leading to different amount of shrinkage. Small
 inclusion. When \code{FALSE}, treats probabilties of inclusion as unstructured.}
 
 \item{iar.data}{A list of output from \code{\link{mungeCARdata4stan}} that contains the necessary
-inputs for the IAR prior.}
+inputs for the IAR prior. When unspecified, this is built internally assuming that neighbors are those
+variables directly above, below, left, and  right of a given variable location. \code{im.res} must be specified
+when allowing this argument to be built internally.}
 
 \item{tau.prior}{One of \code{c("none", "manual", "cauchy")}. This argument determines the precision
 parameter in the Conditional Autoregressive model for the (logit of) prior inclusion probabilities.

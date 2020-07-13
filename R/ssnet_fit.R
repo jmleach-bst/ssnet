@@ -5,8 +5,9 @@
 #' @importFrom survival Surv is.Surv
 #' @importFrom glmnet glmnet
 #' @importFrom BhGLM bglm
-#' @param x Design, or input, matrix, of dimension nobs x nvars; each row is an observation vector. NOte that the columns of
-#' \code{x} must be named.
+#' @param x Design, or input, matrix, of dimension nobs x nvars; each row is an observation vector. It is recommended that
+#' \code{x} have user-defined column names for ease of identifying variables. If missing \code{colnames} are internally
+#' assigned \code{x1}, \code{x2}, ... and so forth.
 #' @param y Scalar response variable. Quantitative for \code{family = "gaussian"}, or \code{family = "poisson"}
 #' (non-negative counts). For \code{family = "gaussian"}, \code{y} is always standardized. For \code{family = "binomial"},
 #' y should be either a factor with two levels, or a two-column matrix of counts or proportions (the second column is treated
@@ -30,10 +31,14 @@
 #' includes variables in the k-th group. The mixture double-exponential prior is only used for grouped
 #' predictors. For ungrouped predictors, the prior is double-exponential with scale \code{ss[2]} and mean 0.
 #' @param ss A vector of two positive scale values for the spike-and-slab mixture double-exponential prior, allowing for different
-#' scales for different predictors, leading to different amount of shrinkage. Smaller scale values give stronger shrinkage.
+#' scales for different predictors, leading to different amount of shrinkage. Smaller scale values give stronger shrinkage. While
+#' the smaller of the two input values will be treated as the spike scale, it is recommended to specify the spike scale as the
+#' first element of the vector.
 #' @param Warning Logical. If \code{TRUE}, shows the error messages of not convergence and identifiability.
 #' @param iar.data A list of output from \code{\link{mungeCARdata4stan}} that contains the necessary
-#' inputs for the IAR prior.
+#' inputs for the IAR prior. When unspecified, this is built internally assuming that neighbors are those
+#' variables directly above, below, left, and  right of a given variable location. \code{im.res} must be specified
+#' when allowing this argument to be built internally.
 #' @param opt.algorithm One of \code{c("LBFGS", "BFGS", "Newton")}. This argument determines which argument
 #' is used to optimize the term in the EM algorithm that estimates the probabilities of inclusion for
 #' each parameter. Optimization is performed by \code{optimizing}.
@@ -83,12 +88,7 @@ ssnet_fit <- function (x, y, family = c("gaussian", "binomial", "poisson", "cox"
     iar.data <- mungeCARdata4stan(adjmat$nb.index, table(adjmat$location.index))
   }
 
-  if (alpha > 1 | alpha < 0) {
-    stop("alpha must be greater than 0 and less than 1.")
-  }
-
   ss <- sort(ss)
-  ss <- ifelse(ss <= 0, 0.001, ss)
   prior.scale <- ss[length(ss)]
   if (family == "cox")
     intercept <- FALSE
@@ -105,12 +105,12 @@ ssnet_fit <- function (x, y, family = c("gaussian", "binomial", "poisson", "cox"
   group.vars <- d$group.vars
   ungroup.vars <- d$ungroup.vars
   prior.scale <- prior.scale/autoscale(x, min.x.sd = 1e-04)
+
   if (intercept) {
     x <- x[, -1]
     prior.scale <- prior.scale[-1]
   }
-  if (length(ss) != 2)
-    stop("ss should have two positive values")
+
   gvars <- unlist(group.vars)
   theta <- p <- rep(0.5, length(gvars))
   names(theta) <- names(p) <- gvars

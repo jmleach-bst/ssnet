@@ -64,49 +64,105 @@
 #'
 #' @export
 #' @inheritParams ssnet_fit
-ssnet <- function (x, y, family = c("gaussian", "binomial",
-"poisson", "cox"), offset = NULL, epsilon = 1e-04, alpha = 0.5,
-maxit = 50, init = NULL, group = NULL, ss = c(0.04, 0.5),
-Warning = FALSE, verbose = FALSE, iar.prior = FALSE,
-opt.algorithm = "LBFGS", iar.data = NULL, p.bound = c(0.01, 0.99),
-tau.prior = "none", stan_manual = NULL, stan_local = FALSE,
-plot.pj = FALSE, im.res = NULL)
+ssnet <- function (x, y, family = c("gaussian", "binomial", "poisson", "cox"),
+                   offset = NULL, epsilon = 1e-04, alpha = 0.5, maxit = 50,
+                   init = NULL, group = NULL, ss = c(0.04, 0.5),
+                   Warning = FALSE, verbose = FALSE, iar.prior = FALSE,
+                   opt.algorithm = "LBFGS", iar.data = NULL, p.bound = c(0.01, 0.99),
+                   tau.prior = "none", stan_manual = NULL, stan_local = FALSE,
+                   plot.pj = FALSE, im.res = NULL)
 {
   start.time <- Sys.time()
   call <- match.call()
-  x <- as.matrix(x)
-  if (is.null(colnames(x)))
-    colnames(x) <- paste("x", 1:ncol(x), sep = "")
+
+  ##############
+  # check data #
+  ##############
+
+  # picked a family?
+  if (length(family) != 1){
+    stop("user must select a family: gaussian, binomial, poisson, or cox")
+  }
+
+  # check matrix
+  if (is.matrix(x) == FALSE) {
+    stop("x should be a matrix")
+  }
+
+  # assign variable names if necessary
+  if (is.null(colnames(x)) == TRUE) {
+    colnames(x) <- paste0("x", 1:ncol(x))
+  }
+
+  # ensure number obs in x and y are the same
+  if (is.null(length(y)) == FALSE) {
+    if (length(y) != nrow(x)) {
+      stop("length of y should equal number of rows in x")
+    }
+  } else {
+    if (nrow(y) != nrow(x)) {
+      stop("length of y should equal number of rows in x")
+    }
+  }
+
+  # check that y & family makes sense
+  if (is.numeric(y) == FALSE & (family == "gaussian") | (family == "poisson")) {
+    stop("gaussian family requires numeric y")
+  }
+
+  # check EN parameter
+  if (alpha > 1 | alpha < 0) {
+    stop("alpha must be 0 or greater and cannot exceed 1.")
+  }
+
+  # check scale parameters
+  if (any(ss <= 0)) {
+    stop("scale values must exceed 0.")
+  }
+
+  if (length(ss) != 2) {
+    stop("ss should contain only 2 elements, 1 spike and 1 slab scale.")
+  }
+
   nobs <- nrow(x)
-  if (NROW(y) != nobs)
-    stop("nobs of 'x' and 'y' are different")
+
+  # remove observations with missingness
   inc <- apply(cbind(y, x), 1, function(z) !any(is.na(z)))
   if (!is.null(offset)) {
-    if (length(offset) != nobs)
+    if (length(offset) != nobs) {
       stop("nobs of 'x' and 'offset' are different")
-    inc <- apply(cbind(y, x, offset), 1, function(z) !any(is.na(z)))
+    }
+        inc <- apply(cbind(y, x, offset), 1, function(z) !any(is.na(z)))
   }
   y <- y[inc]
   x <- x[inc, ]
   offset <- offset[inc]
-  family <- family[1]
+
+  # cox requires y to be a survival object
   if (family == "cox")
     if (!survival::is.Surv(y))
       stop("'y' should be a 'Surv' object")
-  if (family == "gaussian")
-    y <- (y - mean(y))/sd(y)
+
+  # standardize y for continuous data
+  if (family == "gaussian") {
+    y <- (y - mean(y)) / sd(y)
+  }
+
+  # when specifying initial values, ensure there are the right number
   if (!is.null(init) & length(init) != ncol(x))
-    stop("give an initial value to each coefficient (not intercept)")
-  # create adjacency matrix
+    stop("must specify initial value to each coefficient except intercept")
+
+  # create adjacency matrix (if necessary)
   if (iar.prior == TRUE & is.null(iar.data) == TRUE) {
     if (is.null(im.res) == TRUE) {
-      stop("Require image dimensions, im.res, to create adjacency matrix. \n")
+      stop("Require image dimensions, im.res, to create adjacency matrix.")
     } else {
       adjmat <- sim2Dpredictr::proximity_builder(im.res = im.res, type = "sparse")
-      iar.data = mungeCARdata4stan(adjmat$nb.index,
-                                   table(adjmat$location.index))
+      iar.data <- mungeCARdata4stan(adjmat$nb.index,
+                                    table(adjmat$location.index))
     }
   }
+
   f <- ssnet_fit(x = x, y = y, family = family, offset = offset, alpha = alpha,
                  epsilon = epsilon, maxit = maxit, init = init, group = group,
                  ss = ss, Warning = Warning, iar.data = iar.data,
