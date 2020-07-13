@@ -5,6 +5,7 @@
 #' The model is fit using an EM algorithm where the E-step is fit by \code{glmnet()} and the M-step is fit using the
 #' \code{stan} function \code{optimizing} (when IAR prior is employed).
 #'
+#' @inheritParams ssnet_fit
 #' @param verbose Logical. If \code{TRUE}, prints out the number of iterations and computational time.
 #' @importFrom Rdpack reprompt
 #' @importFrom stats sd
@@ -63,12 +64,11 @@
 #' \insertRef{Tang:2017}{ssnet}
 #'
 #' @export
-#' @inheritParams ssnet_fit
 ssnet <- function (x, y, family = c("gaussian", "binomial", "poisson", "cox"),
                    offset = NULL, epsilon = 1e-04, alpha = 0.5, maxit = 50,
                    init = NULL, group = NULL, ss = c(0.04, 0.5),
                    Warning = FALSE, verbose = FALSE, iar.prior = FALSE,
-                   opt.algorithm = "LBFGS", iar.data = NULL, p.bound = c(0.01, 0.99),
+                   opt.algorithm = "LBFGS", adjmat = NULL, iar.data = NULL, p.bound = c(0.01, 0.99),
                    tau.prior = "none", stan_manual = NULL, stan_local = FALSE,
                    plot.pj = FALSE, im.res = NULL)
 {
@@ -152,15 +152,14 @@ ssnet <- function (x, y, family = c("gaussian", "binomial", "poisson", "cox"),
   if (!is.null(init) & length(init) != ncol(x))
     stop("must specify initial value to each coefficient except intercept")
 
-  # create adjacency matrix (if necessary)
+  # format neighborhood information
+  if (is.null(adjmat) == FALSE & is.null(iar.data) == FALSE) {
+    warning("argument adjmat is not used when argument iar.data is specified.")
+  }
+
+  # format IAR data
   if (iar.prior == TRUE & is.null(iar.data) == TRUE) {
-    if (is.null(im.res) == TRUE) {
-      stop("Require image dimensions, im.res, to create adjacency matrix.")
-    } else {
-      adjmat <- sim2Dpredictr::proximity_builder(im.res = im.res, type = "sparse")
-      iar.data <- mungeCARdata4stan(adjmat$nb.index,
-                                    table(adjmat$location.index))
-    }
+    iar.data <- format_iar(adjmat = adjmat, im.res = im.res, x = x)
   }
 
   f <- ssnet_fit(x = x, y = y, family = family, offset = offset, alpha = alpha,
@@ -171,9 +170,11 @@ ssnet <- function (x, y, family = c("gaussian", "binomial", "poisson", "cox"),
                  stan_manual = stan_manual, stan_local = stan_local,
                  plot.pj = plot.pj, im.res = im.res)
   f$call <- call
-  if (family == "cox")
+  if (family == "cox") {
     class(f) <- c(class(f), "bmlasso", "COXPH")
-  else class(f) <- c(class(f), "bmlasso", "GLM")
+  } else {
+    class(f) <- c(class(f), "bmlasso", "GLM")
+  }
   stop.time <- Sys.time()
   minutes <- round(difftime(stop.time, start.time, units = "min"),
                    3)

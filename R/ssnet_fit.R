@@ -35,10 +35,16 @@
 #' the smaller of the two input values will be treated as the spike scale, it is recommended to specify the spike scale as the
 #' first element of the vector.
 #' @param Warning Logical. If \code{TRUE}, shows the error messages of not convergence and identifiability.
+#' @param adjmat A data.frame or matrix containing a "sparse" representation of the neighbor relationships. The first
+#' column should contain a numerical index for a given location. Each index will be repeated in this column for
+#' every neighbor it has. The indices for the location's neighbors are then specified in the second column. An optional
+#' third column specifies weights. If no third column is specified, then equal weights are assumed.
 #' @param iar.data A list of output from \code{\link{mungeCARdata4stan}} that contains the necessary
 #' inputs for the IAR prior. When unspecified, this is built internally assuming that neighbors are those
 #' variables directly above, below, left, and  right of a given variable location. \code{im.res} must be specified
-#' when allowing this argument to be built internally.
+#' when allowing this argument to be built internally. It is not recommended to use this argument directly, even
+#' when specifying a more complicated neighborhood stucture; this can be specified with the \code{adjmat} argument,
+#' and then internally converted to the correct format.
 #' @param opt.algorithm One of \code{c("LBFGS", "BFGS", "Newton")}. This argument determines which argument
 #' is used to optimize the term in the EM algorithm that estimates the probabilities of inclusion for
 #' each parameter. Optimization is performed by \code{optimizing}.
@@ -67,25 +73,17 @@
 #' bml_model <- ssnet_fit(x = matrix(rnorm(10000), nrow = 100, ncol = 100,
 #'                              dimnames = list(1:100, cn)), family = "gaussian",
 #'                              y = rnorm(100))
-#' @export
 ssnet_fit <- function (x, y, family = c("gaussian", "binomial", "poisson", "cox"),
                        offset = NULL, epsilon = 1e-04, alpha = 0.5,
                        maxit = 50, init = rep(0, ncol(x)), group = NULL,
                        ss = c(0.04,0.5), Warning = FALSE,
-                       iar.prior = FALSE,  iar.data = NULL,
+                       iar.prior = FALSE, adjmat = NULL,  iar.data = NULL,
                        tau.prior = "none", stan_manual = NULL, stan_local = FALSE,
                        opt.algorithm = "LBFGS", p.bound = c(0.01, 0.99),
                        plot.pj = FALSE, im.res = NULL)
 {
   if (plot.pj == TRUE & !requireNamespace("sim2Dpredictr") == FALSE) {
     stop("Cannot plot p_j without package sim2Dpredictr. \n")
-  }
-  if (iar.prior == TRUE & is.null(iar.data) == TRUE) {
-    ## build adjacency matrix
-    adjmat <- sim2Dpredictr::proximity_builder(im.res = sqrt(ncol(x)), type = "sparse")
-
-    ## stan model information
-    iar.data <- mungeCARdata4stan(adjmat$nb.index, table(adjmat$location.index))
   }
 
   ss <- sort(ss)

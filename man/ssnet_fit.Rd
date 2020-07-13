@@ -17,6 +17,7 @@ ssnet_fit(
   ss = c(0.04, 0.5),
   Warning = FALSE,
   iar.prior = FALSE,
+  adjmat = NULL,
   iar.data = NULL,
   tau.prior = "none",
   stan_manual = NULL,
@@ -70,10 +71,17 @@ first element of the vector.}
 \item{iar.prior}{Logical. When \code{TRUE}, imposes intrinsic autoregressive prior on logit of the probabilities of
 inclusion. When \code{FALSE}, treats probabilties of inclusion as unstructured.}
 
+\item{adjmat}{A data.frame or matrix containing a "sparse" representation of the neighbor relationships. The first
+column should contain a numerical index for a given location. Each index will be repeated in this column for
+every neighbor it has. The indices for the location's neighbors are then specified in the second column. An optional
+third column specifies weights. If no third column is specified, then equal weights are assumed.}
+
 \item{iar.data}{A list of output from \code{\link{mungeCARdata4stan}} that contains the necessary
 inputs for the IAR prior. When unspecified, this is built internally assuming that neighbors are those
 variables directly above, below, left, and  right of a given variable location. \code{im.res} must be specified
-when allowing this argument to be built internally.}
+when allowing this argument to be built internally. It is not recommended to use this argument directly, even
+when specifying a more complicated neighborhood stucture; this can be specified with the \code{adjmat} argument,
+and then internally converted to the correct format.}
 
 \item{tau.prior}{One of \code{c("none", "manual", "cauchy")}. This argument determines the precision
 parameter in the Conditional Autoregressive model for the (logit of) prior inclusion probabilities.

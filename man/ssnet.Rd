@@ -19,6 +19,7 @@ ssnet(
   verbose = FALSE,
   iar.prior = FALSE,
   opt.algorithm = "LBFGS",
+  adjmat = NULL,
   iar.data = NULL,
   p.bound = c(0.01, 0.99),
   tau.prior = "none",
@@ -77,10 +78,17 @@ inclusion. When \code{FALSE}, treats probabilties of inclusion as unstructured.}
 is used to optimize the term in the EM algorithm that estimates the probabilities of inclusion for
 each parameter. Optimization is performed by \code{optimizing}.}
 
+\item{adjmat}{A data.frame or matrix containing a "sparse" representation of the neighbor relationships. The first
+column should contain a numerical index for a given location. Each index will be repeated in this column for
+every neighbor it has. The indices for the location's neighbors are then specified in the second column. An optional
+third column specifies weights. If no third column is specified, then equal weights are assumed.}
+
 \item{iar.data}{A list of output from \code{\link{mungeCARdata4stan}} that contains the necessary
 inputs for the IAR prior. When unspecified, this is built internally assuming that neighbors are those
 variables directly above, below, left, and  right of a given variable location. \code{im.res} must be specified
-when allowing this argument to be built internally.}
+when allowing this argument to be built internally. It is not recommended to use this argument directly, even
+when specifying a more complicated neighborhood stucture; this can be specified with the \code{adjmat} argument,
+and then internally converted to the correct format.}
 
 \item{p.bound}{A vector defining the lower and upper boundaries for the probabilities of inclusion
 in the model, respectively. Defaults to \code{c(0.01, 0.99)}.}
