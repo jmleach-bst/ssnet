@@ -24,7 +24,6 @@ ssnet(
   p.bound = c(0.01, 0.99),
   tau.prior = "none",
   stan_manual = NULL,
-  stan_local = FALSE,
   plot.pj = FALSE,
   im.res = NULL
 )
@@ -101,9 +100,6 @@ scale 2.5.}
 
 \item{stan_manual}{A \code{stan_model} that is manually specified. Especially when fitting multiple models in
 succession, specifying the the \code{stan} model outside this "loop" may avoid errors.}
-
-\item{stan_local}{Logical. Defaults to \code{FALSE}, but when \code{TRUE}, uses locally stored \code{stan} files.
-This option will eventually be removed once the package is more stable.}
 
 \item{plot.pj}{When \code{TRUE}, prints a series of 2D graphs of the prior probabilities of inclusion
 at each step of the algorithm. This should NOT be used for 3D data.}

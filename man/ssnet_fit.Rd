@@ -21,7 +21,6 @@ ssnet_fit(
   iar.data = NULL,
   tau.prior = "none",
   stan_manual = NULL,
-  stan_local = FALSE,
   opt.algorithm = "LBFGS",
   p.bound = c(0.01, 0.99),
   plot.pj = FALSE,
@@ -91,9 +90,6 @@ scale 2.5.}
 
 \item{stan_manual}{A \code{stan_model} that is manually specified. Especially when fitting multiple models in
 succession, specifying the the \code{stan} model outside this "loop" may avoid errors.}
-
-\item{stan_local}{Logical. Defaults to \code{FALSE}, but when \code{TRUE}, uses locally stored \code{stan} files.
-This option will eventually be removed once the package is more stable.}
 
 \item{opt.algorithm}{One of \code{c("LBFGS", "BFGS", "Newton")}. This argument determines which argument
 is used to optimize the term in the EM algorithm that estimates the probabilities of inclusion for

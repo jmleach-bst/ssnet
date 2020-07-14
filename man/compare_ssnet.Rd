@@ -96,8 +96,9 @@ by the practical context of the analysis.}
 to calculate the false discovery proportion (FDR), family-wise error (FWER), and power for the data. This vector should
 NOT contain a value for the intercept.}
 
-\item{x}{Design, or input, matrix, of dimension nobs x nvars; each row is an observation vector. NOte that the columns of
-\code{x} must be named.}
+\item{x}{Design, or input, matrix, of dimension nobs x nvars; each row is an observation vector. It is recommended that
+\code{x} have user-defined column names for ease of identifying variables. If missing \code{colnames} are internally
+assigned \code{x1}, \code{x2}, ... and so forth.}
 
 \item{y}{Scalar response variable. Quantitative for \code{family = "gaussian"}, or \code{family = "poisson"}
 (non-negative counts). For \code{family = "gaussian"}, \code{y} is always standardized. For \code{family = "binomial"},
@@ -133,7 +134,11 @@ is used to optimize the term in the EM algorithm that estimates the probabilitie
 each parameter. Optimization is performed by \code{optimizing}.}
 
 \item{iar.data}{A list of output from \code{\link{mungeCARdata4stan}} that contains the necessary
-inputs for the IAR prior.}
+inputs for the IAR prior. When unspecified, this is built internally assuming that neighbors are those
+variables directly above, below, left, and  right of a given variable location. \code{im.res} must be specified
+when allowing this argument to be built internally. It is not recommended to use this argument directly, even
+when specifying a more complicated neighborhood stucture; this can be specified with the \code{adjmat} argument,
+and then internally converted to the correct format.}
 
 \item{iar.prior}{Logical. When \code{TRUE}, imposes intrinsic autoregressive prior on logit of the probabilities of
 inclusion. When \code{FALSE}, treats probabilties of inclusion as unstructured.}
@@ -149,9 +154,6 @@ scale 2.5.}
 
 \item{stan_manual}{A \code{stan_model} that is manually specified. Especially when fitting multiple models in
 succession, specifying the the \code{stan} model outside this "loop" may avoid errors.}
-
-\item{stan_local}{Logical. Defaults to \code{FALSE}, but when \code{TRUE}, uses locally stored \code{stan} files.
-This option will eventually be removed once the package is more stable.}
 
 \item{plot.pj}{When \code{TRUE}, prints a series of 2D graphs of the prior probabilities of inclusion
 at each step of the algorithm. This should NOT be used for 3D data.}

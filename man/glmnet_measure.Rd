@@ -56,7 +56,8 @@ except the \code{"cox"}; they measure the deviation from the fitted mean to
 the response.
 \code{type.measure="C"} is Harrel's concordance measure, only available for \code{cox} models.}
 
-\item{family}{Response type (see above)}
+\item{family}{Response type (see above). Either a character string representing
+one of the built-in families, or else a \code{glm()} family object.}
 
 \item{alpha}{The elasticnet mixing parameter, with \eqn{0\le\alpha\le 1}.
 The penalty is defined as
