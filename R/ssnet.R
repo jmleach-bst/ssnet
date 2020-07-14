@@ -69,7 +69,7 @@ ssnet <- function (x, y, family = c("gaussian", "binomial", "poisson", "cox"),
                    init = NULL, group = NULL, ss = c(0.04, 0.5),
                    Warning = FALSE, verbose = FALSE, iar.prior = FALSE,
                    opt.algorithm = "LBFGS", adjmat = NULL, iar.data = NULL, p.bound = c(0.01, 0.99),
-                   tau.prior = "none", stan_manual = NULL,
+                   tau.prior = "none", tau.manual = NULL, stan_manual = NULL,
                    plot.pj = FALSE, im.res = NULL)
 {
   start.time <- Sys.time()

@@ -37,8 +37,8 @@
 #' @param Warning Logical. If \code{TRUE}, shows the error messages of not convergence and identifiability.
 #' @param adjmat A data.frame or matrix containing a "sparse" representation of the neighbor relationships. The first
 #' column should contain a numerical index for a given location. Each index will be repeated in this column for
-#' every neighbor it has. The indices for the location's neighbors are then specified in the second column. An optional
-#' third column specifies weights. If no third column is specified, then equal weights are assumed.
+#' every neighbor it has. The indices for the location's neighbors are then specified in the second column. Any
+#' additional columns are ignored.
 #' @param iar.data A list of output from \code{\link{mungeCARdata4stan}} that contains the necessary
 #' inputs for the IAR prior. When unspecified, this is built internally assuming that neighbors are those
 #' variables directly above, below, left, and  right of a given variable location. \code{im.res} must be specified
@@ -51,8 +51,9 @@
 #' @param tau.prior One of \code{c("none", "manual", "cauchy")}. This argument determines the precision
 #' parameter in the Conditional Autoregressive model for the (logit of) prior inclusion probabilities.
 #' When \code{"none"}, the precision is set to 1; when "manual", the precision is manually entered by the
-#' use; when \code{"cauchy"}, the inverse precision is assumed to follow a Cauchy distribution with mean 0 and
+#' user; when \code{"cauchy"}, the inverse precision is assumed to follow a Cauchy distribution with mean 0 and
 #' scale 2.5.
+#' @param tau.manual When \code{tau.prior = "manual"}, use this argument to specify a common precision parameter.
 #' @param plot.pj When \code{TRUE}, prints a series of 2D graphs of the prior probabilities of inclusion
 #' at each step of the algorithm. This should NOT be used for 3D data.
 #' @param im.res A 2-element vector where the first argument is the number of "rows" and the second argument
@@ -76,7 +77,7 @@ ssnet_fit <- function (x, y, family = c("gaussian", "binomial", "poisson", "cox"
                        maxit = 50, init = rep(0, ncol(x)), group = NULL,
                        ss = c(0.04,0.5), Warning = FALSE,
                        iar.prior = FALSE, adjmat = NULL,  iar.data = NULL,
-                       tau.prior = "none", stan_manual = NULL,
+                       tau.prior = "none", tau.manual = NULL, stan_manual = NULL,
                        opt.algorithm = "LBFGS", p.bound = c(0.01, 0.99),
                        plot.pj = FALSE, im.res = NULL)
 {

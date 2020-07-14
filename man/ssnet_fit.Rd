@@ -20,6 +20,7 @@ ssnet_fit(
   adjmat = NULL,
   iar.data = NULL,
   tau.prior = "none",
+  tau.manual = NULL,
   stan_manual = NULL,
   opt.algorithm = "LBFGS",
   p.bound = c(0.01, 0.99),
@@ -72,8 +73,8 @@ inclusion. When \code{FALSE}, treats probabilties of inclusion as unstructured.}
 
 \item{adjmat}{A data.frame or matrix containing a "sparse" representation of the neighbor relationships. The first
 column should contain a numerical index for a given location. Each index will be repeated in this column for
-every neighbor it has. The indices for the location's neighbors are then specified in the second column. An optional
-third column specifies weights. If no third column is specified, then equal weights are assumed.}
+every neighbor it has. The indices for the location's neighbors are then specified in the second column. Any
+additional columns are ignored.}
 
 \item{iar.data}{A list of output from \code{\link{mungeCARdata4stan}} that contains the necessary
 inputs for the IAR prior. When unspecified, this is built internally assuming that neighbors are those
@@ -85,8 +86,10 @@ and then internally converted to the correct format.}
 \item{tau.prior}{One of \code{c("none", "manual", "cauchy")}. This argument determines the precision
 parameter in the Conditional Autoregressive model for the (logit of) prior inclusion probabilities.
 When \code{"none"}, the precision is set to 1; when "manual", the precision is manually entered by the
-use; when \code{"cauchy"}, the inverse precision is assumed to follow a Cauchy distribution with mean 0 and
+user; when \code{"cauchy"}, the inverse precision is assumed to follow a Cauchy distribution with mean 0 and
 scale 2.5.}
+
+\item{tau.manual}{When \code{tau.prior = "manual"}, use this argument to specify a common precision parameter.}
 
 \item{stan_manual}{A \code{stan_model} that is manually specified. Especially when fitting multiple models in
 succession, specifying the the \code{stan} model outside this "loop" may avoid errors.}
