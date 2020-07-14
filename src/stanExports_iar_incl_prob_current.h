@@ -104,7 +104,7 @@ icar_normal_lpdf(const Eigen::Matrix<T0__, Eigen::Dynamic, 1>& psi,
     int current_statement_begin__ = -1;
     try {
         current_statement_begin__ = 8;
-        return stan::math::promote_scalar<fun_return_scalar_t__>((((-(0.5) * tau) * dot_self(subtract(stan::model::rvalue(psi, stan::model::cons_list(stan::model::index_multi(node1), stan::model::nil_index_list()), "psi"), stan::model::rvalue(psi, stan::model::cons_list(stan::model::index_multi(node2), stan::model::nil_index_list()), "psi")))) + normal_log(sum(psi), 0, (0.001 * J))));
+        return stan::math::promote_scalar<fun_return_scalar_t__>((((((J - 1.0) / 2) * stan::math::log(tau)) - ((0.5 * tau) * dot_self(subtract(stan::model::rvalue(psi, stan::model::cons_list(stan::model::index_multi(node1), stan::model::nil_index_list()), "psi"), stan::model::rvalue(psi, stan::model::cons_list(stan::model::index_multi(node2), stan::model::nil_index_list()), "psi"))))) + normal_log(sum(psi), 0, (0.001 * J))));
     } catch (const std::exception& e) {
         stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
         // Next line prevents compiler griping about no return
