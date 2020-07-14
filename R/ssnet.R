@@ -69,7 +69,7 @@ ssnet <- function (x, y, family = c("gaussian", "binomial", "poisson", "cox"),
                    init = NULL, group = NULL, ss = c(0.04, 0.5),
                    Warning = FALSE, verbose = FALSE, iar.prior = FALSE,
                    opt.algorithm = "LBFGS", adjmat = NULL, iar.data = NULL, p.bound = c(0.01, 0.99),
-                   tau.prior = "none", stan_manual = NULL, stan_local = FALSE,
+                   tau.prior = "none", stan_manual = NULL,
                    plot.pj = FALSE, im.res = NULL)
 {
   start.time <- Sys.time()
@@ -167,7 +167,7 @@ ssnet <- function (x, y, family = c("gaussian", "binomial", "poisson", "cox"),
                  ss = ss, Warning = Warning, iar.data = iar.data,
                  opt.algorithm = opt.algorithm, p.bound = p.bound,
                  iar.prior = iar.prior, tau.prior = tau.prior,
-                 stan_manual = stan_manual, stan_local = stan_local,
+                 stan_manual = stan_manual,
                  plot.pj = plot.pj, im.res = im.res)
   f$call <- call
   if (family == "cox") {

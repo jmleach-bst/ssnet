@@ -61,8 +61,6 @@
 #' in the model, respectively. Defaults to \code{c(0.01, 0.99)}.
 #' @param stan_manual A \code{stan_model} that is manually specified. Especially when fitting multiple models in
 #' succession, specifying the the \code{stan} model outside this "loop" may avoid errors.
-#' @param stan_local Logical. Defaults to \code{FALSE}, but when \code{TRUE}, uses locally stored \code{stan} files.
-#' This option will eventually be removed once the package is more stable.
 #' @return The fitted model for the spike-and-slab elastic net. An object of class \code{c("elnet", "glmnet"}.
 #' @note Currently, the \code{ssnet()} \code{im.res} can only handle 2D data. Future versions may allow
 #' images to be 3D. However, the function will work given any appropriately specified neighborhood matrix,
@@ -78,7 +76,7 @@ ssnet_fit <- function (x, y, family = c("gaussian", "binomial", "poisson", "cox"
                        maxit = 50, init = rep(0, ncol(x)), group = NULL,
                        ss = c(0.04,0.5), Warning = FALSE,
                        iar.prior = FALSE, adjmat = NULL,  iar.data = NULL,
-                       tau.prior = "none", stan_manual = NULL, stan_local = FALSE,
+                       tau.prior = "none", stan_manual = NULL,
                        opt.algorithm = "LBFGS", p.bound = c(0.01, 0.99),
                        plot.pj = FALSE, im.res = NULL)
 {
@@ -151,7 +149,6 @@ ssnet_fit <- function (x, y, family = c("gaussian", "binomial", "poisson", "cox"
                           opt.algorithm = opt.algorithm,
                           tau.prior = tau.prior,
                           stan_manual = stan_manual,
-                          stan_local = stan_local,
                           p.bound = p.bound)
     }
     Pf <- 1/(prior.scale + 1e-10)
@@ -196,7 +193,6 @@ ssnet_fit <- function (x, y, family = c("gaussian", "binomial", "poisson", "cox"
   f$offset <- offset
   f$iar.data <- iar.data
   f$stan_manual <- stan_manual
-  f$stan_local <- stan_local
   f$opt.algorithm <- opt.algorithm
   f$epsilon <- epsilon
   f$alpha <- alpha
