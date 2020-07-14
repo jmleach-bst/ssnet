@@ -10,13 +10,12 @@
 #' @param tau.prior One of \code{c("none", "manual", "cauchy")}. This argument determines the precision
 #' parameter in the Conditional Autoregressive model for the (logit of) prior inclusion probabilities.
 #' When \code{"none"}, the precision is set to 1; when "manual", the precision is manually entered by the
-#' use; when \code{"cauchy"}, the inverse precision is assumed to follow a Cauchy distribution with mean 0 and
-#' scale 2.5.
+#' user (and still not random); when \code{"cauchy"}, the inverse precision is assumed to follow a Cauchy
+#' distribution with mean 0 and scale 2.5. Note that at this stage of development, only the \code{"none"} option
+#' has been extensively tested, so the other options should be used with caution.
 #' @param p.bound A vector defining the lower and upper boundaries for the probabilities of inclusion
 #' in the model, respectively. Defaults to \code{c(0.01, 0.99)}.
 #' @param stan_manual A \code{stan_model} that is manually specified.
-#' @param stan_local Logical. Defaults to \code{FALSE}, but when \code{TRUE}, uses locally stored \code{stan} files.
-#' This option will eventually be removed once the package is more stable.
 #' @importFrom Rdpack reprompt
 #' @return A vector containing updated probabilities of inclusion.
 #' @note This function borrows from the work of Mitzi Morris, who describes how to fit an intrisic autoregression
@@ -51,8 +50,7 @@ max_q2_iar <- function(iar.data, p,
                        opt.algorithm = "LBFGS",
                        tau.prior = "none",
                        p.bound = c(0.01, 0.99),
-                       stan_manual = NULL,
-                       stan_local = FALSE){
+                       stan_manual = NULL){
   p[p < p.bound[1]] <- p.bound[1]
   p[p > p.bound[2]] <- p.bound[2]
   iar.data$p <- p
@@ -61,23 +59,6 @@ max_q2_iar <- function(iar.data, p,
                             data = iar.data,
                             algorithm = opt.algorithm)
   } else {
-    if (stan_local == TRUE) {
-      if (tau.prior == "cauchy") {
-        Q2 <- rstan::optimizing(object = rstan::stan_model(file = "C:/Users/Justin/Documents/BST/Dissertation_in_Latex/stan models/iar_incl_prob_current.stan"),
-                                data = iar.data,
-                                algorithm = opt.algorithm)
-      }
-      if (tau.prior == "manual") {
-        Q2 <- rstan::optimizing(object = rstan::stan_model(file = "C:/Users/Justin/Documents/BST/Dissertation_in_Latex/stan models/iar_incl_prob_manual_tau.stan"),
-                                data = iar.data,
-                                algorithm = opt.algorithm)
-      }
-      if (tau.prior == "none") {
-        Q2 <- rstan::optimizing(object = rstan::stan_model(file = "C:/Users/Justin/Documents/BST/Dissertation_in_Latex/stan models/iar_incl_prob_notau.stan"),
-                                data = iar.data,
-                                algorithm = opt.algorithm)
-      }
-    } else {
       if (tau.prior == "cauchy") {
         Q2 <- rstan::optimizing(object = stanmodels$iar_incl_prob_current,
                                 data = iar.data,
@@ -94,7 +75,6 @@ max_q2_iar <- function(iar.data, p,
                                 algorithm = opt.algorithm)
       }
     }
-  }
   theta <- Q2$par[grep("theta*", names(Q2$par))]
   theta[theta < p.bound[1]] <- p.bound
   theta[theta > p.bound[2]] <- p.bound
