@@ -4,7 +4,13 @@
 \alias{format_iar}
 \title{Format IAR data for ssnet}
 \usage{
-format_iar(adjmat = NULL, im.res = NULL, x = NULL)
+format_iar(
+  adjmat = NULL,
+  im.res = NULL,
+  x = NULL,
+  tau.prior = "none",
+  tau.manual = NULL
+)
 }
 \arguments{
 \item{adjmat}{A data.frame or matrix containing a "sparse" representation of the neighbor relationships. The first
