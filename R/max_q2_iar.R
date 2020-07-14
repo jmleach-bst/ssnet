@@ -76,7 +76,7 @@ max_q2_iar <- function(iar.data, p,
       }
     }
   theta <- Q2$par[grep("theta*", names(Q2$par))]
-  theta[theta < p.bound[1]] <- p.bound
-  theta[theta > p.bound[2]] <- p.bound
+  theta[theta < p.bound[1]] <- p.bound[1]
+  theta[theta > p.bound[2]] <- p.bound[2]
   return(theta)
 }
