@@ -24,6 +24,9 @@ is the number of "columns" in each subject's "image". Default is \code{NULL}.}
 \item{x}{Design, or input, matrix, of dimension nobs x nvars; each row is an observation vector. It is recommended that
 \code{x} have user-defined column names for ease of identifying variables.}
 }
+\value{
+A list containing data formatted for using IAR priors.
+}
 \description{
 Given an adjacency matrix, formats data for using IAR priors to model spatial structure. Otherwise, assumes
 default structure where neighbors are defined as variables directly above or to the side of a specified
