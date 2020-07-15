@@ -41,4 +41,4 @@ Suggests:
 Remotes: nyiuab/BhGLM
 SystemRequirements: GNU make
 RdMacros: Rdpack
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
