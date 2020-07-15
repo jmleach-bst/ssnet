@@ -149,7 +149,7 @@ in the model, respectively. Defaults to \code{c(0.01, 0.99)}.}
 \item{tau.prior}{One of \code{c("none", "manual", "cauchy")}. This argument determines the precision
 parameter in the Conditional Autoregressive model for the (logit of) prior inclusion probabilities.
 When \code{"none"}, the precision is set to 1; when "manual", the precision is manually entered by the
-use; when \code{"cauchy"}, the inverse precision is assumed to follow a Cauchy distribution with mean 0 and
+user; when \code{"cauchy"}, the inverse precision is assumed to follow a Cauchy distribution with mean 0 and
 scale 2.5.}
 
 \item{stan_manual}{A \code{stan_model} that is manually specified. Especially when fitting multiple models in

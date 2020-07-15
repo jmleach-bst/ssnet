@@ -110,14 +110,15 @@ compare_ssnet <- function(models = c("glmnet", "ss", "ss_iar"),
   options(stringsAsFactors = FALSE)
   if (variable_selection == TRUE) {
     if (is.null(B) == TRUE | length(B) != ncol(x)) {
-      stop("Variable selection measures requires a true parameter vector of appropriate length.")
+      stop("Variable selection measures requires a true parameter vector of appropriate length. \n
+            Did you forget to remove the intercept or specify B?")
     }
   }
   if (!all(models %in% c("glmnet", "ss", "ss_iar"))) {
-    stop("Models must be a combination of all, glmnet, ss, ss_iar. \n")
+    stop("Models must be a combination of all, glmnet, ss, ss_iar.")
   }
   if (!all(family %in% c("gaussian", "binomial", "poisson", "cox"))) {
-    stop("Models must be a combination of gaussian, binomial, poisson, cox. \n")
+    stop("Models must be a combination of gaussian, binomial, poisson, cox.")
   }
   if (model_fit == "all") {
     if (family == "binomial") {
