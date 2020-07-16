@@ -20,16 +20,6 @@
 #' @return A vector containing updated probabilities of inclusion.
 #' @note This function borrows from the work of Mitzi Morris, who describes how to fit an intrisic autoregression
 #' in \code{stan} \insertCite{Morris:2017,Morris:2019}{ssnet}.
-#' @examples
-#' ## image dim
-#' nr <- 4
-#' nc <- 4
-#'
-#' ## build adjacency matrix
-#' adjmat <- sim2Dpredictr::proximity_builder(im.res = c(nr, nc), type = "sparse")
-#'
-#' ## let function call stan model
-#' mq2 <- max_q2_iar(iar.data = model_info, p = rbeta(nr * nc, 1, 1))
 #' @references
 #'
 #' \insertRef{Morris:2017}{ssnet}
