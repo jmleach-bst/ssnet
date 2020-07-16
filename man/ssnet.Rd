@@ -137,8 +137,7 @@ nr <- 4
 nc <- 4
 
 ## generate data
-cn <- c()
-for (i in 1:(nr * nc)) cn[i] <- paste0("x", i)
+cn <- paste0("x", 1:(nr * nc))
 tb <- rbinom(nr * nc, 1, 0.05)
 tx <- matrix(rnorm(n * nr * nc), nrow = n, ncol = nr * nc,
              dimnames = list(1:n, cn))
@@ -149,15 +148,11 @@ adjmat <- proximity_builder(im.res = c(nr, nc), type = "sparse")
 ## stan model information
 model_info <- mungeCARdata4stan(adjmat$nb.index,
                                 table(adjmat$location.index))
-## pre-specify stan model
-sm <- stan_model(file =
-"C:/Users/Justin/Documents/BST/Dissertation_in_Latex/stan models/iar_incl_prob_notau.stan"
-)
 
 ## fit model
 ex_model <- ssnet(x = tx, y = ty, alpha = 0.5,
                   iar.prior = TRUE, iar.data = model_info,
-                  family = "gaussian", stan_manual = sm)
+                  family = "gaussian")
 }
 \references{
 \insertRef{Banerjee:2015}{ssnet}
