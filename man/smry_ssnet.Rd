@@ -28,13 +28,10 @@ M <- 2
 N <- 30
 ## image resolution for spatial predictors
 ir <- c(5, 5)
-L = sim2Dpredictr::chol_s2Dp(im.res = ir, rho = 0.90,
-                             corr.structure = "ar1",
-                             triangle = "lower")
-## stan info for IAR
-adjmat <- sim2Dpredictr::proximity_builder(im.res = ir, type = "sparse")
-model_info <- mungeCARdata4stan(adjmat$nb.index,
-                               table(adjmat$location.index))
+L <- sim2Dpredictr::chol_s2Dp(im.res = ir, rho = 0.90,
+                              corr.structure = "ar1",
+                              triangle = "lower")
+
 ## generate non-zero parameters with spatial clustering
 betas <- sim2Dpredictr::beta_builder(index.type = "ellipse",
                                      w = 2, h = 2,
@@ -47,18 +44,18 @@ for (m in 1:M) {
                                      L = L$L, S = L$S,
                                      B = betas$B)
 
- mod.out.m <- compare_ssnet(x = as.matrix(datm[, grep("X.*", names(datm), perl = TRUE)]),
-                         y = datm$Y, models = c("glmnet", "ss"),
-                         s0 = seq(0.01, 0.05), nfolds = 3,
-                         family = "gaussian", model_fit = "all",
-                         variable_selection = TRUE,
-                         B = betas$B[-1],
-                         iar.data = model_info, stan_manual = sm)
- if (m > 1) {
-   mod.out <- rbind(mod.out, mod.out.m)
- } else {
-   mod.out <- mod.out.m
- }
+  mod.out.m <- compare_ssnet(x = as.matrix(datm[, grep("X.*", names(datm), perl = TRUE)]),
+                             y = datm$Y, models = c("glmnet", "ss"),
+                             s0 = seq(0.01, 0.05), nfolds = 3,
+                             family = "gaussian", model_fit = "all",
+                             variable_selection = TRUE,
+                             B = betas$B[-1],
+                             iar.data = model_info)
+  if (m > 1) {
+    mod.out <- rbind(mod.out, mod.out.m)
+  } else {
+    mod.out <- mod.out.m
+  }
 }
 
 ## summarize measures of model fitness
