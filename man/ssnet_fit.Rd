@@ -118,10 +118,3 @@ Currently, the \code{ssnet()} \code{im.res} can only handle 2D data. Future vers
 images to be 3D. However, the function will work given any appropriately specified neighborhood matrix,
 whatever the original dimension.
 }
-\examples{
-cn <- c()
-for (i in 1:100) cn[i] <- paste0("x", i)
-bml_model <- ssnet_fit(x = matrix(rnorm(10000), nrow = 100, ncol = 100,
-                             dimnames = list(1:100, cn)), family = "gaussian",
-                             y = rnorm(100))
-}

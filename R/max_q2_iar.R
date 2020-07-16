@@ -27,17 +27,9 @@
 #'
 #' ## build adjacency matrix
 #' adjmat <- sim2Dpredictr::proximity_builder(im.res = c(nr, nc), type = "sparse")
-#' model_info <- mungeCARdata4stan(adjmat$nb.index,
-#'                                 table(adjmat$location.index))
 #'
 #' ## let function call stan model
 #' mq2 <- max_q2_iar(iar.data = model_info, p = rbeta(nr * nc, 1, 1))
-#'
-#' ## specify stan model ahead of time
-#' sm <- rstan::stan_model(file =
-#' "C:/Users/Justin/Documents/BST/Dissertation_in_Latex/stan models/iar_incl_prob_notau.stan"
-#' )
-#' mq2 <- max_q2_iar(iar.data = model_info, p = rbeta(nr * nc, 1, 1), stan_manual = sm)
 #' @references
 #'
 #' \insertRef{Morris:2017}{ssnet}
@@ -45,7 +37,6 @@
 #' \insertRef{Morris:2019}{ssnet}
 #'
 #' \insertRef{Tang:2017}{ssnet}
-#' @export
 max_q2_iar <- function(iar.data, p,
                        opt.algorithm = "LBFGS",
                        tau.prior = "none",
