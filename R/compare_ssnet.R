@@ -62,8 +62,7 @@
 #' nc <- 4
 #'
 #' ## generate data
-#' cn <- c()
-#' for (i in 1:(nr * nc)) cn[i] <- paste0("x", i)
+#' cn <- paste0("x", 1:(nr * nc))
 #' tb <- rbinom(nr * nc, 1, 0.05)
 #' tx <- matrix(rnorm(n * nr * nc), nrow = n, ncol = nr * nc,
 #'              dimnames = list(1:n, cn))
@@ -71,20 +70,14 @@
 #'
 #' ## build adjacency matrix
 #' adjmat <- proximity_builder(im.res = c(nr, nc), type = "sparse")
-#' ## stan model information
-#' model_info <- mungeCARdata4stan(adjmat$nb.index,
-#'                                 table(adjmat$location.index))
-#' ## pre-specify stan model
-#' sm <- stan_model(file =
-#' "C:/Users/Justin/Documents/BST/Dissertation_in_Latex/stan models/iar_incl_prob_notau.stan"
-#' )
 #'
 #' ## fit multiple models and compare
 #' compare_ssnet(x = tx, y = ty, family = "gaussian",
 #'               alpha = c(0.5, 1), s0 = c(0.01, 0.05),
-#'               type_error = "kcv", nfolds = 3,
+#'               type_error = "kcv", nfolds = 3, im.res = c(4, 4),
 #'               model_fit = "all", variable_selection = TRUE,
-#'               B = tb, iar.data = model_info, stan_manual = sm)
+#'               B = tb)
+#'
 #' @export
 compare_ssnet <- function(models = c("glmnet", "ss", "ss_iar"),
                           alpha = c(0, 0.5, 1),
@@ -98,7 +91,7 @@ compare_ssnet <- function(models = c("glmnet", "ss", "ss_iar"),
                           Warning = FALSE, verbose = FALSE, opt.algorithm = "LBFGS",
                           iar.data = NULL, iar.prior = FALSE,
                           p.bound = c(0.01, 0.99), tau.prior = "none",
-                          stan_manual = NULL, stan_local = FALSE,
+                          stan_manual = NULL,
                           plot.pj = FALSE, im.res = NULL,
                           nlambda = 100,
                           type.measure = c("default", "mse", "deviance",
@@ -387,7 +380,6 @@ compare_ssnet <- function(models = c("glmnet", "ss", "ss_iar"),
                                          iar.data = iar.data, p.bound = p.bound,
                                          tau.prior = tau.prior,
                                          stan_manual = stan_manual,
-                                         stan_local = stan_local,
                                          im.res = im.res)
           if(output_param_est == TRUE) {
             ssiar.params.a <- data.frame(model = "ss_iar",
