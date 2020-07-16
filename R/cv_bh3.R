@@ -46,12 +46,12 @@ cv.bh.lasso2 <- function (object, nfolds = 10, foldid = NULL, ncv = 1, verbose =
   epsilon <- object$epsilon
   # add for elastic net
   alpha <- object$alpha
+  tau.prior <- object$tau.prior
 
   # additional arguments for IAR
   iar.data <- object$iar.data
   p.bound <- object$p.bound
   stan_manual <- object$stan_manual
-  stan_local <- object$stan_local
   opt.algorithm <- object$opt.algorithm
 
   fol <- generate.foldid(nobs = n, nfolds = nfolds, foldid = foldid,
