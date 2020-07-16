@@ -11,6 +11,12 @@
 #' third column specifies weights. If no third column is specified, then equal weights are assumed.
 #' @param im.res A 2-element vector where the first argument is the number of "rows" and the second argument
 #' is the number of "columns" in each subject's "image". Default is \code{NULL}.
+#' @param tau.prior One of \code{c("none", "manual", "cauchy")}. This argument determines the precision
+#' parameter in the Conditional Autoregressive model for the (logit of) prior inclusion probabilities.
+#' When \code{"none"}, the precision is set to 1; when "manual", the precision is manually entered by the
+#' user; when \code{"cauchy"}, the inverse precision is assumed to follow a Cauchy distribution with mean 0 and
+#' scale 2.5.
+#' @param tau.manual When \code{tau.prior = "manual"}, use this argument to specify a common precision parameter.
 #' @return A list containing data formatted for using IAR priors.
 #'
 format_iar <- function(adjmat = NULL, im.res = NULL, x = NULL,

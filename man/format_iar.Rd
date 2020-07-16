@@ -23,6 +23,14 @@ is the number of "columns" in each subject's "image". Default is \code{NULL}.}
 
 \item{x}{Design, or input, matrix, of dimension nobs x nvars; each row is an observation vector. It is recommended that
 \code{x} have user-defined column names for ease of identifying variables.}
+
+\item{tau.prior}{One of \code{c("none", "manual", "cauchy")}. This argument determines the precision
+parameter in the Conditional Autoregressive model for the (logit of) prior inclusion probabilities.
+When \code{"none"}, the precision is set to 1; when "manual", the precision is manually entered by the
+user; when \code{"cauchy"}, the inverse precision is assumed to follow a Cauchy distribution with mean 0 and
+scale 2.5.}
+
+\item{tau.manual}{When \code{tau.prior = "manual"}, use this argument to specify a common precision parameter.}
 }
 \value{
 A list containing data formatted for using IAR priors.
