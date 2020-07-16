@@ -1,5 +1,3 @@
-devtools::load_all()
-
 test_that("Check formating for IAR priors", {
   expect_error(ssnet(x = matrix(rnorm(100), nrow = 10, ncol = 10),
                      y = rnorm(10), family = "gaussian",
