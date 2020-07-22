@@ -17,7 +17,9 @@ The goal of `ssnet` is to fit spike-and-slab elastic net GLM’s with or
 without spatially structured priors. An expectation maximization (EM)
 algorithm is used to fit the models, and spatial structure is
 incorporated by using Intrinsic Autoregressions (IAR) as priors for
-inclusion probabilities.
+inclusion probabilities. This allows for variable selection to
+incorporate assumptions about spatial clustering of variables that
+should (not) be included in the model.
 
 ## Installation
 

@@ -18,13 +18,14 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 ```{r, echo=FALSE, message=FALSE}
 usethis::use_lifecycle_badge("maturing")
+usethis::use_github_actions_badge(name = "R-CMD-check")
 ```
 [![Lifecycle: maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 [![R build status](https://github.com/jmleach-bst/ssnet/workflows/R-CMD-check/badge.svg)](https://github.com/jmleach-bst/ssnet/actions)
 [![Travis build status](https://travis-ci.org/jmleach-bst/ssnet.svg?branch=master)](https://travis-ci.org/jmleach-bst/ssnet)
 <!-- badges: end -->
 
-The goal of `ssnet` is to fit spike-and-slab elastic net GLM's with or without spatially structured priors. An expectation maximization (EM) algorithm is used to fit the models, and spatial structure is incorporated by using Intrinsic Autoregressions (IAR) as priors for inclusion probabilities.
+The goal of `ssnet` is to fit spike-and-slab elastic net GLM's with or without spatially structured priors. An expectation maximization (EM) algorithm is used to fit the models, and spatial structure is incorporated by using Intrinsic Autoregressions (IAR) as priors for inclusion probabilities. This allows for variable selection to incorporate assumptions about spatial clustering of variables that should (not) be included in the model.
 
 ## Installation
 
