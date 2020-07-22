@@ -7,8 +7,6 @@
 
 [![Lifecycle:
 maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
-[![R build
-status](https://github.com/jmleach-bst/ssnet/workflows/R-CMD-check/badge.svg)](https://github.com/jmleach-bst/ssnet/actions)
 [![Travis build
 status](https://travis-ci.org/jmleach-bst/ssnet.svg?branch=master)](https://travis-ci.org/jmleach-bst/ssnet)
 <!-- badges: end -->
