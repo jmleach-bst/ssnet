@@ -12,7 +12,9 @@ env:
 
 matrix:
   include:
-    - os: linux
+    - os: 
+        -osx
+        -linux
       compiler: clang
       addons:
         apt:
