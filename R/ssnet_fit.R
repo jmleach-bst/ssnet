@@ -124,7 +124,7 @@ ssnet_fit <- function (x, y, family = c("gaussian", "binomial", "poisson", "cox"
   devold <- 0
   conv <- FALSE
   for (iter in 1:maxit) {
-    out <- update_scale_p(b0 = b[gvars], ss = ss, theta = theta)
+    out <- update_scale_p(b0 = b[gvars], ss = ss, theta = theta, alpha = alpha)
     prior.scale[gvars] <- out[[1]]
     p <- out[[2]]
     if (plot.pj == TRUE) {
