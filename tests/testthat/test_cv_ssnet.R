@@ -4,7 +4,7 @@ test_that("Bad inputs are not accepted.", {
                         y = rnorm(10),
                         foldid = list(f1 = sample(1:3, 10, T),
                                       f2 = sample(1:3, 10, T))),
-               "If foldid is supplied, must be vector, matrix, or data frame."
+               "foldid must be a numeric vector, matrix, or data frame."
                )
   expect_error(cv_ssnet(model = "ss",
                         x = matrix(rnorm(10*10), nrow = 10, ncol = 10),
