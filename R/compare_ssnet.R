@@ -14,7 +14,7 @@
 #' @param model_fit A vector containing measures of model fit to output. Options include  \code{c("deviance", "mse", "mae")}
 #' for all models, and when \code{family = "binomial"}, also \code{c("auc", "misclassification")}. When \code{model_fit = "all"},
 #' then all appropriate measures of model fit are output.
-#' @param variable_selection Logical. When \code{TRUE}, outputs the false dicovery proportion (FDP), family-wise error (FWE),
+#' @param variable_selection Logical. When \code{TRUE}, outputs the false discovery proportion (FDP), family-wise error (FWE),
 #' and power for the model. Requires that parameter vector \code{B} be specified. Default is \code{FALSE}, and is only
 #' appropriate for simulated data, when the true and false positives can be known.
 #' @param type_error Determines whether models are selected based on training error (\code{"training"})

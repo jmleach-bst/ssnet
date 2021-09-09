@@ -48,14 +48,14 @@ compare_ssnet(
 \item{models}{A vector that determines which models to fit. Options include \code{c("glmnet", "ss", "ss_iar")}.
 The default is to fit all three models.}
 
-\item{alpha}{A scalar value between 0 and 1 determining the compromise between the Ridge and Lasso models. When
-\code{alpha = 1} reduces to the Lasso, and when \code{alpha = 0} reduces to Ridge.}
+\item{alpha}{A scalar value between 0 and 1 determining the compromise between the Ridge and Lasso
+models. When \code{alpha = 1} reduces to the Lasso, and when \code{alpha = 0} reduces to Ridge.}
 
 \item{model_fit}{A vector containing measures of model fit to output. Options include  \code{c("deviance", "mse", "mae")}
 for all models, and when \code{family = "binomial"}, also \code{c("auc", "misclassification")}. When \code{model_fit = "all"},
 then all appropriate measures of model fit are output.}
 
-\item{variable_selection}{Logical. When \code{TRUE}, outputs the false dicovery proportion (FDP), family-wise error (FWE),
+\item{variable_selection}{Logical. When \code{TRUE}, outputs the false discovery proportion (FDP), family-wise error (FWE),
 and power for the model. Requires that parameter vector \code{B} be specified. Default is \code{FALSE}, and is only
 appropriate for simulated data, when the true and false positives can be known.}
 
@@ -95,16 +95,20 @@ by the practical context of the analysis.}
 to calculate the false discovery proportion (FDR), family-wise error (FWER), and power for the data. This vector should
 NOT contain a value for the intercept.}
 
-\item{x}{Design, or input, matrix, of dimension nobs x nvars; each row is an observation vector. It is recommended that
-\code{x} have user-defined column names for ease of identifying variables. If missing \code{colnames} are internally
-assigned \code{x1}, \code{x2}, ... and so forth.}
+\item{x}{Design, or input, matrix, of dimension nobs x nvars; each row is an observation vector. It
+is recommended that \code{x} have user-defined column names for ease of identifying variables. If
+missing, then \code{colnames} are internally assigned \code{x1}, \code{x2}, ... and so forth.}
 
 \item{y}{Scalar response variable. Quantitative for \code{family = "gaussian"}, or \code{family = "poisson"}
-(non-negative counts). For \code{family = "gaussian"}, \code{y} is always standardized. For \code{family = "binomial"},
-y should be either a factor with two levels, or a two-column matrix of counts or proportions (the second column is treated
-as the target class; for a factor, the last level in alphabetical order is the target class). For \code{family="cox"}, \code{y}
-should be a two-column matrix with columns named \code{'time'} and \code{'status'}. The latter is a binary variable, with \code{'1'}
-indicating death, and \code{'0'} indicating right censored. The function \code{Surv()} in package survival produces such a matrix.}
+(non-negative counts). For \code{family = "gaussian"}, \code{y} is always standardized. For
+\code{family = "binomial"}, \code{y} should be either a factor with two levels, or a two-column matrix
+of counts or proportions (the second column is treated as the target class; for a factor, the last
+level in alphabetical order is the target class). For \code{family="cox"}, \code{y} should be a
+two-column matrix with columns named \code{'time'} and \code{'status'}. The latter is a binary
+variable, with \code{'1'} indicating death, and \code{'0'} indicating right censored. The function
+\code{Surv()} in package survival produces such a matrix. When \code{family = "multinomial"}, \code{y}
+follows the documentation for \code{glmnet}, but it is preferred that \code{y} is a factor with two
+or more levels.}
 
 \item{family}{Response type (see above).}
 
@@ -114,7 +118,11 @@ indicating death, and \code{'0'} indicating right censored. The function \code{S
 
 \item{maxit}{An integer giving the maximal number of EM iterations.}
 
-\item{init}{A vector of initial values for all coefficients (not for intercept). If not given, it will be internally produced.}
+\item{init}{A vector of initial values for all coefficients (not for intercept). If not given, it
+will be internally produced. If \code{family = "multinomial"} and the same initializations are
+desired for each response/outcome category then \code{init} can be a vector. If different initializations
+are desired, then \code{init} should be a list, each element of which contains a vector of initializations.
+The list should be named according the response/outcome category as they appear in \code{y}.}
 
 \item{group}{A numeric vector, or an integer, or a list indicating the groups of predictors.
 If \code{group = NULL}, all the predictors form a single group. If \code{group = K}, the
@@ -122,25 +130,27 @@ predictors are evenly divided into groups each with K predictors. If group is a 
 it defines groups as follows: Group 1: \code{(group[1]+1):group[2]}, Group 2: \code{(group[2]+1):group[3]},
 Group 3: \code{(group[3]+1):group[4]}, ... If group is a list of variable names, \code{group[[k]]}
 includes variables in the k-th group. The mixture double-exponential prior is only used for grouped
-predictors. For ungrouped predictors, the prior is double-exponential with scale \code{ss[2]} and mean 0.}
+predictors. For ungrouped predictors, the prior is double-exponential with scale \code{ss[2]} and
+mean 0. Note that grouped predictors when \code{family = "multinomial"} is still experimental, so
+use with caution.}
 
 \item{Warning}{Logical. If \code{TRUE}, shows the error messages of not convergence and identifiability.}
 
 \item{verbose}{Logical. If \code{TRUE}, prints out the number of iterations and computational time.}
 
-\item{opt.algorithm}{One of \code{c("LBFGS", "BFGS", "Newton")}. This argument determines which argument
-is used to optimize the term in the EM algorithm that estimates the probabilities of inclusion for
-each parameter. Optimization is performed by \code{optimizing}.}
+\item{opt.algorithm}{One of \code{c("LBFGS", "BFGS", "Newton")}. This argument determines which
+argument is used to optimize the term in the EM algorithm that estimates the probabilities of
+inclusion for each parameter. Optimization is performed by \code{optimizing}.}
 
 \item{iar.data}{A list of output from \code{\link{mungeCARdata4stan}} that contains the necessary
 inputs for the IAR prior. When unspecified, this is built internally assuming that neighbors are those
-variables directly above, below, left, and  right of a given variable location. \code{im.res} must be specified
-when allowing this argument to be built internally. It is not recommended to use this argument directly, even
-when specifying a more complicated neighborhood stucture; this can be specified with the \code{adjmat} argument,
-and then internally converted to the correct format.}
+variables directly above, below, left, and  right of a given variable location. \code{im.res} must be
+specified when allowing this argument to be built internally. It is not recommended to use this
+argument directly, even when specifying a more complicated neighborhood stucture; this can be specified
+with the \code{adjmat} argument, and then internally converted to the correct format.}
 
-\item{iar.prior}{Logical. When \code{TRUE}, imposes intrinsic autoregressive prior on logit of the probabilities of
-inclusion. When \code{FALSE}, treats probabilties of inclusion as unstructured.}
+\item{iar.prior}{Logical. When \code{TRUE}, imposes intrinsic autoregressive prior on logit of the
+probabilities of inclusion. When \code{FALSE}, treats probabilities of inclusion as unstructured.}
 
 \item{p.bound}{A vector defining the lower and upper boundaries for the probabilities of inclusion
 in the model, respectively. Defaults to \code{c(0.01, 0.99)}.}
@@ -148,17 +158,17 @@ in the model, respectively. Defaults to \code{c(0.01, 0.99)}.}
 \item{tau.prior}{One of \code{c("none", "manual", "cauchy")}. This argument determines the precision
 parameter in the Conditional Autoregressive model for the (logit of) prior inclusion probabilities.
 When \code{"none"}, the precision is set to 1; when "manual", the precision is manually entered by the
-user; when \code{"cauchy"}, the inverse precision is assumed to follow a Cauchy distribution with mean 0 and
-scale 2.5.}
+user; when \code{"cauchy"}, the inverse precision is assumed to follow a Cauchy distribution with
+mean 0 and scale 2.5.}
 
-\item{stan_manual}{A \code{stan_model} that is manually specified. Especially when fitting multiple models in
-succession, specifying the the \code{stan} model outside this "loop" may avoid errors.}
+\item{stan_manual}{A \code{stan_model} that is manually specified. Especially when fitting multiple
+models in succession, specifying the the \code{stan} model outside this "loop" may avoid errors.}
 
 \item{plot.pj}{When \code{TRUE}, prints a series of 2D graphs of the prior probabilities of inclusion
 at each step of the algorithm. This should NOT be used for 3D data.}
 
-\item{im.res}{A 2-element vector where the first argument is the number of "rows" and the second argument
-is the number of "columns" in each subject's "image". Default is \code{NULL}.}
+\item{im.res}{A 2-element vector where the first argument is the number of "rows" and the second
+argument is the number of "columns" in each subject's "image". Default is \code{NULL}.}
 
 \item{nlambda}{The number of \code{lambda} values - default is 100.}
 
