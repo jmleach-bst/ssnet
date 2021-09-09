@@ -23,6 +23,7 @@
 #' n <- 500
 #' y <- sample(c("ack", "eek", "ahh"), size = n, replace = TRUE)
 #' x <- matrix(rnorm(n*5), nrow = n, ncol = 5)
+#' colnames(x) <- paste0("x", 1:ncol(x))
 #' mfit <- glmnet::glmnet(x = x, y = y, family = "multinomial",
 #'                        type.multinomial = "grouped",
 #'                        lambda = 0.01)
@@ -32,6 +33,9 @@
 #'   b[[i]] <- as.numeric(mfit$beta[[i]])
 #' }
 #' names(b) <- names(mfit$beta)
+#' for (i in 1:length(b)) {
+#'     names(b[[i]]) <- colnames(x)
+#' }
 #' pm <- prob_multinomial(x = xnew, b = b, a0 = mfit$a0)
 #' measures_multiclass(y = y, pr_yi = pm[,-4])
 #' measures_multiclass(y = y, y_hat = pm$predicted.class)

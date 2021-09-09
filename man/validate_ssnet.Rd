@@ -30,6 +30,7 @@ validate_ssnet(
   adjmat = NULL,
   p.bound = c(0.01, 0.99),
   tau.prior = "none",
+  tau.manual = NULL,
   stan_manual = NULL,
   nlambda = 100,
   lambda.criteria = "lambda.min",
@@ -117,6 +118,9 @@ parameter in the Conditional Autoregressive model for the (logit of) prior inclu
 When \code{"none"}, the precision is set to 1; when "manual", the precision is manually entered by the
 user; when \code{"cauchy"}, the inverse precision is assumed to follow a Cauchy distribution with
 mean 0 and scale 2.5.}
+
+\item{tau.manual}{When \code{tau.prior = "manual"}, use this argument to specify a common precision
+parameter.}
 
 \item{stan_manual}{A \code{stan_model} that is manually specified. Especially when fitting multiple
 models in succession, specifying the the \code{stan} model outside this "loop" may avoid errors.}

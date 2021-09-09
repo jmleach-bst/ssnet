@@ -97,7 +97,7 @@ validate_ssnet <- function(
   offset = NULL, epsilon = 1e-04, maxit = 50, init = NULL, group = NULL,
   Warning = FALSE, verbose = FALSE, opt.algorithm = "LBFGS",
   iar.data = NULL, iar.prior = FALSE, adjmat = NULL, p.bound = c(0.01, 0.99),
-  tau.prior = "none", stan_manual = NULL, nlambda = 100,
+  tau.prior = "none", tau.manual = NULL, stan_manual = NULL, nlambda = 100,
   lambda.criteria = "lambda.min", output_param_est = FALSE)
 {
   if (!(model %in% c("glmnet", "ss", "ss_iar"))) {

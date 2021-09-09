@@ -4,7 +4,7 @@
 #' @importFrom stats coef deviance predict sd
 #' @importFrom survival Surv is.Surv
 #' @importFrom glmnet glmnet
-#' @importFrom BhGLM bglm
+#' @importFrom BhGLM bglm De
 #' @param x Design, or input, matrix, of dimension nobs x nvars; each row is an observation vector. It
 #' is recommended that \code{x} have user-defined column names for ease of identifying variables. If
 #' missing, then \code{colnames} are internally assigned \code{x1}, \code{x2}, ... and so forth.
@@ -94,7 +94,7 @@ ssnet_fit <- function (x, y, family = c("gaussian", "binomial", "multinomial", "
                        opt.algorithm = "LBFGS", p.bound = c(0.01, 0.99),
                        plot.pj = FALSE, im.res = NULL, print.iter = FALSE)
 {
-  if (plot.pj == TRUE & ("sim2Dpredictr" %in% installed.packages()) == FALSE) {
+  if (plot.pj == TRUE & ("sim2Dpredictr" %in% utils::installed.packages()) == FALSE) {
     stop("Cannot plot p_j without package sim2Dpredictr. \n")
   }
 
@@ -361,7 +361,7 @@ ssnet_fit <- function (x, y, family = c("gaussian", "binomial", "multinomial", "
   }
   if (family == "gaussian") {
     f$dispersion <- BhGLM::bglm(y ~ f$linear.predictors - 1, start = 1,
-                                prior = De(mean = 1, scale = 0),
+                                prior = BhGLM::De(mean = 1, scale = 0),
                                 verbose = FALSE)$dispersion
   }
   f$iter <- iter

@@ -14,6 +14,7 @@
 #' @param fold.seed A scalar seed value for cross validation; ensures the folds are the same upon re-running
 #' the function. Alternatively, use \code{foldid} to manually specify folds.
 #' @inheritParams validate_ssnet
+#' @inheritParams ssnet
 #' @examples
 #' xtr <- matrix(rnorm(100*5), nrow = 100, ncol = 5)
 #' xte <- matrix(rnorm(100*5), nrow = 100, ncol = 5)
@@ -74,7 +75,7 @@ cv_ssnet <- function(
   iar.data = NULL, iar.prior = FALSE,
   p.bound = c(0.01, 0.99), tau.prior = "none",
   stan_manual = NULL, lambda.criteria = "lambda.min",
-  output_param_est = FALSE
+  output_param_est = FALSE, type.multinomial = "grouped"
 )
 {
   # reproducibility
@@ -92,10 +93,11 @@ cv_ssnet <- function(
   # ensure foldid is valid or build foldid from scratch
   if (is.null(foldid) == FALSE) {
     if (
-      is.vector(foldid) == FALSE &
+      is.numeric(foldid) == FALSE &
       is.matrix(foldid) == FALSE &
       is.data.frame(foldid) == FALSE) {
-        stop("If foldid is supplied, must be vector, matrix, or data frame.")
+        stop("foldid must be a numeric vector, matrix, or data frame.")
+        #stop("foldid must be NULL or a (numeric) vector, matrix, or data frame.")
     }
     if (is.vector(foldid) == TRUE) {
       ncv <- 1
@@ -104,7 +106,7 @@ cv_ssnet <- function(
     } else {
       ncv <- ncol(foldid)
       nfolds.b <- c()
-      for (nf in 1:NF) {
+      for (nf in 1:ncv) {
         nfolds.b[nf] <- length(unique(foldid[ , nf]))
       }
       if (any(nfolds.b != nfolds.b[1])) {

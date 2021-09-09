@@ -32,7 +32,8 @@ cv_ssnet(
   tau.prior = "none",
   stan_manual = NULL,
   lambda.criteria = "lambda.min",
-  output_param_est = FALSE
+  output_param_est = FALSE,
+  type.multinomial = "grouped"
 )
 }
 \arguments{
@@ -64,6 +65,21 @@ data frame  where each column contains fold identifiers. If \code{foldid} is sup
 
 \item{fold.seed}{A scalar seed value for cross validation; ensures the folds are the same upon re-running
 the function. Alternatively, use \code{foldid} to manually specify folds.}
+
+\item{x}{Design, or input, matrix, of dimension nobs x nvars; each row is an observation vector. It
+is recommended that \code{x} have user-defined column names for ease of identifying variables. If
+missing, then \code{colnames} are internally assigned \code{x1}, \code{x2}, ... and so forth.}
+
+\item{y}{Scalar response variable. Quantitative for \code{family = "gaussian"}, or \code{family = "poisson"}
+(non-negative counts). For \code{family = "gaussian"}, \code{y} is always standardized. For
+\code{family = "binomial"}, \code{y} should be either a factor with two levels, or a two-column matrix
+of counts or proportions (the second column is treated as the target class; for a factor, the last
+level in alphabetical order is the target class). For \code{family="cox"}, \code{y} should be a
+two-column matrix with columns named \code{'time'} and \code{'status'}. The latter is a binary
+variable, with \code{'1'} indicating death, and \code{'0'} indicating right censored. The function
+\code{Surv()} in package survival produces such a matrix. When \code{family = "multinomial"}, \code{y}
+follows the documentation for \code{glmnet}, but it is preferred that \code{y} is a factor with two
+or more levels.}
 
 \item{family}{Response type (see above).}
 
@@ -126,6 +142,10 @@ is within one standard error of the minimal measure given in \code{type.measure}
 
 \item{output_param_est}{Logical. When \code{TRUE} adds an element to the output list that includes
 parameter estimates for the fitted model. Defaults is \code{FALSE}.}
+
+\item{type.multinomial}{If \code{"grouped"} then a grouped lasso penalty is
+used on the multinomial coefficients for a variable. This ensures they are
+all in our out together. The default is \code{"ungrouped"}}
 }
 \description{
 Perform k-fold cross validation for spike-and-slab elastic net models.
