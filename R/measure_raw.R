@@ -1,7 +1,10 @@
 #' Evaluating Fitted Models
 #'
-#' @note This function is taken directly from \code{measure.glm} in \code{BhGLM}, with the modification that
-#' measures are no longer rounded, and classification evaluation is possible for binary outcomes.
+#' Obtain measures of model performance for fitted models.
+#'
+#' @note This function is a modified version of \code{measure.glm} from \code{BhGLM}, with
+#' the modification that measures are no longer rounded, and classification evaluation is
+#' possible for binary outcomes, along with measures of classification performance.
 #'
 #' @param y This is an outcome/response vector.
 #' @param y.fitted This predicted (estimated) response values for GLMs or probabilties of
@@ -16,6 +19,18 @@
 #' if the value is above \code{classify.rule}, then the predicted class is 1; otherwise the predicted
 #' class is 0. The default is 0.5.
 #' @return A vector.
+#' @details When the family is treated as Gaussian, returns deviance, R2, mean squared error (MSE),
+#' and mean absolute error (MAE). Additionally, when the outcome is binary, returns misclassification,
+#' and if \code{classify = TRUE}, then returns accuracy, sensitivity, specificity, positive predictive
+#' value (PPV), negative predictive value (NPV), Matthews correlation coefficient (MCC), and F1 score.
+#' @examples
+#'
+#' y <- c(1, 1, 1, 0, 0, 1, 0, 0, 0, 1)
+#' y.fitted <- c(0, 1, 1, 0, 1, 1, 0, 0, 1, 0)
+#'
+#' measure_glm_raw(y, y.fitted, family = "binomial", classify = TRUE)
+#'
+#' @export
 measure_glm_raw <- function(y, y.fitted, family, dispersion = 1,
                             classify = FALSE, classify.rule = 0.5)
 {
@@ -77,6 +92,20 @@ measure_glm_raw <- function(y, y.fitted, family, dispersion = 1,
       predicted.class[y.fitted > classify.rule] <- 1
       observed.class <- y
 
+      # Matthew's Correlation Coefficient
+      mcc <- function(tp, tn, fp, fn) {
+        mcc.num <- (tp * tn) - (fp * fn)
+        mcc.den <- (tp + fp)*(tp + fn)*(tn + fp)*(tn + fn)
+        return(mcc.num / sqrt(mcc.den))
+      }
+
+      # f1 score
+      f1.score <- function(tp, tn, fp, fn) {
+        f1.num <- 2 * tp
+        f1.den <- 2 * tp + fn + fp
+        return(f1.num / f1.den)
+      }
+
       # obtain classification performance measures
       accuracy <- length(which(predicted.class == observed.class)) / length(y)
 
@@ -103,10 +132,14 @@ measure_glm_raw <- function(y, y.fitted, family, dispersion = 1,
       specificity <- sum(tn) / on
       ppv <- sum(tp) / pp
       npv <- sum(tn) / pn
+      mcc.obs <- mcc(tp = sum(tp), tn = sum(tn),
+                     fp = sum(fp), fn = sum(fn))
+      f1.obs <- f1.score(tp = sum(tp), tn = sum(tn),
+                         fp = sum(fp), fn = sum(fn))
 
       predm <- list(accuracy = accuracy,
                     sensitivity = sensitivity, specificity = specificity,
-                    ppv = ppv, npv = npv)
+                    ppv = ppv, npv = npv, mcc = mcc.obs, f1 = f1.obs)
       measures <- c(measures, predm)
 
     }
