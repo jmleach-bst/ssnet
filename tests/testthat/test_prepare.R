@@ -1,0 +1,32 @@
+test_that("prepare() works as expected when family is multinomial.", {
+  expect_type(prepare(x = matrix(c(1, 3, 3, 4,
+                                   2, 3, 1, 3,
+                                   5, 1, -1, 0,
+                                   3, 2, 0, 1 ),
+                                 nrow = 4, ncol = 4),
+                      intercept = FALSE, prior.mean = 0,
+                      prior.sd = 1, prior.scale = 1, prior.df = 1,
+                      group = NULL, multinomial = TRUE,
+                      outcome.cats = 1:4),
+              type = "list")
+  expect_type(prepare(x = matrix(c(1, 3, 3, 4,
+                                   2, 3, 1, 3,
+                                   5, 1, -1, 0,
+                                   3, 2, 0, 1 ),
+                                 nrow = 4, ncol = 4),
+                      intercept = FALSE, prior.mean = 0,
+                      prior.sd = 1, prior.scale = 1, prior.df = 1,
+                      group = NULL, multinomial = TRUE,
+                      outcome.cats = 1:4)$prior.mean,
+              type = "list")
+  expect_type(prepare(x = matrix(c(1, 3, 3, 4,
+                                   2, 3, 1, 3,
+                                   5, 1, -1, 0,
+                                   3, 2, 0, 1 ),
+                                 nrow = 4, ncol = 4),
+                      intercept = FALSE, prior.mean = 0,
+                      prior.sd = 1, prior.scale = 1, prior.df = 1,
+                      group = NULL, multinomial = FALSE,
+                      outcome.cats = 1:4)$prior.mean,
+              type = "double")
+})
