@@ -4,12 +4,22 @@
 \alias{prepare}
 \title{Prepare the model for analysis.}
 \usage{
-prepare(x, intercept, prior.mean, prior.sd, prior.scale, prior.df, group)
+prepare(
+  x,
+  intercept,
+  prior.mean,
+  prior.sd,
+  prior.scale,
+  prior.df,
+  group,
+  multinomial = FALSE,
+  outcome.cats = NULL
+)
 }
 \arguments{
 \item{x}{The design, or input, matrix, of dimension nobs x nvars; each row is an observation vector.}
 
-\item{intercept}{Logical. When \code{intercept = TRUE}, an intercept is includedi in the model.}
+\item{intercept}{Logical. When \code{intercept = TRUE}, an intercept is included in the model.}
 
 \item{prior.mean}{A vector of prior means for the parameters. If \code{length(prior.mean) = 1}, then
 all parameters are assumed to have a common prior mean.}
@@ -32,6 +42,13 @@ it defines groups as follows: Group 1: \code{(group[1]+1):group[2]}, Group 2: \c
 Group 3: \code{(group[3]+1):group[4]}, ... If group is a list of variable names, \code{group[[k]]}
 includes variables in the k-th group. The mixture double-exponential prior is only used for grouped
 predictors. For ungrouped predictors, the prior is double-exponential with scale \code{ss[2]} and mean 0.}
+
+\item{multinomial}{Logical. When \code{TRUE}, prepare the data for analysis of multinomial outcome
+according to parameterization in \code{glmnet}, i.e., a unique set of parameters is associated with
+each outcome category. See section 4 of \insertCite{Friedman:2010}{ssnet} for details.}
+
+\item{outcome.cats}{Either an integer denoting the number of response categories, or a vector containing
+outcome categories. Only used when \code{multinomial = TRUE}.}
 }
 \value{
 A list containing necessary elements for Bayesian analysis in the package \code{BhGLM}.
@@ -40,5 +57,8 @@ A list containing necessary elements for Bayesian analysis in the package \code{
 Prepare the model for analysis.
 }
 \note{
-This function is taken from the R package \code{BhGLM}.
+This function is a modified version the function \code{prepare} from the R package \code{BhGLM}.
+}
+\references{
+\insertRef{Friedman:2010}{ssnet}
 }

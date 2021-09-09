@@ -8,8 +8,9 @@
 #' parameter and whose second element is a vector of updated conditional expectations
 #' of prior probabilities of model inclusion.
 #' @note This function is taken unchanged from the R package \code{BhGLM}, except that bounds
-#' for theta are now able to be specfied by the user rather than assumed to be 0.01 and 0.99.
+#' for theta are now able to be specified by the user rather than assumed to be 0.01 and 0.99.
 #' @return A single numeric value between 0 and 1 that estimates the overall inclusion probability.
+#' @note This is a modified version of the function \code{update_ptheta_group} from the package \code{BhGLM}.
 update_ptheta_group2 <- function(group.vars, p, p.bound = c(0.01, 0.99))
 {
   theta <- p
@@ -19,5 +20,5 @@ update_ptheta_group2 <- function(group.vars, p, p.bound = c(0.01, 0.99))
   }
   theta <- ifelse(theta < p.bound[1], p.bound[1], theta)
   theta <- ifelse(theta > p.bound[2], p.bound[2], theta)
-  theta
+  return(theta)
 }

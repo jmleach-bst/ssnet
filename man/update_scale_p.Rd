@@ -4,7 +4,7 @@
 \alias{update_scale_p}
 \title{Update conditional expectation of prior probabilities of inclusion at each iteration.}
 \usage{
-update_scale_p(b0, ss, theta)
+update_scale_p(b0, ss, theta, alpha)
 }
 \arguments{
 \item{b0}{A vector of current parameter estimates.}
@@ -12,6 +12,9 @@ update_scale_p(b0, ss, theta)
 \item{ss}{A vector of spike and slab prior scales, respectively.}
 
 \item{theta}{The current estimate of prior probabilities of inclusion.}
+
+\item{alpha}{A scalar value between 0 and 1 determining the compromise between the Ridge and Lasso models. When
+\code{alpha = 1} reduces to the Lasso, and when \code{alpha = 0} reduces to Ridge.}
 }
 \value{
 A list whose first element is a vector of updated scale parameters for each
@@ -22,5 +25,5 @@ of prior probabilities of model inclusion.
 Update conditional expectation of prior probabilities of inclusion at each iteration.
 }
 \note{
-This function is taken unchanged (except for the name) from the R package \code{BhGLM}.
+This function is a modified version of \code{update_scale_p()} from the R package \code{BhGLM}.
 }

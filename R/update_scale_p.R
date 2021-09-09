@@ -8,7 +8,7 @@
 #' @return A list whose first element is a vector of updated scale parameters for each
 #' parameter and whose second element is a vector of updated conditional expectations
 #' of prior probabilities of model inclusion.
-#' @note This function is taken unchanged (except for the name) from the R package \code{BhGLM}.
+#' @note This function is a modified version of \code{update_scale_p()} from the R package \code{BhGLM}.
 update_scale_p <- function (b0, ss, theta, alpha)
 {
   if (alpha == 1) {

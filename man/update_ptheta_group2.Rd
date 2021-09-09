@@ -26,5 +26,7 @@ Update conditional expectation of prior probabilities of inclusion at each itera
 }
 \note{
 This function is taken unchanged from the R package \code{BhGLM}, except that bounds
-for theta are now able to be specfied by the user rather than assumed to be 0.01 and 0.99.
+for theta are now able to be specified by the user rather than assumed to be 0.01 and 0.99.
+
+This is a modified version of the function \code{update_ptheta_group} from the package \code{BhGLM}.
 }

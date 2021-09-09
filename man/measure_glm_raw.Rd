@@ -36,9 +36,24 @@ class is 0. The default is 0.5.}
 A vector.
 }
 \description{
-Evaluating Fitted Models
+Obtain measures of model performance for fitted models.
+}
+\details{
+When the family is treated as Gaussian, returns deviance, R2, mean squared error (MSE),
+and mean absolute error (MAE). Additionally, when the outcome is binary, returns misclassification,
+and if \code{classify = TRUE}, then returns accuracy, sensitivity, specificity, positive predictive
+value (PPV), negative predictive value (NPV), Matthews correlation coefficient (MCC), and F1 score.
 }
 \note{
-This function is taken directly from \code{measure.glm} in \code{BhGLM}, with the modification that
-measures are no longer rounded, and classification evaluation is possible for binary outcomes.
+This function is a modified version of \code{measure.glm} from \code{BhGLM}, with
+the modification that measures are no longer rounded, and classification evaluation is
+possible for binary outcomes, along with measures of classification performance.
+}
+\examples{
+
+y <- c(1, 1, 1, 0, 0, 1, 0, 0, 0, 1)
+y.fitted <- c(0, 1, 1, 0, 1, 1, 0, 0, 1, 0)
+
+measure_glm_raw(y, y.fitted, family = "binomial", classify = TRUE)
+
 }
