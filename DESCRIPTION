@@ -1,6 +1,6 @@
 Package: ssnet
 Title: Fit Spike-and-Slab Elastic Net GLM With Spatial Priors on Parameters
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R: 
     person(given = "Justin",
            family = "Leach",
@@ -22,7 +22,6 @@ Imports:
 	sim2Dpredictr,
     methods,
     Rcpp (>= 0.12.0),
-    rstantools (>= 2.0.0),
 	Rdpack,
 	pROC,
 	dplyr,
@@ -37,7 +36,8 @@ LinkingTo:
     rstan (>= 2.18.1),
     StanHeaders (>= 2.18.0)
 Suggests:
-    testthat
+    testthat,
+	rstantools (>= 2.0.0)
 Remotes: nyiuab/BhGLM
 SystemRequirements: GNU make
 RdMacros: Rdpack
