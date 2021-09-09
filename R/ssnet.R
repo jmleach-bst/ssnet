@@ -18,7 +18,7 @@
 #' whatever the original dimension.
 #' @examples
 #' library(sim2Dpredictr)
-#' set.seed(27723)
+#' set.seed(223)
 #'
 #' ## sample size
 #' n <- 30
@@ -28,7 +28,7 @@
 #'
 #' ## generate data
 #' cn <- paste0("x", 1:(nr * nc))
-#' tb <- rbinom(nr * nc, 1, 0.05)
+#' tb <- rbinom(nr * nc, 1, 0.2)
 #' tx <- matrix(rnorm(n * nr * nc), nrow = n, ncol = nr * nc,
 #'              dimnames = list(1:n, cn))
 #' ty <- tx %*% tb + rnorm(n)
@@ -58,14 +58,17 @@
 #'
 #' \insertRef{Tang:2017}{ssnet}
 #'
+#' \insertRef{Tang:2018}{ssnet}
+#'
 #' @export
-ssnet <- function (x, y, family = c("gaussian", "binomial", "poisson", "cox"),
-                   offset = NULL, epsilon = 1e-04, alpha = 0.5, maxit = 50,
-                   init = NULL, group = NULL, ss = c(0.04, 0.5),
-                   Warning = FALSE, verbose = FALSE, iar.prior = FALSE,
-                   opt.algorithm = "LBFGS", adjmat = NULL, iar.data = NULL, p.bound = c(0.01, 0.99),
+ssnet <- function (x, y, family = c("gaussian", "binomial", "multinomial", "poisson", "cox"),
+                   offset = NULL, epsilon = 1e-04, alpha = 0.95, type.multinomial = "grouped",
+                   maxit = 50, init = rep(0, ncol(x)), init.theta = 0.5,
+                   ss = c(0.04,0.5), Warning = FALSE, group = NULL,
+                   iar.prior = FALSE, adjmat = NULL,  iar.data = NULL,
                    tau.prior = "none", tau.manual = NULL, stan_manual = NULL,
-                   plot.pj = FALSE, im.res = NULL)
+                   opt.algorithm = "LBFGS", p.bound = c(0.01, 0.99),
+                   plot.pj = FALSE, im.res = NULL, verbose = FALSE, print.iter = FALSE)
 {
   start.time <- Sys.time()
   call <- match.call()
@@ -76,7 +79,7 @@ ssnet <- function (x, y, family = c("gaussian", "binomial", "poisson", "cox"),
 
   # picked a family?
   if (length(family) != 1){
-    stop("user must select a family: gaussian, binomial, poisson, or cox")
+    stop("user must select a family: gaussian, binomial, multinomial, poisson, or cox")
   }
 
   # check matrix
@@ -158,12 +161,13 @@ ssnet <- function (x, y, family = c("gaussian", "binomial", "poisson", "cox"),
   }
 
   f <- ssnet_fit(x = x, y = y, family = family, offset = offset, alpha = alpha,
-                 epsilon = epsilon, maxit = maxit, init = init, group = group,
-                 ss = ss, Warning = Warning, iar.data = iar.data,
+                 epsilon = epsilon, maxit = maxit, init = init, init.theta = init.theta,
+                 group = group, ss = ss, Warning = Warning, iar.data = iar.data,
                  opt.algorithm = opt.algorithm, p.bound = p.bound,
                  iar.prior = iar.prior, tau.prior = tau.prior,
                  stan_manual = stan_manual,
-                 plot.pj = plot.pj, im.res = im.res)
+                 plot.pj = plot.pj, im.res = im.res,
+                 print.iter = print.iter)
   f$call <- call
   if (family == "cox") {
     class(f) <- c(class(f), "bmlasso", "COXPH")

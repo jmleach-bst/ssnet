@@ -7,39 +7,46 @@
 ssnet(
   x,
   y,
-  family = c("gaussian", "binomial", "poisson", "cox"),
+  family = c("gaussian", "binomial", "multinomial", "poisson", "cox"),
   offset = NULL,
   epsilon = 1e-04,
-  alpha = 0.5,
+  alpha = 0.95,
+  type.multinomial = "grouped",
   maxit = 50,
-  init = NULL,
-  group = NULL,
+  init = rep(0, ncol(x)),
+  init.theta = 0.5,
   ss = c(0.04, 0.5),
   Warning = FALSE,
-  verbose = FALSE,
+  group = NULL,
   iar.prior = FALSE,
-  opt.algorithm = "LBFGS",
   adjmat = NULL,
   iar.data = NULL,
-  p.bound = c(0.01, 0.99),
   tau.prior = "none",
   tau.manual = NULL,
   stan_manual = NULL,
+  opt.algorithm = "LBFGS",
+  p.bound = c(0.01, 0.99),
   plot.pj = FALSE,
-  im.res = NULL
+  im.res = NULL,
+  verbose = FALSE,
+  print.iter = FALSE
 )
 }
 \arguments{
-\item{x}{Design, or input, matrix, of dimension nobs x nvars; each row is an observation vector. It is recommended that
-\code{x} have user-defined column names for ease of identifying variables. If missing \code{colnames} are internally
-assigned \code{x1}, \code{x2}, ... and so forth.}
+\item{x}{Design, or input, matrix, of dimension nobs x nvars; each row is an observation vector. It
+is recommended that \code{x} have user-defined column names for ease of identifying variables. If
+missing, then \code{colnames} are internally assigned \code{x1}, \code{x2}, ... and so forth.}
 
 \item{y}{Scalar response variable. Quantitative for \code{family = "gaussian"}, or \code{family = "poisson"}
-(non-negative counts). For \code{family = "gaussian"}, \code{y} is always standardized. For \code{family = "binomial"},
-y should be either a factor with two levels, or a two-column matrix of counts or proportions (the second column is treated
-as the target class; for a factor, the last level in alphabetical order is the target class). For \code{family="cox"}, \code{y}
-should be a two-column matrix with columns named \code{'time'} and \code{'status'}. The latter is a binary variable, with \code{'1'}
-indicating death, and \code{'0'} indicating right censored. The function \code{Surv()} in package survival produces such a matrix.}
+(non-negative counts). For \code{family = "gaussian"}, \code{y} is always standardized. For
+\code{family = "binomial"}, \code{y} should be either a factor with two levels, or a two-column matrix
+of counts or proportions (the second column is treated as the target class; for a factor, the last
+level in alphabetical order is the target class). For \code{family="cox"}, \code{y} should be a
+two-column matrix with columns named \code{'time'} and \code{'status'}. The latter is a binary
+variable, with \code{'1'} indicating death, and \code{'0'} indicating right censored. The function
+\code{Surv()} in package survival produces such a matrix. When \code{family = "multinomial"}, \code{y}
+follows the documentation for \code{glmnet}, but it is preferred that \code{y} is a factor with two
+or more levels.}
 
 \item{family}{Response type (see above).}
 
@@ -47,12 +54,33 @@ indicating death, and \code{'0'} indicating right censored. The function \code{S
 
 \item{epsilon}{A positive convergence tolerance; the iterations converge when \eqn{|dev - dev_old|/(|dev| + 0.1) < e}.}
 
-\item{alpha}{A scalar value between 0 and 1 determining the compromise between the Ridge and Lasso models. When
-\code{alpha = 1} reduces to the Lasso, and when \code{alpha = 0} reduces to Ridge.}
+\item{alpha}{A scalar value between 0 and 1 determining the compromise between the Ridge and Lasso
+models. When \code{alpha = 1} reduces to the Lasso, and when \code{alpha = 0} reduces to Ridge.}
+
+\item{type.multinomial}{If \code{"grouped"} then a grouped lasso penalty is
+used on the multinomial coefficients for a variable. This ensures they are
+all in our out together. The default is \code{"ungrouped"}}
 
 \item{maxit}{An integer giving the maximal number of EM iterations.}
 
-\item{init}{A vector of initial values for all coefficients (not for intercept). If not given, it will be internally produced.}
+\item{init}{A vector of initial values for all coefficients (not for intercept). If not given, it
+will be internally produced. If \code{family = "multinomial"} and the same initializations are
+desired for each response/outcome category then \code{init} can be a vector. If different initializations
+are desired, then \code{init} should be a list, each element of which contains a vector of initializations.
+The list should be named according the response/outcome category as they appear in \code{y}.}
+
+\item{init.theta}{A single value between 0 and 1 to initialize inclusion probabilities. When parameter groups
+is 2 or more, can be a vector of initial values for parameter inclusion probabilities. Default is 0.5 for all
+parameters. Currently, it is not supported to have parameter-specific initializations for inclusion probabilities.
+This may change in forthcoming updates.}
+
+\item{ss}{A vector of two positive scale values for the spike-and-slab mixture double-exponential
+prior, allowing for different scales for different predictors, leading to different amount of shrinkage.
+Smaller scale values give stronger shrinkage. While the smaller of the two input values will be
+treated as the spike scale, it is recommended to specify the spike scale as the first element of the
+vector.}
+
+\item{Warning}{Logical. If \code{TRUE}, shows the error messages of not convergence and identifiability.}
 
 \item{group}{A numeric vector, or an integer, or a list indicating the groups of predictors.
 If \code{group = NULL}, all the predictors form a single group. If \code{group = K}, the
@@ -60,55 +88,54 @@ predictors are evenly divided into groups each with K predictors. If group is a 
 it defines groups as follows: Group 1: \code{(group[1]+1):group[2]}, Group 2: \code{(group[2]+1):group[3]},
 Group 3: \code{(group[3]+1):group[4]}, ... If group is a list of variable names, \code{group[[k]]}
 includes variables in the k-th group. The mixture double-exponential prior is only used for grouped
-predictors. For ungrouped predictors, the prior is double-exponential with scale \code{ss[2]} and mean 0.}
+predictors. For ungrouped predictors, the prior is double-exponential with scale \code{ss[2]} and
+mean 0. Note that grouped predictors when \code{family = "multinomial"} is still experimental, so
+use with caution.}
 
-\item{ss}{A vector of two positive scale values for the spike-and-slab mixture double-exponential prior, allowing for different
-scales for different predictors, leading to different amount of shrinkage. Smaller scale values give stronger shrinkage. While
-the smaller of the two input values will be treated as the spike scale, it is recommended to specify the spike scale as the
-first element of the vector.}
+\item{iar.prior}{Logical. When \code{TRUE}, imposes intrinsic autoregressive prior on logit of the
+probabilities of inclusion. When \code{FALSE}, treats probabilities of inclusion as unstructured.}
 
-\item{Warning}{Logical. If \code{TRUE}, shows the error messages of not convergence and identifiability.}
-
-\item{verbose}{Logical. If \code{TRUE}, prints out the number of iterations and computational time.}
-
-\item{iar.prior}{Logical. When \code{TRUE}, imposes intrinsic autoregressive prior on logit of the probabilities of
-inclusion. When \code{FALSE}, treats probabilties of inclusion as unstructured.}
-
-\item{opt.algorithm}{One of \code{c("LBFGS", "BFGS", "Newton")}. This argument determines which argument
-is used to optimize the term in the EM algorithm that estimates the probabilities of inclusion for
-each parameter. Optimization is performed by \code{optimizing}.}
-
-\item{adjmat}{A data.frame or matrix containing a "sparse" representation of the neighbor relationships. The first
-column should contain a numerical index for a given location. Each index will be repeated in this column for
-every neighbor it has. The indices for the location's neighbors are then specified in the second column. Any
-additional columns are ignored.}
+\item{adjmat}{A data.frame or matrix containing a "sparse" representation of the neighbor relationships.
+The first column should contain a numerical index for a given location. Each index will be repeated in
+this column for every neighbor it has. The indices for the location's neighbors are then specified in
+the second column. Any additional columns are ignored.}
 
 \item{iar.data}{A list of output from \code{\link{mungeCARdata4stan}} that contains the necessary
 inputs for the IAR prior. When unspecified, this is built internally assuming that neighbors are those
-variables directly above, below, left, and  right of a given variable location. \code{im.res} must be specified
-when allowing this argument to be built internally. It is not recommended to use this argument directly, even
-when specifying a more complicated neighborhood stucture; this can be specified with the \code{adjmat} argument,
-and then internally converted to the correct format.}
-
-\item{p.bound}{A vector defining the lower and upper boundaries for the probabilities of inclusion
-in the model, respectively. Defaults to \code{c(0.01, 0.99)}.}
+variables directly above, below, left, and  right of a given variable location. \code{im.res} must be
+specified when allowing this argument to be built internally. It is not recommended to use this
+argument directly, even when specifying a more complicated neighborhood stucture; this can be specified
+with the \code{adjmat} argument, and then internally converted to the correct format.}
 
 \item{tau.prior}{One of \code{c("none", "manual", "cauchy")}. This argument determines the precision
 parameter in the Conditional Autoregressive model for the (logit of) prior inclusion probabilities.
 When \code{"none"}, the precision is set to 1; when "manual", the precision is manually entered by the
-user; when \code{"cauchy"}, the inverse precision is assumed to follow a Cauchy distribution with mean 0 and
-scale 2.5.}
+user; when \code{"cauchy"}, the inverse precision is assumed to follow a Cauchy distribution with
+mean 0 and scale 2.5.}
 
-\item{tau.manual}{When \code{tau.prior = "manual"}, use this argument to specify a common precision parameter.}
+\item{tau.manual}{When \code{tau.prior = "manual"}, use this argument to specify a common precision
+parameter.}
 
-\item{stan_manual}{A \code{stan_model} that is manually specified. Especially when fitting multiple models in
-succession, specifying the the \code{stan} model outside this "loop" may avoid errors.}
+\item{stan_manual}{A \code{stan_model} that is manually specified. Especially when fitting multiple
+models in succession, specifying the the \code{stan} model outside this "loop" may avoid errors.}
+
+\item{opt.algorithm}{One of \code{c("LBFGS", "BFGS", "Newton")}. This argument determines which
+argument is used to optimize the term in the EM algorithm that estimates the probabilities of
+inclusion for each parameter. Optimization is performed by \code{optimizing}.}
+
+\item{p.bound}{A vector defining the lower and upper boundaries for the probabilities of inclusion
+in the model, respectively. Defaults to \code{c(0.01, 0.99)}.}
 
 \item{plot.pj}{When \code{TRUE}, prints a series of 2D graphs of the prior probabilities of inclusion
 at each step of the algorithm. This should NOT be used for 3D data.}
 
-\item{im.res}{A 2-element vector where the first argument is the number of "rows" and the second argument
-is the number of "columns" in each subject's "image". Default is \code{NULL}.}
+\item{im.res}{A 2-element vector where the first argument is the number of "rows" and the second
+argument is the number of "columns" in each subject's "image". Default is \code{NULL}.}
+
+\item{verbose}{Logical. If \code{TRUE}, prints out the number of iterations and computational time.}
+
+\item{print.iter}{Logical. When \code{TRUE}, prints a quite excessive amount intermediate output for
+every iteration. Default is (obviously) \code{FALSE}.}
 }
 \value{
 An object of class \code{c("elnet"   "glmnet"  "bmlasso" "GLM")}.
@@ -128,7 +155,7 @@ whatever the original dimension.
 }
 \examples{
 library(sim2Dpredictr)
-set.seed(27723)
+set.seed(223)
 
 ## sample size
 n <- 30
@@ -138,7 +165,7 @@ nc <- 4
 
 ## generate data
 cn <- paste0("x", 1:(nr * nc))
-tb <- rbinom(nr * nc, 1, 0.05)
+tb <- rbinom(nr * nc, 1, 0.2)
 tx <- matrix(rnorm(n * nr * nc), nrow = n, ncol = nr * nc,
              dimnames = list(1:n, cn))
 ty <- tx \%*\% tb + rnorm(n)
@@ -168,4 +195,6 @@ ex_model <- ssnet(x = tx, y = ty, alpha = 0.5,
 \insertRef{Rockova+George:2018}{ssnet}
 
 \insertRef{Tang:2017}{ssnet}
+
+\insertRef{Tang:2018}{ssnet}
 }
