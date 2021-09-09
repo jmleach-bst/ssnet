@@ -1,0 +1,18 @@
+---
+output: github_document
+---
+
+<!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  out.width = "100%"
+)
+```
+# ssnet
+This is the development version of ssnet.
+
+# Updates
+Note (June 11, 2021): R CMD check passes for R 4.1.0.
