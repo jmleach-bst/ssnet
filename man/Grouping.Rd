@@ -11,7 +11,7 @@ Grouping(all.var, group)
 
 \item{group}{A numeric vector, or an integer, or a list indicating the groups of predictors.
 If \code{group = NULL}, all the predictors form a single group. If \code{group = K}, the
-predictors are evenly divided into groups each with K predictors. If group is a numberic vector,
+predictors are evenly divided into groups each with K predictors. If group is a numeric vector,
 it defines groups as follows: Group 1: \code{(group[1]+1):group[2]}, Group 2: \code{(group[2]+1):group[3]},
 Group 3: \code{(group[3]+1):group[4]}, ... If group is a list of variable names, \code{group[[k]]}
 includes variables in the k-th group. The mixture double-exponential prior is only used for grouped
@@ -25,5 +25,5 @@ This function uses the user-defined groups to properly prepare the variables for
 group-specific estimation/inference.
 }
 \note{
-This function is taken from the R package \code{BhGLM}.
+This function is a modified version of the function \code{Grouping} from the R package \code{BhGLM}.
 }
