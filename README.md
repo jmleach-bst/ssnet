@@ -17,16 +17,14 @@ algorithm is used to fit the models, and spatial structure is
 incorporated by using Intrinsic Autoregressions (IAR) as priors for
 inclusion probabilities. This allows for variable selection to
 incorporate assumptions about spatial clustering of variables that
-should (not) be included in the model.
+should (not) be included in the model. Outcome distributions supported
+are Binomial, Normal, Poisson, and Multinomial.
 
 ## Installation
 
 <!-- You can install the released version of ssnet from [CRAN](https://CRAN.R-project.org) with: -->
-
 <!-- ``` r -->
-
 <!-- install.packages("ssnet") -->
-
 <!-- ``` -->
 
 The `R` package `ssnet` is in development, which version can be
