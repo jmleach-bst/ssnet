@@ -15,5 +15,8 @@ knitr::opts_chunk$set(
 This is ssnet version 0.2.0.
 
 # Updates
-Note (June 11, 2021): R CMD check passes for R 4.1.0.
-Note (November 12, 2021): Option for multinomial outcomes pushed.
+## June 11, 2021
+Note : R CMD check passes for R 4.1.0.
+
+## November 12, 2021
+Note: Option for multinomial outcomes pushed.
