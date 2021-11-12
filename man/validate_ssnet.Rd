@@ -34,7 +34,9 @@ validate_ssnet(
   stan_manual = NULL,
   nlambda = 100,
   lambda.criteria = "lambda.min",
-  output_param_est = FALSE
+  output_param_est = FALSE,
+  output_probs = FALSE,
+  print_check = FALSE
 )
 }
 \arguments{
@@ -117,7 +119,8 @@ in the model, respectively. Defaults to \code{c(0.01, 0.99)}.}
 parameter in the Conditional Autoregressive model for the (logit of) prior inclusion probabilities.
 When \code{"none"}, the precision is set to 1; when "manual", the precision is manually entered by the
 user; when \code{"cauchy"}, the inverse precision is assumed to follow a Cauchy distribution with
-mean 0 and scale 2.5.}
+mean 0 and scale 2.5. Note that at this stage of development, only the \code{"none"} option
+has been extensively tested, so the other options should be used with caution.}
 
 \item{tau.manual}{When \code{tau.prior = "manual"}, use this argument to specify a common precision
 parameter.}
@@ -134,6 +137,10 @@ is within one standard error of the minimal measure given in \code{type.measure}
 
 \item{output_param_est}{Logical. When \code{TRUE} adds an element to the output list that includes
 parameter estimates for the fitted model. Defaults is \code{FALSE}.}
+
+\item{output_probs}{Logical. When \code{TRUE} and \code{family = "multinomial"} adds an element to
+the output list that contains the probabilties of being a member of each category for each subject,
+in addition to their classification. Default is \code{FALSE}.}
 }
 \value{
 A list or a data frame. When \code{output_param_est = FALSE}, returns a data frame with a

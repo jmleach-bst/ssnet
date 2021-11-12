@@ -111,7 +111,8 @@ with the \code{adjmat} argument, and then internally converted to the correct fo
 parameter in the Conditional Autoregressive model for the (logit of) prior inclusion probabilities.
 When \code{"none"}, the precision is set to 1; when "manual", the precision is manually entered by the
 user; when \code{"cauchy"}, the inverse precision is assumed to follow a Cauchy distribution with
-mean 0 and scale 2.5.}
+mean 0 and scale 2.5. Note that at this stage of development, only the \code{"none"} option
+has been extensively tested, so the other options should be used with caution.}
 
 \item{tau.manual}{When \code{tau.prior = "manual"}, use this argument to specify a common precision
 parameter.}

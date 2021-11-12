@@ -8,7 +8,8 @@
 #' the probability the subjects belongs to the respective class. The column names should match the
 #' factor levels for \code{y}. This information can be obtained using \code{prob_multinomial()}.
 #' @param y_hat A vector of predicted classes that should have the same factor levels as \code{y}.
-#' When \code{y_hat} is supplied it supercedes \code{pr_yi}.
+#' When \code{y_hat} is supplied it supercedes \code{pr_yi} for classification. However, \code{pr_yi}
+#' will still be used to calculate the deviance.
 #' @param print_check Logical. When \code{TRUE}, prints intermediate results.
 #' @note While this function will work when there are only 2 classes, it is recommended to use
 #' \code{eval_classify()} when there are only 2 classes.
@@ -83,7 +84,13 @@ measures_multiclass <- function(y, pr_yi = NULL, y_hat = NULL,
 
     y_hat <- c()
     for (i in 1:nrow(pr_yi)) {
-      y_hat[i] <- colnames(pr_yi)[pr_yi[i,] == max(pr_yi[i,])]
+      pc.i <- which(pr_yi[i, ] == max(pr_yi[i, ]))
+      if (length(pc.i) > 1) {
+        print(pr_yi[i, ])
+        pc.i <- sample(pc.i, size = 1, replace = FALSE)
+        warning("Multiple categories have maximum probability. Class selected randomly.")
+      }
+      y_hat[i] <- colnames(pr_yi)[pc.i]
     }
   }
 
@@ -94,6 +101,10 @@ measures_multiclass <- function(y, pr_yi = NULL, y_hat = NULL,
   # convert y to factor
   if (is.factor(y_hat) == FALSE) {
     y_hat <- as.factor(y_hat)
+  }
+
+  if (print_check == TRUE) {
+    print(table(y_hat))
   }
 
   #############################################
@@ -212,17 +223,39 @@ measures_multiclass <- function(y, pr_yi = NULL, y_hat = NULL,
     print(micro)
   }
 
-  return(
-    data.frame(
-      avg_acc = avg_acc,
-      pce = pce,
-      ppv_macro = ppv_macro,
-      sn_macro = sn_macro,
-      f1_macro = f1_macro,
-      ppv_micro = ppv_micro,
-      sn_micro = sn_micro,
-      f1_micro = f1_micro
+  # calculate multinomial deviance
+  if (is.null(pr_yi) == FALSE) {
+    lp <- c()
+    for (i in 1:nrow(pr_yi)) {
+      lp[i] <- pr_yi[i, y[i]]
+    }
+    logL <- log(lp)
+    deviance = -2 * sum(logL)
+    return(
+      data.frame(
+        deviance = deviance,
+        avg_acc = avg_acc,
+        pce = pce,
+        ppv_macro = ppv_macro,
+        sn_macro = sn_macro,
+        f1_macro = f1_macro,
+        ppv_micro = ppv_micro,
+        sn_micro = sn_micro,
+        f1_micro = f1_micro
+      )
     )
-  )
-
+  } else {
+    return(
+      data.frame(
+        avg_acc = avg_acc,
+        pce = pce,
+        ppv_macro = ppv_macro,
+        sn_macro = sn_macro,
+        f1_macro = f1_macro,
+        ppv_micro = ppv_micro,
+        sn_micro = sn_micro,
+        f1_micro = f1_micro
+      )
+    )
+  }
 }

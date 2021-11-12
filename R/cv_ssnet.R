@@ -135,10 +135,10 @@ cv_ssnet <- function(
 
       for (a in 1:length(alpha)) {
         for (s0b in 1:length(s0)) {
-          for (s1b in 1:length(s1)) {
+          if (model == "glmnet") {
             mod.ijas <- validate_ssnet(
               model = model, family = family,
-              alpha = alpha[a], s0 = s0[s0b], s1 = s1[s1b],
+              alpha = alpha[a], s0 = s0[s0b], s1 = s0[s0b],
               x.train = xtr.ij, y.train = ytr.ij,
               x.test = xte.ij, y.test = yte.ij,
               classify = classify, classify.rule = classify.rule,
@@ -159,7 +159,7 @@ cv_ssnet <- function(
                 fold.id = j,
                 alpha = alpha[a],
                 s0 = s0[s0b],
-                s1 = s1[s1b],
+                s1 = s0[s0b],
                 mod.ijas
               )
             } else {
@@ -169,7 +169,7 @@ cv_ssnet <- function(
                 fold.id = j,
                 alpha = alpha[a],
                 s0 = s0[s0b],
-                s1 = s1[s1b],
+                s1 = s0[s0b],
                 mod.ijas$model_fitness
               )
               param.est.ijas <- cbind(
@@ -178,7 +178,7 @@ cv_ssnet <- function(
                 fold.id = j,
                 alpha = alpha[a],
                 s0 = s0[s0b],
-                s1 = s1[s1b],
+                s1 = s0[s0b],
                 mod.ijas$param_est
               )
 
@@ -191,6 +191,64 @@ cv_ssnet <- function(
               model_fit,
               mod.fit.ijas
             )
+          } else {
+            for (s1b in 1:length(s1)) {
+              mod.ijas <- validate_ssnet(
+                model = model, family = family,
+                alpha = alpha[a], s0 = s0[s0b], s1 = s1[s1b],
+                x.train = xtr.ij, y.train = ytr.ij,
+                x.test = xte.ij, y.test = yte.ij,
+                classify = classify, classify.rule = classify.rule,
+                type.multinomial = type.multinomial,
+                offset = offset, epsilon = epsilon,
+                maxit = maxit, init = init, group = group,
+                Warning = Warning, verbose = verbose,
+                opt.algorithm = opt.algorithm,
+                iar.data = iar.data, iar.prior = iar.prior,
+                p.bound = p.bound, tau.prior = tau.prior,
+                stan_manual = stan_manual, lambda.criteria = lambda.criteria,
+                output_param_est = output_param_est
+              )
+              if (output_param_est == FALSE) {
+                mod.fit.ijas <- cbind(
+                  model = model,
+                  ncv.id = i,
+                  fold.id = j,
+                  alpha = alpha[a],
+                  s0 = s0[s0b],
+                  s1 = s1[s1b],
+                  mod.ijas
+                )
+              } else {
+                mod.fit.ijas <- cbind(
+                  model = model,
+                  ncv.id = i,
+                  fold.id = j,
+                  alpha = alpha[a],
+                  s0 = s0[s0b],
+                  s1 = s1[s1b],
+                  mod.ijas$model_fitness
+                )
+                param.est.ijas <- cbind(
+                  model = model,
+                  ncv.id = i,
+                  fold.id = j,
+                  alpha = alpha[a],
+                  s0 = s0[s0b],
+                  s1 = s1[s1b],
+                  mod.ijas$param_est
+                )
+
+                param_est <- dplyr::bind_rows(
+                  param_est,
+                  param.est.ijas
+                )
+              }
+              model_fit <- dplyr::bind_rows(
+                model_fit,
+                mod.fit.ijas
+              )
+            }
           }
         }
       }

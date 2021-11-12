@@ -70,6 +70,7 @@ prob_multinomial <- function(x, b, a0,
     )
   colnames(b.mat) <- colnames(x0)
   rownames(b.mat) <- names(b)
+  # print(names(b))
   # print(b.mat)
 
   # compute & store raw predictions
@@ -77,10 +78,9 @@ prob_multinomial <- function(x, b, a0,
   for (i in 1:nrow(b.mat)) {
     exp.xb[[i]] <- exp(x0 %*% b.mat[i, ])
   }
-  names(exp.xb) <- rownames(b.mat)
-  # print(exp.xb)
+  names(exp.xb) <- names(b)
   exp.xb.df <- data.frame(dplyr::bind_cols(exp.xb))
-  # print(exp.xb.df)
+  colnames(exp.xb.df) <- names(b)
   denominator <- rowSums(exp.xb.df)
 
   pr.yi <- list()
@@ -89,15 +89,22 @@ prob_multinomial <- function(x, b, a0,
   }
   names(pr.yi) <- colnames(exp.xb.df)
   pr.yi.df <- data.frame(dplyr::bind_cols(pr.yi))
+  colnames(pr.yi.df) <- colnames(exp.xb.df)
 
   if (classify == TRUE) {
     predicted.class <- c()
     for (i in 1:nrow(pr.yi.df)) {
-      predicted.class[i] <- colnames(pr.yi.df)[which(
-        pr.yi.df[i, ] == max(pr.yi.df[i, ])
-      )]
+      pc.i <- which(pr.yi.df[i, ] == max(pr.yi.df[i, ]))
+      if (length(pc.i) > 1) {
+        print(pr.yi.df[i, ])
+        pc.i <- sample(pc.i, size = 1, replace = FALSE)
+        warning("Multiple categories have maximum probability. Class selected randomly.")
+      }
+      predicted.class[i] <- colnames(pr.yi.df)[pc.i]
+
     }
     df <- cbind(pr.yi.df, predicted.class)
+    # print(df)
     colnames(df) <- c(names(b),
                       "predicted.class")
     return(df)

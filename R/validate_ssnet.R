@@ -11,6 +11,9 @@
 #' @param y.train,y.test Response/outcome vectors for training and testing, respectively.
 #' @param output_param_est Logical. When \code{TRUE} adds an element to the output list that includes
 #' parameter estimates for the fitted model. Defaults is \code{FALSE}.
+#' @param output_probs Logical. When \code{TRUE} and \code{family = "multinomial"} adds an element to
+#' the output list that contains the probabilties of being a member of each category for each subject,
+#' in addition to their classification. Default is \code{FALSE}.
 #' @inheritParams ssnet
 #' @inheritParams glmnet::glmnet
 #' @inheritParams glmnet::cv.glmnet
@@ -98,7 +101,8 @@ validate_ssnet <- function(
   Warning = FALSE, verbose = FALSE, opt.algorithm = "LBFGS",
   iar.data = NULL, iar.prior = FALSE, adjmat = NULL, p.bound = c(0.01, 0.99),
   tau.prior = "none", tau.manual = NULL, stan_manual = NULL, nlambda = 100,
-  lambda.criteria = "lambda.min", output_param_est = FALSE)
+  lambda.criteria = "lambda.min", output_param_est = FALSE,
+  output_probs = FALSE, print_check = FALSE)
 {
   if (!(model %in% c("glmnet", "ss", "ss_iar"))) {
     stop("Models must be one of glmnet, ss, ss_iar.")
@@ -120,17 +124,17 @@ validate_ssnet <- function(
     stop("x.train and x.test must have the same number of columns.")
   }
 
-  if (output_param_est == TRUE) {
-    var_names <- c()
-    for (v in 1:(ncol(x.train) + 1)) {
-      var_names[v] <- paste0("x", v - 1)
-    }
+  var_names <- c()
+  for (xn in 1:(ncol(x.train) + 1)) {
+    var_names[xn] <- paste0("x", xn - 1)
   }
 
   if (model == "glmnet") {
     fit.mod <- glmnet::glmnet(
       x = x.train, y = y.train,
-      family = family, alpha = alpha
+      family = family, alpha = alpha,
+      type.multinomial = type.multinomial,
+      lambda = s0
     )
     if (family == "gaussian") {
       dispersion <- NULL
@@ -142,6 +146,18 @@ validate_ssnet <- function(
         newx = x.test,
         s = s0,
         type = "class"
+      )
+      b.list <- fit.mod$beta
+      b.list2 <- list()
+      for (i in 1:length(b.list)) {
+        b.list2[[i]] <- as.numeric(b.list[[i]])
+        names(b.list2[[i]]) <- var_names[-1]
+      }
+      names(b.list2) <- names(b.list)
+      b <- b.list2
+      # print(b)
+      pred.pc <- prob_multinomial(
+        x = x.test, b = b, a0 = fit.mod$a0
       )
       if (output_param_est == TRUE) {
         param_est <- NULL
@@ -219,8 +235,9 @@ validate_ssnet <- function(
     }
   }
   if (family == "multinomial") {
-    out <- measures_multiclass(
-      y = y.test, y_hat = pred.y
+    model_fitness <- measures_multiclass(
+      y = y.test, pr_yi = pred.pc %>% dplyr::select(-predicted.class),
+      print_check = print_check
     )
   } else {
     if (family == "gaussian") {
@@ -236,19 +253,24 @@ validate_ssnet <- function(
       pred.y <- exp(pred.y.raw)
       dispersion <- 1
     }
-    out <- measures_model_fitness(
+    model_fitness <- measures_model_fitness(
       y = y.test, y.fitted = pred.y, family = family, dispersion = dispersion,
       inverse.link.y = TRUE, classify = classify, classify.rule = classify.rule
     )
   }
-  if (output_param_est == TRUE) {
-    return(
-      list(
-        model_fitness = out,
-        param_est = param_est
-      )
-    )
+  if (output_param_est == FALSE & output_probs == FALSE) {
+    return(model_fitness)
   } else {
+
+  }
+  if (output_param_est == TRUE) {
+    out <- list(
+      model_fitness = model_fitness,
+      param_est = param_est
+    )
+    if (output_probs == TRUE & family == "multinomial") {
+      out$cat_probs <- pred.pc
+    }
     return(out)
   }
 }

@@ -4,7 +4,7 @@
 #' @importFrom stats coef deviance predict sd
 #' @importFrom survival Surv is.Surv
 #' @importFrom glmnet glmnet
-#' @importFrom BhGLM bglm De
+#' @importFrom BhGLM bglm
 #' @param x Design, or input, matrix, of dimension nobs x nvars; each row is an observation vector. It
 #' is recommended that \code{x} have user-defined column names for ease of identifying variables. If
 #' missing, then \code{colnames} are internally assigned \code{x1}, \code{x2}, ... and so forth.
@@ -67,7 +67,8 @@
 #' parameter in the Conditional Autoregressive model for the (logit of) prior inclusion probabilities.
 #' When \code{"none"}, the precision is set to 1; when "manual", the precision is manually entered by the
 #' user; when \code{"cauchy"}, the inverse precision is assumed to follow a Cauchy distribution with
-#' mean 0 and scale 2.5.
+#' mean 0 and scale 2.5. Note that at this stage of development, only the \code{"none"} option
+#' has been extensively tested, so the other options should be used with caution.
 #' @param tau.manual When \code{tau.prior = "manual"}, use this argument to specify a common precision
 #' parameter.
 #' @param plot.pj When \code{TRUE}, prints a series of 2D graphs of the prior probabilities of inclusion
@@ -114,6 +115,10 @@ ssnet_fit <- function (x, y, family = c("gaussian", "binomial", "multinomial", "
 
   if (family == "multinomial") {
     multinomial <- TRUE
+    # convert y to factor for multinomial regression
+    if (is.factor(y) == FALSE) {
+      y <- as.factor(y)
+    }
   } else {
     multinomial <- FALSE
   }
@@ -138,13 +143,6 @@ ssnet_fit <- function (x, y, family = c("gaussian", "binomial", "multinomial", "
   # initialize inclusion probabilities
   theta <- p <- rep(init.theta, length(gvars))
   names(theta) <- names(p) <- gvars
-
-  # convert y to factor for multinomial regression
-  if (family == "multinomial") {
-    if (is.factor(y) == FALSE) {
-      y <- as.factor(y)
-    }
-  }
 
   # internal initialization
   if (is.null(init) == TRUE) {
@@ -215,8 +213,11 @@ ssnet_fit <- function (x, y, family = c("gaussian", "binomial", "multinomial", "
       # print(theta)
       for (i in 1:length(b)) {
         out.i <- update_scale_p(b0 = b[[i]][gvars], ss = ss, theta = theta, alpha = alpha)
-        # print(b[[i]][gvars])
-        # print(out.i)
+        if (print.iter == TRUE) {
+          print(theta)
+          print(b[[i]][gvars])
+          print(out.i)
+        }
         prior.scale0[gvars] <- out.i$scale
         prior.scale[[i]] <- prior.scale0
         p[[i]] <- out.i$p
@@ -289,6 +290,7 @@ ssnet_fit <- function (x, y, family = c("gaussian", "binomial", "multinomial", "
       theta <- max_q2_iar(iar.data = iar.data, p = p,
                             opt.algorithm = opt.algorithm,
                             tau.prior = tau.prior,
+                            tau.manual = tau.manual,
                             stan_manual = stan_manual,
                             p.bound = p.bound)
       if (print.iter == TRUE) {
@@ -339,6 +341,9 @@ ssnet_fit <- function (x, y, family = c("gaussian", "binomial", "multinomial", "
 
 
     dev <- deviance(f)
+    if (print.iter == TRUE) {
+      cat("Deviance at iteration ", iter, " is ", dev, "\n")
+    }
     if (abs(dev - devold)/(0.1 + abs(dev)) < epsilon & iter > 5) {
       conv <- TRUE
       break
@@ -360,8 +365,13 @@ ssnet_fit <- function (x, y, family = c("gaussian", "binomial", "multinomial", "
                                    offset = offset)
   }
   if (family == "gaussian") {
+    De <- function(mean = 0, scale = 0.5, autoscale = TRUE) {
+      if (any(scale < 0))
+        stop("'scale' cannot be negative")
+      list(prior = "de", mean = mean, scale = scale, autoscale = autoscale)
+    }
     f$dispersion <- BhGLM::bglm(y ~ f$linear.predictors - 1, start = 1,
-                                prior = BhGLM::De(mean = 1, scale = 0),
+                                prior = De(mean = 1, scale = 0),
                                 verbose = FALSE)$dispersion
   }
   f$iter <- iter

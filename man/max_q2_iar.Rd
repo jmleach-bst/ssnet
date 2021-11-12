@@ -9,6 +9,7 @@ max_q2_iar(
   p,
   opt.algorithm = "LBFGS",
   tau.prior = "none",
+  tau.manual = NULL,
   p.bound = c(0.01, 0.99),
   stan_manual = NULL
 )
@@ -28,6 +29,9 @@ user (and still not random); when \code{"cauchy"}, the inverse precision is assu
 distribution with mean 0 and scale 2.5. Note that at this stage of development, only the \code{"none"} option
 has been extensively tested, so the other options should be used with caution.}
 
+\item{tau.manual}{When \code{tau.prior = "manual"}, use this argument to specify a common precision
+parameter.}
+
 \item{p.bound}{A vector defining the lower and upper boundaries for the probabilities of inclusion
 in the model, respectively. Defaults to \code{c(0.01, 0.99)}.}
 
@@ -41,7 +45,7 @@ Uses \code{stan} to optimize the term in the EM algorithm that depends on the pr
 of inclusion in the model, \eqn{p_j}.
 }
 \note{
-This function borrows from the work of Mitzi Morris, who describes how to fit an intrisic autoregression
+This function borrows from the work of Mitzi Morris, who describes how to fit an intrinsic autoregression
 in \code{stan} \insertCite{Morris:2017,Morris:2019}{ssnet}.
 }
 \references{

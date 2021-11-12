@@ -15,7 +15,8 @@ the probability the subjects belongs to the respective class. The column names s
 factor levels for \code{y}. This information can be obtained using \code{prob_multinomial()}.}
 
 \item{y_hat}{A vector of predicted classes that should have the same factor levels as \code{y}.
-When \code{y_hat} is supplied it supercedes \code{pr_yi}.}
+When \code{y_hat} is supplied it supercedes \code{pr_yi} for classification. However, \code{pr_yi}
+will still be used to calculate the deviance.}
 
 \item{print_check}{Logical. When \code{TRUE}, prints intermediate results.}
 }
