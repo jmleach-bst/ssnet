@@ -1,6 +1,6 @@
 Package: ssnet
 Title: Fit Spike-and-Slab Elastic Net GLM With Spatial Priors on Parameters
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: 
     person(given = "Justin",
            family = "Leach",
