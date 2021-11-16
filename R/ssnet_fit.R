@@ -86,6 +86,8 @@
 #' @note Currently, the \code{ssnet()} \code{im.res} can only handle 2D data. Future versions may allow
 #' images to be 3D. However, the function will work given any appropriately specified neighborhood matrix,
 #' whatever the original dimension. Use Cox models with caution as we have not yet validated their extension.
+#' @note While the type.multinomial option is included, it is only valid for traditional elastic net models.
+#' Thus far we have only extended the spike-and-slab models for grouped selection.
 ssnet_fit <- function (x, y, family = c("gaussian", "binomial", "multinomial", "poisson", "cox"),
                        offset = NULL, epsilon = 1e-04, alpha = 0.95, type.multinomial = "grouped",
                        maxit = 50, init = rep(0, ncol(x)), init.theta = 0.5,
@@ -206,48 +208,11 @@ ssnet_fit <- function (x, y, family = c("gaussian", "binomial", "multinomial", "
   # begin algorithm
   for (iter in 1:maxit) {
     if (family == "multinomial") {
-      prior.scale0 <- c()
-      prior.scale <- list()
-      p <- list()
-      # cat("Verify updated scales/p for iteration ", iter, "\n")
-      # print(theta)
-      for (i in 1:length(b)) {
-        out.i <- update_scale_p(b0 = b[[i]][gvars], ss = ss, theta = theta, alpha = alpha)
-        if (print.iter == TRUE) {
-          print(theta)
-          print(b[[i]][gvars])
-          print(out.i)
-        }
-        prior.scale0[gvars] <- out.i$scale
-        prior.scale[[i]] <- prior.scale0
-        p[[i]] <- out.i$p
-      }
-      # group scales by predictor
-      names(prior.scale) <- names(b)
-      if (print.iter == TRUE) {
-        cat("Raw prior scales for iteration ", iter, "\n")
-        print(prior.scale)
-      }
-      prior.scale.bind <- t(dplyr::bind_cols(prior.scale))
-      prior.scale <- apply(prior.scale.bind, 2, mean)
-      names(prior.scale) <- names(b[[1]])
-      if (print.iter == TRUE) {
-        cat("Grouped prior scales for iteration ", iter, "\n")
-        print(prior.scale)
-      }
-      # group p by predictors
-      names(p) <- names(b)
-      if (print.iter == TRUE) {
-        cat("Raw p for iteration ", iter, "\n")
-        print(p)
-      }
-      p.bind <- t(dplyr::bind_cols(p))
-      p <- apply(p.bind, 2, mean)
-      names(p) <- names(b[[1]])
-      if (print.iter == TRUE) {
-        cat("Grouped p for iteration ", iter, "\n")
-        print(p)
-      }
+      scale_p <- update_scale_p_mn(b0 = b, ss = ss, theta = theta, alpha = alpha)
+      prior.scale <- scale_p$scale
+      p <- scale_p$p
+      names(prior.scale) <- colnames(x)
+      names(p) <- colnames(x)
     } else {
       out <- update_scale_p(b0 = b[gvars], ss = ss, theta = theta, alpha = alpha)
       prior.scale[gvars] <- out[[1]]
@@ -255,7 +220,11 @@ ssnet_fit <- function (x, y, family = c("gaussian", "binomial", "multinomial", "
     }
 
     if (print.iter == TRUE) {
-      cat("Prior scales updated for iteration ", iter, "\n")
+      cat("Prior scales/p_j updated for iteration ", iter, "\n")
+      cat("Estimated p for iteration ", iter, "\n")
+      print(p)
+      cat("Estimated prior scales for iteration ", iter, "\n")
+      print(prior.scale)
     }
 
     if (plot.pj == TRUE) {
