@@ -145,4 +145,7 @@ Fit the Spike-and-Slab Elastic Net GLM with Intrinsic Autoregressive Prior
 Currently, the \code{ssnet()} \code{im.res} can only handle 2D data. Future versions may allow
 images to be 3D. However, the function will work given any appropriately specified neighborhood matrix,
 whatever the original dimension. Use Cox models with caution as we have not yet validated their extension.
+
+While the type.multinomial option is included, it is only valid for traditional elastic net models.
+Thus far we have only extended the spike-and-slab models for grouped selection.
 }
