@@ -15,6 +15,8 @@
 #' the function. Alternatively, use \code{foldid} to manually specify folds.
 #' @inheritParams validate_ssnet
 #' @inheritParams ssnet
+#' @return Either a data frame of model fitness measures or a list whose elements are data frames of
+#' model fitness measures and parameter estimates, respectively, depending on the value of output_param_ets.
 #' @examples
 #' xtr <- matrix(rnorm(100*5), nrow = 100, ncol = 5)
 #' xte <- matrix(rnorm(100*5), nrow = 100, ncol = 5)
