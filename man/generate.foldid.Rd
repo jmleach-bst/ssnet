@@ -9,9 +9,7 @@ generate.foldid(nobs, nfolds = 10, foldid = NULL, ncv = 1, fold.seed = NULL)
 \arguments{
 \item{nobs}{The number of observations.}
 
-\item{nfolds}{ 
-  These arguments are the same as in the functions \code{\link{glmnet}} and \code{\link{cv.glmnet}} in the package \bold{glmnet}.
-  }
+\item{nfolds}{The number of folds to generate.}
 
 \item{foldid}{An array of fold identifiers. If not supplied by the user, generated within function.}
 

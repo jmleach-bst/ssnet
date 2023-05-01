@@ -2,21 +2,26 @@
 #'
 #' Perform k-fold cross validation for spike-and-slab elastic net models.
 #'
-#' @param s0,s1 A vector of user-selected possible values for the spike scale and slab scale parameter, respectively.
-#' The default is \code{s0 = seq(0.01, 0.1, 0.01)} and \code{s1 = 1}. However, the user should select values informed
-#' by the practical context of the analysis.
+#' @param s0,s1 A vector of user-selected possible values for the spike scale
+#' and slab scale parameter, respectively. The default is
+#' \code{s0 = seq(0.01, 0.1, 0.01)} and \code{s1 = 1}. However, the user
+#' should select values informed by the practical context of the analysis.
 #' @param nfolds Numeric value indicating the number of folds to create.
-#' @param ncv Numeric value indicating the number of times to perform cross validation.
-#' @param foldid An (optional) vector of values between 1 and \code{nfold} identifying the fold for each
-#' observation. When supplied \code{nfolds} may be omitted. If \code{ncv > 1}, then supply a matrix or
-#' data frame  where each column contains fold identifiers. If \code{foldid} is supplied, it supersedes
-#' \code{ncv} and \code{nfolds}.
-#' @param fold.seed A scalar seed value for cross validation; ensures the folds are the same upon re-running
-#' the function. Alternatively, use \code{foldid} to manually specify folds.
+#' @param ncv Numeric value indicating the number of times to perform cross
+#' validation.
+#' @param foldid An (optional) vector of values between 1 and \code{nfold}
+#' identifying the fold for each observation. When supplied \code{nfolds} may
+#' be omitted. If \code{ncv > 1}, then supply a matrix or data frame  where
+#' each column contains fold identifiers. If \code{foldid} is supplied, it
+#' supersedes \code{ncv} and \code{nfolds}.
+#' @param fold.seed A scalar seed value for cross validation; ensures the
+#' folds are the same upon re-running the function. Alternatively, use
+#' \code{foldid} to manually specify folds.
 #' @inheritParams validate_ssnet
 #' @inheritParams ssnet
-#' @return Either a data frame of model fitness measures or a list whose elements are data frames of
-#' model fitness measures and parameter estimates, respectively, depending on the value of output_param_ets.
+#' @return Either a data frame of model fitness measures or a list whose
+#' elements are data frames of model fitness measures and parameter estimates,
+#' respectively, depending on the value of output_param_ets.
 #' @examples
 #' xtr <- matrix(rnorm(100*5), nrow = 100, ncol = 5)
 #' xte <- matrix(rnorm(100*5), nrow = 100, ncol = 5)
@@ -67,19 +72,33 @@
 #'
 #' @export
 cv_ssnet <- function(
-  model, alpha = c(0.5, 1),
-  s0 = seq(0.01, 0.1, 0.01), s1 = c(1, 2.5),
-  classify = FALSE, classify.rule = 0.5,
-  nfolds = 10, ncv = 1, foldid = NULL, fold.seed = NULL,
-  x, y, family, offset = NULL, epsilon = 1e-04,
-  maxit = 50, init = NULL, group = NULL,
-  Warning = FALSE, verbose = FALSE, opt.algorithm = "LBFGS",
-  iar.data = NULL, iar.prior = FALSE,
-  p.bound = c(0.01, 0.99), tau.prior = "none",
-  stan_manual = NULL, lambda.criteria = "lambda.min",
-  output_param_est = FALSE, type.multinomial = "grouped"
-)
-{
+  model,
+  alpha = c(0.5, 1),
+  s0 = seq(0.01, 0.1, 0.01),
+  s1 = c(1, 2.5),
+  classify = FALSE,
+  classify.rule = 0.5,
+  nfolds = 10, ncv = 1,
+  foldid = NULL,
+  fold.seed = NULL,
+  x, y, family,
+  offset = NULL,
+  epsilon = 1e-04,
+  maxit = 50,
+  init = NULL,
+  group = NULL,
+  Warning = FALSE,
+  verbose = FALSE,
+  opt.algorithm = "LBFGS",
+  iar.data = NULL,
+  iar.prior = FALSE,
+  p.bound = c(0.01, 0.99),
+  tau.prior = "none",
+  stan_manual = NULL,
+  lambda.criteria = "lambda.min",
+  output_param_est = FALSE,
+  type.multinomial = "grouped"
+){
   # reproducibility
   if (is.null(fold.seed) == FALSE) {
     set.seed(fold.seed)
@@ -108,25 +127,29 @@ cv_ssnet <- function(
     } else {
       ncv <- ncol(foldid)
       nfolds.b <- c()
-      for (nf in 1:ncv) {
+      for (nf in seq_len(ncv)) {
         nfolds.b[nf] <- length(unique(foldid[ , nf]))
       }
       if (any(nfolds.b != nfolds.b[1])) {
-        stop("Each column of foldid must have the same number of unique folds.")
+        stop(
+          "Each column of foldid must have the same number of unique folds."
+          )
       } else {
         nfolds <- nfolds.b[1]
       }
     }
   } else {
     foldid <- matrix(
-      sample(1:nfolds, size = nrow(x) * ncv, replace = TRUE),
+      sample(seq_len(nfolds),
+             size = nrow(x) * ncv,
+             replace = TRUE),
       ncol = ncv,
       nrow = nrow(x)
     )
   }
   # begin cv procedure
-  for (i in 1:ncv) {
-    for (j in 1:nfolds) {
+  for (i in seq_len(ncv)) {
+    for (j in seq_len(nfolds)) {
       # divide data into:
       # training set (all but fold j)
       xtr.ij <- x[foldid[ , i] != j, ]
@@ -135,8 +158,8 @@ cv_ssnet <- function(
       xte.ij <- x[foldid[ , i] == j, ]
       yte.ij <- y[foldid[ , i] == j]
 
-      for (a in 1:length(alpha)) {
-        for (s0b in 1:length(s0)) {
+      for (a in seq_len(length(alpha))) {
+        for (s0b in seq_len(length(s0))) {
           if (model == "glmnet") {
             mod.ijas <- validate_ssnet(
               model = model, family = family,
@@ -194,7 +217,7 @@ cv_ssnet <- function(
               mod.fit.ijas
             )
           } else {
-            for (s1b in 1:length(s1)) {
+            for (s1b in seq_len(length(s1))) {
               mod.ijas <- validate_ssnet(
                 model = model, family = family,
                 alpha = alpha[a], s0 = s0[s0b], s1 = s1[s1b],
@@ -208,7 +231,8 @@ cv_ssnet <- function(
                 opt.algorithm = opt.algorithm,
                 iar.data = iar.data, iar.prior = iar.prior,
                 p.bound = p.bound, tau.prior = tau.prior,
-                stan_manual = stan_manual, lambda.criteria = lambda.criteria,
+                stan_manual = stan_manual,
+                lambda.criteria = lambda.criteria,
                 output_param_est = output_param_est
               )
               if (output_param_est == FALSE) {

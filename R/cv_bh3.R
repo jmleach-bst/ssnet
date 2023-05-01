@@ -1,28 +1,44 @@
 #' Cross Validation for Bayesian Models or Elastic Net
 #'
-#' Several alterations to \code{cv.bh()} were necessary to ensure that \code{update()} works in
-#' the functions \code{compare_ssnet()}. Many arguments and functionality are the same as \code{cv.bh()}.
-#' See \code{\link[BhGLM]{cv.bh}} for details. An addition in this version is also that for binary
-#' outcomes classification and observed accuracy, sensitivity, specificity, and positive and negative
-#' predictive values can be output as well as the orginally included measures.
+#' Several alterations to \code{cv.bh()} were necessary to ensure that
+#' \code{update()} works in the functions \code{compare_ssnet()}. Many
+#' arguments and functionality are the same as \code{cv.bh()}. See
+#' \code{\link[BhGLM]{cv.bh}} for details. An addition in this version is
+#' also that for binary outcomes classification and observed accuracy,
+#' sensitivity, specificity, and positive and negative predictive values can
+#' be output as well as the orginally included measures.
 #'
 #' @inheritParams BhGLM::cv.bh
 #' @inheritParams measure_glm_raw
 #' @param fold.seed An integer that sets the seed for generating folds.
-#' @note The package \code{pROC} will not calculate the AUC when a fold does does not have
-#' at least one observation of each level. This can largely be avoided by selecting the number
-#' of folds so that such circumstances are rare. When such does occur, the current result is
-#' to assign AUC <- NA. Note that during cross validation, the initialization values for the
-#' algorithm to re-fit the model are the initial estimates for the \code{object}. This follows
-#' \code{\link[BhGLM]{cv.bh}}.
+#' @note The package \code{pROC} will not calculate the AUC when a fold does
+#' does not have at least one observation of each level. This can largely be
+#' avoided by selecting the number of folds so that such circumstances are
+#' rare. When such does occur, the current result is to assign AUC <- NA.
+#' Note that during cross validation, the initialization values for the
+#' algorithm to re-fit the model are the initial estimates for the
+#' \code{object}. This follows \code{\link[BhGLM]{cv.bh}}.
 #' @export
-cv.bh3 <- function (object, nfolds = 10, foldid = NULL, fold.seed = NULL, ncv = 1,
-                    verbose = TRUE, classify = FALSE, classify.rule = 0.5)
-{
+cv.bh3 <- function(
+    object, nfolds = 10,
+    foldid = NULL,
+    fold.seed = NULL,
+    ncv = 1,
+    verbose = TRUE,
+    classify = FALSE,
+    classify.rule = 0.5
+){
   start.time <- Sys.time()
-  out <- cv.bh.lasso2(object = object, nfolds = nfolds, fold.seed = fold.seed,
-                      foldid = foldid, ncv = ncv, verbose = verbose,
-                      classify = classify, classify.rule = classify.rule)
+  out <- cv.bh.lasso2(
+    object = object,
+    nfolds = nfolds,
+    fold.seed = fold.seed,
+    foldid = foldid,
+    ncv = ncv,
+    verbose = verbose,
+    classify = classify,
+    classify.rule = classify.rule
+  )
   stop.time <- Sys.time()
   Time <- round(difftime(stop.time, start.time, units = "min"),
                 3)
@@ -30,9 +46,16 @@ cv.bh3 <- function (object, nfolds = 10, foldid = NULL, fold.seed = NULL, ncv = 
     cat("\n Cross-validation time:", Time, "minutes \n")
   out
 }
-cv.bh.lasso2 <- function (object, nfolds = 10, foldid = NULL, ncv = 1, verbose = TRUE,
-                          classify = FALSE, classify.rule = 0.5, fold.seed = NULL)
-{
+cv.bh.lasso2 <- function(
+    object,
+    nfolds = 10,
+    foldid = NULL,
+    ncv = 1,
+    verbose = TRUE,
+    classify = FALSE,
+    classify.rule = 0.5,
+    fold.seed = NULL
+){
   family <- object$family
   x.obj <- object$x
   y.obj <- object$y
@@ -54,8 +77,13 @@ cv.bh.lasso2 <- function (object, nfolds = 10, foldid = NULL, ncv = 1, verbose =
   stan_manual <- object$stan_manual
   opt.algorithm <- object$opt.algorithm
 
-  fol <- generate.foldid(nobs = n, nfolds = nfolds, foldid = foldid,
-                         ncv = ncv, fold.seed = fold.seed)
+  fol <- generate.foldid(
+    nobs = n,
+    nfolds = nfolds,
+    foldid = foldid,
+    ncv = ncv,
+    fold.seed = fold.seed
+  )
   foldid <- fol$foldid
   nfolds <- fol$nfolds
   ncv <- fol$ncv
@@ -72,27 +100,56 @@ cv.bh.lasso2 <- function (object, nfolds = 10, foldid = NULL, ncv = 1, verbose =
       omit <- which(foldid[, k] == i)
       subset1[omit] <- FALSE
       if (any(class(object) %in% "glmNet"))
-        fit <- stats::update(object, x = x.obj[-omit, ], y = y.obj[-omit],
-                      offset = offset[-omit], lambda = object$lambda,
-                      alpha = object$alpha,
-                      verbose = FALSE)
+        fit <- stats::update(
+          object,
+          x = x.obj[-omit, ],
+          y = y.obj[-omit],
+          offset = offset[-omit],
+          lambda = object$lambda,
+          alpha = object$alpha,
+          verbose = FALSE
+        )
       if (any(class(object) %in% "bmlasso"))
-        fit <- stats::update(object, x = x.obj[-omit, ], y = y.obj[-omit],
-                      alpha = object$alpha,
-                      offset = offset[-omit], init = init, verbose = FALSE)
+        fit <- stats::update(
+          object,
+          x = x.obj[-omit, ],
+          y = y.obj[-omit],
+          alpha = object$alpha,
+          offset = offset[-omit],
+          init = init,
+          verbose = FALSE
+        )
       if (is.null(fit$offset))
         fit$offset <- FALSE
       else fit$offset <- TRUE
       xx <- x.obj[omit, , drop = FALSE]
       off <- offset[omit]
-      lp[omit] <- as.vector(predict(fit, newx = xx, newoffset = off))
+      lp[omit] <- as.vector(
+        predict(
+          fit,
+          newx = xx,
+          newoffset = off
+        )
+      )
       if (any(class(object) %in% "GLM")) {
-        y.fitted[omit] <- as.vector(predict(fit, newx = xx,
-                                            type = "response", newoffset = off))
-        dd <- suppressWarnings(measure_glm_raw(
-                                           y.obj[omit],
-                                           y.fitted[omit], family = family, dispersion = fit$dispersion,
-                                           classify = classify, classify.rule = classify.rule))
+        y.fitted[omit] <- as.vector(
+          predict(
+            fit,
+            newx = xx,
+            type = "response",
+            newoffset = off
+          )
+        )
+        dd <- suppressWarnings(
+          measure_glm_raw(
+            y.obj[omit],
+            y.fitted[omit],
+            family = family,
+            dispersion = fit$dispersion,
+            classify = classify,
+            classify.rule = classify.rule
+          )
+        )
         deviance <- c(deviance, dd["deviance"])
       }
       if (verbose) {
@@ -101,22 +158,38 @@ cv.bh.lasso2 <- function (object, nfolds = 10, foldid = NULL, ncv = 1, verbose =
       }
     }
     if (any(class(object) %in% "GLM")) {
-      measures <- measure_glm_raw(y.obj, y.fitted, family = family,
-                                  classify = classify, classify.rule = classify.rule)
+      measures <- measure_glm_raw(
+        y.obj,
+        y.fitted,
+        family = family,
+        classify = classify,
+        classify.rule = classify.rule
+      )
       measures["deviance"] <- sum(deviance)
-      y.fitted0 <- cbind(y.fitted0, y.fitted)
+      y.fitted0 <- cbind(
+        y.fitted0,
+        y.fitted
+      )
     }
     if (any(class(object) %in% "COXPH"))
       measures <- BhGLM::measure.cox(y.obj, lp)
-    measures0 <- rbind(measures0, measures)
-    lp0 <- cbind(lp0, lp)
+    measures0 <- rbind(
+      measures0,
+      measures
+    )
+    lp0 <- cbind(
+      lp0,
+      lp
+    )
   }
   out <- list()
   if (nrow(measures0) == 1)
     out$measures <- colMeans(measures0, na.rm = TRUE)
   else {
-    out$measures <- rbind(colMeans(measures0, na.rm = TRUE),
-                          apply(measures0, 2, sd, na.rm = TRUE))
+    out$measures <- rbind(
+      colMeans(measures0, na.rm = TRUE),
+      apply(measures0, 2, sd, na.rm = TRUE)
+    )
     rownames(out$measures) <- c("mean", "sd")
   }
   # out$measures <- round(out$measures, digits = 3)

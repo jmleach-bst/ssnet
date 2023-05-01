@@ -1,27 +1,39 @@
 #' Extract True/False Positive/Negative Measures After Classification
 #'
-#' After fitting GLM's with, set a classification  rule, and obtain measures for classification effectiveness.
+#' After fitting GLM's with, set a classification  rule, and obtain measures
+#' for classification effectiveness.
 #'
-#' @param num.class A scalar value defining the number of classes. Default value is two.
+#' @param num.class A scalar value defining the number of classes. Default
+#' value is two.
 #' @param classify.rule A vector of thresholds that determine assigned classes.
 #' @param beta.hat A vector of parameter estimates from some model fit.
-#' @param x A (numeric) design matrix whose number of columns is equal to \code{length(beta.hat) - 1} and whose number
-#' of rows is equal to \code{length(y)}. Strictly speaking, \code{x} may be a data frame, but categorical variables
-#' must have already been transformed into alternative coding schemes; e.g., dummy coding.
-#' @param make.x0 Logical. When \code{TRUE}, creates a column of ones for the intercept. Default is \code{TRUE}.
-#' @param y A numeric vector of outcome measurements. The length of this vector must equal \code{nrow(x)}.
-#' @param family One of \code{"gaussian", "gamma", "poisson", "binomial"}, which determines the distribution
-#' from which \code{y} is assumed to be drawn.
-#' @param gamma.link Defines the link function in gamma GLM's. One of \code{c("inverse", "log", "identity")}.
-#' The default is \code{"log"}.
-#' @param extra.measures Logical. When \code{TRUE}, also returns mean squared error (mse) and mean absolute error (mae),
-#' and when \code{family = "binomial"}, returns AUC and misclassification. Default is \code{FALSE}.
-#' @return A data frame with a single row containing columns for sensitivity, specificity, ppv, npv, and accuracy,
-#' where ppv is positive predictive value and npv is negative predictive value. When there are 3 or more classes,
+#' @param x A (numeric) design matrix whose number of columns is equal to
+#' \code{length(beta.hat) - 1} and whose number of rows is equal to
+#' \code{length(y)}. Strictly speaking, \code{x} may be a data frame, but
+#' categorical variables must have already been transformed into alternative
+#' coding schemes; e.g., dummy coding.
+#' @param make.x0 Logical. When \code{TRUE}, creates a column of ones for the
+#' intercept. Default is \code{TRUE}.
+#' @param y A numeric vector of outcome measurements. The length of this
+#' vector must equal \code{nrow(x)}.
+#' @param family One of \code{"gaussian", "gamma", "poisson", "binomial"},
+#' which determines the distribution from which \code{y} is assumed to be
+#' drawn.
+#' @param gamma.link Defines the link function in gamma GLM's. One of
+#' \code{c("inverse", "log", "identity")}. The default is \code{"log"}.
+#' @param extra.measures Logical. When \code{TRUE}, also returns mean squared
+#' error (mse) and mean absolute error (mae), and when
+#' \code{family = "binomial"}, returns AUC and misclassification. Default is
+#' \code{FALSE}.
+#' @return A data frame with a single row containing columns for sensitivity,
+#' specificity, ppv, npv, and accuracy, where ppv is positive predictive value
+#' and npv is negative predictive value. When there are 3 or more classes,
 #' only accuracy, and possibly mse and mae, are returned.
-#' @details Note that \code{y} and \code{x} may be the same outcomes/design matrix used to generate \code{beta.hat},
-#' but they may also, and perhaps more appropriately, be a held-out/independent data set on which to test the
-#' classification performance of whatever model was used to obtain \code{beta.hat}.
+#' @details Note that \code{y} and \code{x} may be the same outcomes/design
+#' matrix used to generate \code{beta.hat}, but they may also, and perhaps
+#' more appropriately, be a held-out/independent data set on which to test the
+#' classification performance of whatever model was used to obtain
+#' \code{beta.hat}.
 #' @examples
 #' set.seed(72874)
 #'
@@ -48,8 +60,17 @@
 #'               x = x, y = y, family = "binomial",
 #'               extra.measures = TRUE)
 #' @export
-eval_classify <- function(num.class = 2, classify.rule, beta.hat, x, y, family,
-                          make.x0 = TRUE, gamma.link = "log", extra.measures = FALSE) {
+eval_classify <- function(
+    num.class = 2,
+    classify.rule,
+    beta.hat,
+    x,
+    y,
+    family,
+    make.x0 = TRUE,
+    gamma.link = "log",
+    extra.measures = FALSE
+){
   # checks
   if (num.class < 2) {
     stop("Require at least 2 classes.")
@@ -57,7 +78,7 @@ eval_classify <- function(num.class = 2, classify.rule, beta.hat, x, y, family,
 
   if (is.numeric(beta.hat) == FALSE) {
     if (is.numeric(t(beta.hat)) == TRUE) {
-      beta.hat = t(beta.hat)
+      beta.hat <- t(beta.hat)
     } else {
       stop("Parameter vector beta.hat must contain only numeric values.")
     }
@@ -65,7 +86,7 @@ eval_classify <- function(num.class = 2, classify.rule, beta.hat, x, y, family,
 
   if (is.numeric(y) == FALSE) {
     if (is.numeric(t(y)) == TRUE) {
-      y = t(y)
+      y <- t(y)
     } else {
       stop("y must contain only numeric values.")
     }
@@ -111,7 +132,8 @@ eval_classify <- function(num.class = 2, classify.rule, beta.hat, x, y, family,
         classify[outcome > classify.rule[1]] <- 1
       }
       if (i > 1 & i < n.cat) {
-        classify[(classify.rule[i] < outcome) & (outcome < classify.rule[i+1])] <- i
+        classify[(classify.rule[i] < outcome) &
+                   (outcome < classify.rule[i+1])] <- i
       }
       if (i == n.cat) {
         classify[outcome > classify.rule[i - 1]] <- n.cat - 1
@@ -120,8 +142,14 @@ eval_classify <- function(num.class = 2, classify.rule, beta.hat, x, y, family,
     return(classify)
   }
 
-  predicted.class <- classy(outcome = y.hat, classify.rule = classify.rule)
-  observed.class <- classy(outcome = y, classify.rule = classify.rule)
+  predicted.class <- classy(
+    outcome = y.hat,
+    classify.rule = classify.rule
+  )
+  observed.class <- classy(
+    outcome = y,
+    classify.rule = classify.rule
+  )
 
   # obtain classification performance measures
   accuracy <- length(which(predicted.class == observed.class)) / length(y)
@@ -152,11 +180,17 @@ eval_classify <- function(num.class = 2, classify.rule, beta.hat, x, y, family,
     ppv <- sum(tp) / pp
     npv <- sum(tn) / pn
 
-    predm <- data.frame(accuracy = accuracy,
-                        sensitivity = sensitivity, specificity = specificity,
-                        ppv = ppv, npv = npv)
+    predm <- data.frame(
+      accuracy = accuracy,
+      sensitivity = sensitivity,
+      specificity = specificity,
+      ppv = ppv,
+      npv = npv
+    )
   } else {
-    predm <- data.frame(accuracy == accuracy)
+    predm <- data.frame(
+      accuracy == accuracy
+    )
   }
 
   if (extra.measures == TRUE) {
@@ -166,7 +200,10 @@ eval_classify <- function(num.class = 2, classify.rule, beta.hat, x, y, family,
     # mean absolute error
     mae <- mean(abs(y - y.hat))
 
-    m.df <- data.frame(mse = mse, mae = mae)
+    m.df <- data.frame(
+      mse = mse,
+      mae = mae
+    )
 
     if (family == "binomial") {
       # auc
@@ -182,7 +219,12 @@ eval_classify <- function(num.class = 2, classify.rule, beta.hat, x, y, family,
       misclassification <- mean(aei)
     }
 
-    predm <- cbind(auc, m.df, misclassification, predm)
+    predm <- cbind(
+      auc,
+      m.df,
+      misclassification,
+      predm
+    )
   }
 
   return(predm)

@@ -16,7 +16,7 @@ autoscale <- function (x, min.x.sd = 1e-04)
   two <- which(apply(x, 2, function(u) {
     length(unique(u)) == 2
   }))
-  scale[two] <- apply(x[, two, drop = F], 2, function(u) {
+  scale[two] <- apply(x[, two, drop = FALSE], 2, function(u) {
     max(u) - min(u)
   })
   scale

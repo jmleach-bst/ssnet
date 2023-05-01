@@ -1,23 +1,29 @@
 #' Bayesian Spike-and-Slab Elastic Net with Spatial Structure
 #'
-#' Fits generalized linear models with spike-and-slab priors whose (logit of) probability of inclusion in the model
-#' is either assigned an intrinsic autoregression as a prior to incorporate spatial information or is unstructured.
-#' The model is fit using an EM algorithm where the E-step is fit by \code{glmnet()} and the M-step is fit using the
+#' Fits generalized linear models with spike-and-slab priors whose (logit of)
+#' probability of inclusion in the model is either assigned an intrinsic
+#' autoregression as a prior to incorporate spatial information or is
+#' unstructured. The model is fit using an EM algorithm where the E-step is
+#' fit by \code{glmnet()} and the M-step is fit using the
 #' \code{stan} function \code{optimizing} (when IAR prior is employed).
 #'
 #' @inheritParams ssnet_fit
-#' @param verbose Logical. If \code{TRUE}, prints out the number of iterations and computational time.
+#' @param verbose Logical. If \code{TRUE}, prints out the number of iterations
+#' and computational time.
 #' @importFrom Rdpack reprompt
 #' @importFrom stats sd
 #' @importFrom utils install.packages
 #' @return An object of class \code{c("elnet"   "glmnet"  "bmlasso" "GLM")}.
-#' @note If \code{iar.data = NULL}, i.e. is left unspecified, then provided that \code{im.res} is specified, the function
-#' \code{proximity_builder()} from the package \code{sim2Dpredictr} builds the appropriate list of data for
-#' optimization with \code{stan}. Currently, \code{im.res} can only handle 2D data. Future versions may allow
-#' images to be 3D. However, the function will work given any appropriately specified neighborhood matrix,
-#' whatever the original dimension.
-#' @note While the type.multinomial option is included, it is only valid for traditional elastic net models.
-#' Thus far we have only extended the spike-and-slab models for grouped selection.
+#' @note If \code{iar.data = NULL}, i.e. is left unspecified, then provided
+#' that \code{im.res} is specified, the function \code{proximity_builder()}
+#' from the package \code{sim2Dpredictr} builds the appropriate list of data
+#' for optimization with \code{stan}. Currently, \code{im.res} can only handle
+#' 2D data. Future versions may allow images to be 3D. However, the function
+#' will work given any appropriately specified neighborhood matrix, whatever
+#' the original dimension.
+#' @note While the type.multinomial option is included, it is only valid for
+#' traditional elastic net models. Thus far we have only extended the
+#' spike-and-slab models for grouped selection.
 #' @examples
 #' library(sim2Dpredictr)
 #' set.seed(223)
@@ -29,10 +35,10 @@
 #' nc <- 4
 #'
 #' ## generate data
-#' cn <- paste0("x", 1:(nr * nc))
+#' cn <- paste0("x", seq_len(nr * nc))
 #' tb <- rbinom(nr * nc, 1, 0.2)
 #' tx <- matrix(rnorm(n * nr * nc), nrow = n, ncol = nr * nc,
-#'              dimnames = list(1:n, cn))
+#'              dimnames = list(seq_len(n), cn))
 #' ty <- tx %*% tb + rnorm(n)
 #'
 #' ## build adjacency matrix
@@ -63,15 +69,33 @@
 #' \insertRef{Tang:2018}{ssnet}
 #'
 #' @export
-ssnet <- function (x, y, family = c("gaussian", "binomial", "multinomial", "poisson", "cox"),
-                   offset = NULL, epsilon = 1e-04, alpha = 0.95, type.multinomial = "grouped",
-                   maxit = 50, init = rep(0, ncol(x)), init.theta = 0.5,
-                   ss = c(0.04,0.5), Warning = FALSE, group = NULL,
-                   iar.prior = FALSE, adjmat = NULL,  iar.data = NULL,
-                   tau.prior = "none", tau.manual = NULL, stan_manual = NULL,
-                   opt.algorithm = "LBFGS", p.bound = c(0.01, 0.99),
-                   plot.pj = FALSE, im.res = NULL, verbose = FALSE, print.iter = FALSE)
-{
+ssnet <- function(
+    x,
+    y,
+    family = c("gaussian", "binomial", "multinomial", "poisson", "cox"),
+    offset = NULL,
+    epsilon = 1e-04,
+    alpha = 0.95,
+    type.multinomial = "grouped",
+    maxit = 50,
+    init = rep(0, ncol(x)),
+    init.theta = 0.5,
+    ss = c(0.04,0.5),
+    Warning = FALSE,
+    group = NULL,
+    iar.prior = FALSE,
+    adjmat = NULL,
+    iar.data = NULL,
+    tau.prior = "none",
+    tau.manual = NULL,
+    stan_manual = NULL,
+    opt.algorithm = "LBFGS",
+    p.bound = c(0.01, 0.99),
+    plot.pj = FALSE,
+    im.res = NULL,
+    verbose = FALSE,
+    print.iter = FALSE
+){
   start.time <- Sys.time()
   call <- match.call()
 
@@ -81,7 +105,10 @@ ssnet <- function (x, y, family = c("gaussian", "binomial", "multinomial", "pois
 
   # picked a family?
   if (length(family) != 1){
-    stop("user must select a family: gaussian, binomial, multinomial, poisson, or cox")
+    stop(
+      "user must select a family: \n
+      gaussian, binomial, multinomial, poisson, or cox"
+      )
   }
 
   # check matrix
@@ -91,7 +118,7 @@ ssnet <- function (x, y, family = c("gaussian", "binomial", "multinomial", "pois
 
   # assign variable names if necessary
   if (is.null(colnames(x)) == TRUE) {
-    colnames(x) <- paste0("x", 1:ncol(x))
+    colnames(x) <- paste0("x", seq_len(ncol(x)))
   }
 
   # ensure number obs in x and y are the same
@@ -106,8 +133,9 @@ ssnet <- function (x, y, family = c("gaussian", "binomial", "multinomial", "pois
   }
 
   # check that y & family makes sense
-  if (is.numeric(y) == FALSE & (family == "gaussian") | (family == "poisson")) {
-    stop("gaussian family requires numeric y")
+  if (is.numeric(y) == FALSE & (family == "gaussian") |
+      (family == "poisson")) {
+    stop("gaussian family requires numeric y.")
   }
 
   # check EN parameter
@@ -159,17 +187,36 @@ ssnet <- function (x, y, family = c("gaussian", "binomial", "multinomial", "pois
 
   # format IAR data
   if (iar.prior == TRUE & is.null(iar.data) == TRUE) {
-    iar.data <- format_iar(adjmat = adjmat, im.res = im.res, x = x)
+    iar.data <- format_iar(
+      adjmat = adjmat,
+      im.res = im.res,
+      x = x
+    )
   }
 
-  f <- ssnet_fit(x = x, y = y, family = family, offset = offset, alpha = alpha,
-                 epsilon = epsilon, maxit = maxit, init = init, init.theta = init.theta,
-                 group = group, ss = ss, Warning = Warning, iar.data = iar.data,
-                 opt.algorithm = opt.algorithm, p.bound = p.bound,
-                 iar.prior = iar.prior, tau.prior = tau.prior,
-                 stan_manual = stan_manual,
-                 plot.pj = plot.pj, im.res = im.res,
-                 print.iter = print.iter)
+  f <- ssnet_fit(
+    x = x,
+    y = y,
+    family = family,
+    offset = offset,
+    alpha = alpha,
+    epsilon = epsilon,
+    maxit = maxit,
+    init = init,
+    init.theta = init.theta,
+    group = group,
+    ss = ss,
+    Warning = Warning,
+    iar.data = iar.data,
+    opt.algorithm = opt.algorithm,
+    p.bound = p.bound,
+    iar.prior = iar.prior,
+    tau.prior = tau.prior,
+    stan_manual = stan_manual,
+    plot.pj = plot.pj,
+    im.res = im.res,
+    print.iter = print.iter
+  )
   f$call <- call
   if (family == "cox") {
     class(f) <- c(class(f), "bmlasso", "COXPH")

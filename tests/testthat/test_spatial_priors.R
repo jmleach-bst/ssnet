@@ -22,13 +22,21 @@ test_that("Check formating for IAR priors", {
 })
 
 test_that("Check Q2 maximization output", {
-  expect_type(max_q2_iar(iar.data = format_iar(x = matrix(rnorm(10 * 16),
-                                                          nrow = 10, ncol = 16),
-                                               im.res = c(4, 4)),
-                         p = rnorm(16)), "double")
-  expect_equal(length(max_q2_iar(iar.data = format_iar(x = matrix(rnorm(10 * 16),
-                                                                  nrow = 10, ncol = 16),
-                                                       im.res = c(4, 4)),
-                                 p = rnorm(16))),
-               length(rnorm(16)))
+  expect_type(
+    max_q2_iar(
+      iar.data = format_iar(
+        x = matrix(rnorm(10 * 16),
+                   nrow = 10, ncol = 16),
+        im.res = c(4, 4)),
+      p = rnorm(16)),
+    "double")
+  expect_equal(
+    length(
+      max_q2_iar(
+        iar.data = format_iar(
+          x = matrix(rnorm(10 * 16),
+                     nrow = 10, ncol = 16),
+          im.res = c(4, 4)),
+        p = rnorm(16))),
+    length(rnorm(16)))
 })

@@ -1,20 +1,27 @@
 #' Prepare variables for group-based inference.
 #'
-#' This function uses the user-defined groups to properly prepare the variables for
-#' group-specific estimation/inference.
+#' This function uses the user-defined groups to properly prepare the variables
+#' or group-specific estimation/inference.
 #'
-#' @param all.var A vector containing the names of the variables in the design matrix.
-#' @param group A numeric vector, or an integer, or a list indicating the groups of predictors.
-#' If \code{group = NULL}, all the predictors form a single group. If \code{group = K}, the
-#' predictors are evenly divided into groups each with K predictors. If group is a numeric vector,
-#' it defines groups as follows: Group 1: \code{(group[1]+1):group[2]}, Group 2: \code{(group[2]+1):group[3]},
-#' Group 3: \code{(group[3]+1):group[4]}, ... If group is a list of variable names, \code{group[[k]]}
-#' includes variables in the k-th group. The mixture double-exponential prior is only used for grouped
-#' predictors. For ungrouped predictors, the prior is double-exponential with scale \code{ss[2]} and mean 0.
+#' @param all.var A vector containing the names of the variables in the design
+#' matrix.
+#' @param group A numeric vector, or an integer, or a list indicating the
+#' groups of predictors. If \code{group = NULL}, all the predictors form a
+#' single group. If \code{group = K}, the predictors are evenly divided into
+#' groups each with K predictors. If group is a numeric vector, it defines
+#' groups as follows: Group 1: \code{(group[1]+1):group[2]}, Group 2:
+#' \code{(group[2]+1):group[3]}, Group 3: \code{(group[3]+1):group[4]}, ...
+#' If group is a list of variable names, \code{group[[k]]} includes variables
+#' in the k-th group. The mixture double-exponential prior is only used for
+#' grouped predictors. For ungrouped predictors, the prior is
+#' double-exponential with scale \code{ss[2]} and mean 0.
 #' @return A list.
-#' @note This function is a modified version of the function \code{Grouping} from the R package \code{BhGLM}.
-Grouping <- function (all.var, group)
-{
+#' @note This function is a modified version of the function \code{Grouping}
+#' from the R package \code{BhGLM}.
+Grouping <- function(
+    all.var,
+    group
+){
   n.vars <- length(all.var)
   group.vars <- list()
   if (is.list(group)) {
@@ -51,11 +58,20 @@ Grouping <- function (all.var, group)
     ungroup.vars <- all.var[which(!all.var %in% all.group.vars)]
   }
 
-  group.new <- c(length(ungroup.vars), length(ungroup.vars) +
-                   cumsum(lapply(group.vars, length)))
+  group.new <- c(
+    length(ungroup.vars),
+    length(ungroup.vars) + cumsum(lapply(group.vars, length))
+  )
 
   var.new <- c(ungroup.vars, unlist(group.vars))
 
-  return(list(group = group, group.vars = group.vars, ungroup.vars = ungroup.vars,
-              group.new = group.new, var.new = var.new))
+  return(
+    list(
+      group = group,
+      group.vars = group.vars,
+      ungroup.vars = ungroup.vars,
+      group.new = group.new,
+      var.new = var.new
+    )
+  )
 }

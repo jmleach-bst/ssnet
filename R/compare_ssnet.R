@@ -1,55 +1,73 @@
 #' Fit Several Models and Compare
 #'
-#' Fit \code{\link[glmnet]{glmnet}} and/or \code{\link[ssnet]{ssnet}} models and output measures of model fit for each.
-#' Allows multiple scale values for spike-and-slab models.
+#' Fit \code{\link[glmnet]{glmnet}} and/or \code{\link[ssnet]{ssnet}} models
+#' and output measures of model fit for each. Allows multiple scale values for
+#' spike-and-slab models.
 #'
 #' @importFrom glmnet glmnet
-#' @param models A vector that determines which models to fit. Options include \code{c("glmnet", "ss", "ss_iar")}.
-#' The default is to fit all three models.
-#' @param s0,s1 A vector of user-selected possible values for the spike scale and slab scale parameter, respectively.
-#' The default is \code{s0 = seq(0.01, 0.1, 0.01)} and \code{s1 = 1}. However, the user should select values informed
-#' by the practical context of the analysis.
-#' @param output_param_est Logical. When \code{TRUE} adds an element to the output list that includes parameter estimates
-#' for each model fit. Defaults to \code{FALSE}.
-#' @param model_fit A vector containing measures of model fit to output. Options include  \code{c("deviance", "mse", "mae")}
-#' for all models, and when \code{family = "binomial"}, also \code{c("auc", "misclassification")}. When \code{model_fit = "all"},
-#' then all appropriate measures of model fit are output.
-#' @param variable_selection Logical. When \code{TRUE}, outputs the false discovery proportion (FDP), family-wise error (FWE),
-#' and power for the model. Requires that parameter vector \code{B} be specified. Default is \code{FALSE}, and is only
-#' appropriate for simulated data, when the true and false positives can be known.
-#' @param type_error Determines whether models are selected based on training error (\code{"training"})
-#' or k-fold cross validated estimates of prediction error (\code{"kcv"}). Defaults to \code{"kcv"}, which
-#' is recommended because training error tends to underestimate the generalization error. See, e.g., Ch. 7 in
-#' \insertCite{Hastie:2009}{ssnet}.
-#' @param B When \code{variable_selection} is \code{TRUE}, a vector of "true" parameter values must be input in order
-#' to calculate the false discovery proportion (FDR), family-wise error (FWER), and power for the data. This vector should
-#' NOT contain a value for the intercept.
+#' @param models A vector that determines which models to fit. Options include
+#' \code{c("glmnet", "ss", "ss_iar")}. The default is to fit all three models.
+#' @param s0,s1 A vector of user-selected possible values for the spike scale
+#' and  slab scale parameter, respectively. The default is
+#' \code{s0 = seq(0.01, 0.1, 0.01)} and \code{s1 = 1}. However, the user
+#' should select values informed by the practical context of the analysis.
+#' @param output_param_est Logical. When \code{TRUE} adds an element to the
+#' output list that includes parameter estimates for each model fit. Defaults
+#' to \code{FALSE}.
+#' @param model_fit A vector containing measures of model fit to output.
+#' Options include  \code{c("deviance", "mse", "mae")} for all models, and
+#' when \code{family = "binomial"}, also \code{c("auc", "misclassification")}.
+#' When \code{model_fit = "all"}, then all appropriate measures of model fit
+#' are output.
+#' @param variable_selection Logical. When \code{TRUE}, outputs the false
+#' discovery proportion (FDP), family-wise error (FWE), and power for the
+#' model. Requires that parameter vector \code{B} be specified. Default is
+#' \code{FALSE}, and is only appropriate for simulated data, when the true and
+#' false positives can be known.
+#' @param type_error Determines whether models are selected based on training
+#' error (\code{"training"}) or k-fold cross validated estimates of prediction
+#' error (\code{"kcv"}). Defaults to \code{"kcv"}, which is recommended because
+#' training error tends to underestimate the generalization error. See, e.g.,
+#' Ch. 7 in \insertCite{Hastie:2009}{ssnet}.
+#' @param B When \code{variable_selection} is \code{TRUE}, a vector of "true"
+#' parameter values must be input in order to calculate the false discovery
+#' proportion (FDR), family-wise error (FWER), and power for the data. This
+#' vector should NOT contain a value for the intercept.
 #' @inheritParams ssnet
 #' @inheritParams glmnet::glmnet
 #' @inheritParams glmnet::cv.glmnet
 #' @inheritParams BhGLM::glmNet
 #' @inheritParams glmnet_measure
 #' @inheritParams measure_glm_raw
-#' @param criteria Specifies the criteria for model selection. Options are \code{"deviance"}, \code{"mse"},
-#' \code{"mae"} for deviance, mean-square error, and mean absolute error, respectively. When
-#' \code{family = "binomial"}, additional options are \code{"auc"} and \code{"misclassification"}, for
-#' Area under the ROC curve and the percentage of cases where the difference between the observed and
-#' predicted values is greater than 1/2.
-#' @param fold.seed A scalar seed value for cross validation; ensures the folds are the same upon re-running
-#' the function. Alternatively, use \code{foldid} to manually specify folds.
-#' @param output_cv Logical. When \code{TRUE}, generates a list with an element for all output generated by
-#' \code{cv.bh3}. Default is \code{FALSE}. The master list has an element for every combination of model,
-#' alpha, and s0. Each element is itself a list, the first element being the model fitness measures, and the
-#' second element the observed outcomes, fitted outcomes, linear predictor, and fold identifier. When
-#' \code{ncv > 1}, the latter three will consist of multiple columns, one for each run of k-fold CV; e.g.,
-#' the column containing the fitted outcomes for the second CV run is \code{y.fitted_2}.
-#' @return When \code{output_param_est = FALSE} returns a data frame of model fitness summaries. Otherwise, returns
-#' a list whose first element is a dataframe whose rows contain parameter estimates for each model fit, and whose
-#' second element is a dataframe of model fitness summaries.
-#' @note Models fit with `glmnet` never select the penalty/tuning parameter using the training error; however, when
-#' \code{type_error = "training"}, the measure used to compare `glmnet` with the other models is based on prediction
-#' error estimates from training error. That is, model selection within `glmnet` is still based on k-fold cross validation,
-#' even if comparisons with other models is not.
+#' @param criteria Specifies the criteria for model selection. Options are
+#' \code{"deviance"}, \code{"mse"}, \code{"mae"} for deviance, mean-square
+#' error, and mean absolute error, respectively. When
+#' \code{family = "binomial"}, additional options are \code{"auc"} and
+#' \code{"misclassification"}, for area under the ROC curve and the percentage
+#' of cases where the difference between the observed and predicted values is
+#' greater than 1/2.
+#' @param fold.seed A scalar seed value for cross validation; ensures the
+#' folds are the same upon re-running the function. Alternatively, use
+#' \code{foldid} to manually specify folds.
+#' @param output_cv Logical. When \code{TRUE}, generates a list with an
+#' element for all output generated by \code{cv.bh3}. Default is \code{FALSE}.
+#' The master list has an element for every combination of model, alpha, and
+#' s0. Each element is itself a list, the first element being the model
+#' fitness measures, and the second element the observed outcomes, fitted
+#' outcomes, linear predictor, and fold identifier. When \code{ncv > 1}, the
+#' latter three will consist of multiple columns, one for each run of k-fold
+#' CV; e.g., the column containing the fitted outcomes for the second CV run
+#' is \code{y.fitted_2}.
+#' @return When \code{output_param_est = FALSE} returns a data frame of model
+#' fitness summaries. Otherwise, returns a list whose first element is a
+#' dataframe whose rows contain parameter estimates for each model fit, and
+#' whose second element is a dataframe of model fitness summaries.
+#' @note Models fit with `glmnet` never select the penalty/tuning parameter
+#' using the training error; however, when \code{type_error = "training"},
+#' the measure used to compare `glmnet` with the other models is based on
+#' prediction error estimates from training error. That is, model selection
+#' within `glmnet` is still based on k-fold cross validation, even if
+#' comparisons with other models is not.
 #' @examples
 #' library(sim2Dpredictr)
 #' ## generate data (no intercept)
@@ -62,10 +80,10 @@
 #' nc <- 4
 #'
 #' ## generate data
-#' cn <- paste0("x", 1:(nr * nc))
+#' cn <- paste0("x", seq_len(nr * nc))
 #' tb <- rbinom(nr * nc, 1, 0.05)
 #' tx <- matrix(rnorm(n * nr * nc), nrow = n, ncol = nr * nc,
-#'              dimnames = list(1:n, cn))
+#'              dimnames = list(seq_len(n), cn))
 #' ty <- tx %*% tb + rnorm(n)
 #'
 #' ## build adjacency matrix
@@ -87,8 +105,10 @@ compare_ssnet <- function(models = c("glmnet", "ss", "ss_iar"),
                           foldid = NULL, fold.seed = NULL,
                           s0 = seq(0.01, 0.1, 0.01), s1 = 1, B = NULL,
                           x, y, family = "gaussian",
-                          offset = NULL, epsilon = 1e-04, maxit = 50, init = NULL, group = NULL,
-                          Warning = FALSE, verbose = FALSE, opt.algorithm = "LBFGS",
+                          offset = NULL, epsilon = 1e-04,
+                          maxit = 50, init = NULL, group = NULL,
+                          Warning = FALSE, verbose = FALSE,
+                          opt.algorithm = "LBFGS",
                           iar.data = NULL, iar.prior = FALSE,
                           p.bound = c(0.01, 0.99), tau.prior = "none",
                           stan_manual = NULL,
@@ -103,8 +123,9 @@ compare_ssnet <- function(models = c("glmnet", "ss", "ss_iar"),
   options(stringsAsFactors = FALSE)
   if (variable_selection == TRUE) {
     if (is.null(B) == TRUE | length(B) != ncol(x)) {
-      stop("Variable selection measures requires a true parameter vector of appropriate length. \n
-            Did you forget to remove the intercept or specify B?")
+      stop(
+      "Variable selection measures requires a true parameter vector of appropriate length. \n
+       Did you forget to remove the intercept or specify B?")
     }
   }
   if (!all(models %in% c("glmnet", "ss", "ss_iar"))) {
@@ -115,9 +136,9 @@ compare_ssnet <- function(models = c("glmnet", "ss", "ss_iar"),
   }
   if (model_fit == "all") {
     if (family == "binomial") {
-      model_fit = c("deviance", "mse", "mae", "auc", "misclassification")
+      model_fit <- c("deviance", "mse", "mae", "auc", "misclassification")
     } else {
-      model_fit = c("deviance", "mse", "mae")
+      model_fit <- c("deviance", "mse", "mae")
     }
   }
 
@@ -130,7 +151,7 @@ compare_ssnet <- function(models = c("glmnet", "ss", "ss_iar"),
 
   # variable names
   xi <- c("x0")
-  for (i in 1:ncol(x)) {
+  for (i in seq_len(ncol(x))) {
     xi <- c(xi, paste0("x", i))
   }
 
@@ -140,7 +161,7 @@ compare_ssnet <- function(models = c("glmnet", "ss", "ss_iar"),
     y.fitted.lab <- c()
     lp.lab <- c()
     foldid.lab <- c()
-    for (u in 1:ncv){
+    for (u in seq_len(ncv)){
       y.fitted.lab[u] <- paste0("y.fitted_", u)
       lp.lab[u] <- paste0("lp_", u)
       foldid.lab[u] <- paste0("foldid_", u)
@@ -152,23 +173,47 @@ compare_ssnet <- function(models = c("glmnet", "ss", "ss_iar"),
 
         glmnet.params <- NULL
 
-    for (a in 1:length(alpha)) {
+    for (a in seq_len(length(alpha))) {
       if (type_error == "training") {
-        glmnet.fit.a <- glmnet::cv.glmnet(x = x, y = y, family = family, alpha = alpha[a],
-                                          type.measure = type.measure, nlambda = nlambda,
-                                          nfolds = nfolds)
-        glmnet.mp.a <- glmnet_measure(glmnet.fit.a, x = x, y = y, family = family,
-                                      type.measure = type.measure,
-                                      lambda.criteria = lambda.criteria, alpha = alpha[a])
-        glmnet.mp.a <- data.frame(model = "glmnet", alpha = alpha[a], glmnet.mp.a[-1])
+        glmnet.fit.a <- glmnet::cv.glmnet(
+          x = x, y = y,
+          family = family,
+          alpha = alpha[a],
+          type.measure = type.measure,
+          nlambda = nlambda,
+          nfolds = nfolds
+          )
+        glmnet.mp.a <- glmnet_measure(
+          glmnet.fit.a,
+          x = x, y = y,
+          family = family,
+          type.measure = type.measure,
+          lambda.criteria = lambda.criteria,
+          alpha = alpha[a]
+          )
+        glmnet.mp.a <- data.frame(
+          model = "glmnet",
+          alpha = alpha[a],
+          glmnet.mp.a[-1]
+          )
         if (output_param_est == TRUE) {
-          glmnet.params.a <- as.vector(glmnet::coef.glmnet(glmnet.fit.a, s = lambda.criteria))
-          glmnet.params.a <- data.frame(model = "glmnet",
-                                      alpha = alpha[a],
-                                      s0 = glmnet.fit.a[[lambda.criteria]],
-                                      s1 = glmnet.fit.a[[lambda.criteria]],
-                                      t(glmnet.params.a))
-          names(glmnet.params.a) <- c("model", "alpha", "s0", "s1", xi)
+          glmnet.params.a <- as.vector(
+            glmnet::coef.glmnet(glmnet.fit.a,
+                                s = lambda.criteria)
+            )
+          glmnet.params.a <- data.frame(
+            model = "glmnet",
+            alpha = alpha[a],
+            s0 = glmnet.fit.a[[lambda.criteria]],
+            s1 = glmnet.fit.a[[lambda.criteria]],
+            t(glmnet.params.a)
+            )
+          names(glmnet.params.a) <- c(
+            "model",
+            "alpha",
+            "s0",
+            "s1",
+            xi)
           if (a == 1) {
             glmnet.params <- glmnet.params.a
           } else {
@@ -178,14 +223,19 @@ compare_ssnet <- function(models = c("glmnet", "ss", "ss_iar"),
           # print(glmnet.params)
         }
       } else {
-        glmnet.fit.a <- BhGLM::glmNet(x = x, y = y, family = family,
-                                    alpha = alpha[a],
-                                    nfolds = nfolds, ncv = ncv,
-                                    verbose = verbose)
+        glmnet.fit.a <- BhGLM::glmNet(
+          x = x, y = y, family = family,
+          alpha = alpha[a],
+          nfolds = nfolds, ncv = ncv,
+          verbose = verbose
+          )
 
-        glmnet.cv.a <- cv.bh3(glmnet.fit.a, nfolds = nfolds, ncv = ncv, foldid = foldid,
-                              classify = classify, classify.rule = classify.rule,
-                              verbose = verbose, fold.seed = fold.seed)
+        glmnet.cv.a <- cv.bh3(
+          glmnet.fit.a,
+          nfolds = nfolds, ncv = ncv, foldid = foldid,
+          classify = classify, classify.rule = classify.rule,
+          verbose = verbose, fold.seed = fold.seed
+          )
         if(output_cv == TRUE) {
           # label location in list
           gfa <- paste0("glmnet_", alpha[a])
@@ -200,9 +250,15 @@ compare_ssnet <- function(models = c("glmnet", "ss", "ss_iar"),
             names(foldid.a) <- foldid.lab
 
           # merge output into data frame
-          glmnet.cv.a.red <- list(measures = glmnet.cv.a[[1]],
-                                  cv.estimates = cbind(y.obs.a, y.fitted.a, lp.a, foldid.a)
-                                  )
+          glmnet.cv.a.red <- list(
+            measures = glmnet.cv.a[[1]],
+            cv.estimates = cbind(
+              y.obs.a,
+              y.fitted.a,
+              lp.a,
+              foldid.a
+            )
+          )
           cv_bh3_out[[gfa]] <- glmnet.cv.a.red
         }
         if (ncv == 1) {
@@ -210,33 +266,50 @@ compare_ssnet <- function(models = c("glmnet", "ss", "ss_iar"),
         } else {
           glmnet.mp.a <- as.data.frame(t(glmnet.cv.a$measures[1, ]))
         }
-        glmnet.mp.a <- cbind(model = "glmnet", alpha = alpha[a],
-                             s0 = glmnet.fit.a$lambda,
-                             s1 = glmnet.fit.a$lambda,
-                             glmnet.mp.a)
+        glmnet.mp.a <- cbind(
+          model = "glmnet",
+          alpha = alpha[a],
+          s0 = glmnet.fit.a$lambda,
+          s1 = glmnet.fit.a$lambda,
+          glmnet.mp.a
+          )
         if (output_param_est == TRUE) {
-          glmnet.params.a <- data.frame(model = "glmnet",
-                                        alpha = alpha[a],
-                                        s0 = glmnet.fit.a$lambda,
-                                        s1 = glmnet.fit.a$lambda,
-                                        t(glmnet.fit.a$coefficients))
+          glmnet.params.a <- data.frame(
+            model = "glmnet",
+            alpha = alpha[a],
+            s0 = glmnet.fit.a$lambda,
+            s1 = glmnet.fit.a$lambda,
+            t(glmnet.fit.a$coefficients)
+          )
           names(glmnet.params.a) <- c("model", "alpha", "s0", "s1", xi)
-          glmnet.params <- rbind(glmnet.params, glmnet.params.a)
+          glmnet.params <- rbind(
+            glmnet.params,
+            glmnet.params.a
+          )
         }
       }
 
       if (variable_selection == TRUE) {
         glmnet.rej.a <- rep(0, ncol(x))
         glmnet.est.a <- stats::coef(glmnet.fit.a, s = lambda.criteria)[-1]
-        glmnet.rej.a[glmnet.est.a != 0] = 1
-        glmnet.vs.a <- sim2Dpredictr::sample_FP_Power(rejections = glmnet.rej.a, B = B, B.incl.B0 = FALSE)
-        glmnet.mp.a <- cbind(glmnet.mp.a, glmnet.vs.a)
+        glmnet.rej.a[glmnet.est.a != 0] <- 1
+        glmnet.vs.a <- sim2Dpredictr::sample_FP_Power(
+          rejections = glmnet.rej.a,
+          B = B,
+          B.incl.B0 = FALSE
+        )
+        glmnet.mp.a <- cbind(
+          glmnet.mp.a,
+          glmnet.vs.a
+        )
       }
       if (a == 1) {
         glmnet.mp <- glmnet.mp.a
       } else {
-        glmnet.mp <- rbind(glmnet.mp,
-                           glmnet.mp.a)
+        glmnet.mp <- rbind(
+          glmnet.mp,
+          glmnet.mp.a
+        )
       }
       # print(glmnet.mp)
     }
@@ -262,84 +335,130 @@ compare_ssnet <- function(models = c("glmnet", "ss", "ss_iar"),
     ss.fit.ij.a <- NULL
     ssiar.fit.ij.a <- NULL
 
-    for (i in 1:length(s0)) {
-      for (j in 1:length(s1)) {
+    for (i in seq_len(length(s0))) {
+      for (j in seq_len(length(s1))) {
         ss <- c(s0[i], s1[j])
-        for (a in 1:length(alpha)) {
-          ss.fit.ij.a <- ssnet::ssnet(x = x, y = y, family = family, ss = ss,
-                                     offset = offset, init = init,
-                                     group = group, alpha = alpha[a],
-                                     iar.prior = FALSE,
-                                     verbose = verbose)
+        for (a in seq_len(length(alpha))) {
+          ss.fit.ij.a <- ssnet::ssnet(
+            x = x,
+            y = y,
+            family = family,
+            ss = ss,
+            offset = offset, init = init,
+            group = group, alpha = alpha[a],
+            iar.prior = FALSE,
+            verbose = verbose
+          )
           if(output_param_est == TRUE) {
-            ss.params.a <- data.frame(model = "ss",
-                                      alpha = alpha[a],
-                                      s0 = s0[i], s1 = s1[j],
-                                      t(ss.fit.ij.a$coefficients))
-            ss.params <- rbind(ss.params, ss.params.a)
+            ss.params.a <- data.frame(
+              model = "ss",
+              alpha = alpha[a],
+              s0 = s0[i],
+              s1 = s1[j],
+              t(ss.fit.ij.a$coefficients)
+            )
+            ss.params <- rbind(
+              ss.params,
+              ss.params.a
+            )
           }
 
           # model fit measures
           if (type_error == "training") {
-            ss.mp.ij.a <- as.data.frame(t(c(alpha = alpha[a],
-                                            s0 = s0[i], s1 = s1[j],
-                                            measure_bh_raw(ss.fit.ij.a)[model_fit])))
+            ss.mp.ij.a <- as.data.frame(
+              t(c(alpha = alpha[a],
+                  s0 = s0[i], s1 = s1[j],
+                  measure_bh_raw(ss.fit.ij.a)[model_fit]))
+            )
           } else {
-            ss.cv.ij.a <- cv.bh3(ss.fit.ij.a,
-                                nfolds = nfolds,
-                                ncv = ncv,
-                                foldid = foldid,
-                                fold.seed = fold.seed,
-                                classify = classify,
-                                classify.rule = classify.rule,
-                                verbose = verbose)
+            ss.cv.ij.a <- cv.bh3(
+              ss.fit.ij.a,
+              nfolds = nfolds,
+              ncv = ncv,
+              foldid = foldid,
+              fold.seed = fold.seed,
+              classify = classify,
+              classify.rule = classify.rule,
+              verbose = verbose
+            )
             if(output_cv == TRUE) {
-              ss.cv.ij.a.lab <- paste0("ss_s0=", s0[i], "_s1=", s1[j], "_alpha=", alpha[a])
+              ss.cv.ij.a.lab <- paste0(
+                "ss_s0=", s0[i],
+                "_s1=", s1[j],
+                "_alpha=", alpha[a]
+              )
 
               # extract output
-              y.obs.ss.ij.a <- data.frame(y.obs = ss.cv.ij.a$y.obs)
-              y.fitted.ss.ij.a <- data.frame(ss.cv.ij.a$y.fitted)
+              y.obs.ss.ij.a <- data.frame(
+                y.obs = ss.cv.ij.a$y.obs
+              )
+              y.fitted.ss.ij.a <- data.frame(
+                ss.cv.ij.a$y.fitted
+              )
               names(y.fitted.ss.ij.a) <- y.fitted.lab
-              lp.ss.ij.a <- data.frame(ss.cv.ij.a$lp)
+              lp.ss.ij.a <- data.frame(
+                ss.cv.ij.a$lp
+              )
               names(lp.ss.ij.a) <- lp.lab
-              foldid.ss.ij.a <- data.frame(ss.cv.ij.a$foldid)
+              foldid.ss.ij.a <- data.frame(
+                ss.cv.ij.a$foldid
+              )
               names(foldid.ss.ij.a) <- foldid.lab
 
               # merge output into data frame
-              ss.cv.ij.a.red <- list(measures = ss.cv.ij.a[[1]],
-                                    cv.estimates = cbind(
-                                      y.obs.ss.ij.a,
-                                      y.fitted.ss.ij.a,
-                                      lp.ss.ij.a,
-                                      foldid.ss.ij.a
-                                    ))
+              ss.cv.ij.a.red <- list(
+                measures = ss.cv.ij.a[[1]],
+                cv.estimates = cbind(
+                  y.obs.ss.ij.a,
+                  y.fitted.ss.ij.a,
+                  lp.ss.ij.a,
+                  foldid.ss.ij.a
+                  )
+                )
               cv_bh3_out[[ss.cv.ij.a.lab]] <- ss.cv.ij.a.red
             }
 
             if (ncv == 1) {
-              ss.mp.ij.a <- as.data.frame(t(c(alpha = alpha[a],
-                                             s0 = s0[i], s1 = s1[j],
-                                             ss.cv.ij.a$measures)))
+              ss.mp.ij.a <- as.data.frame(
+                t(c(alpha = alpha[a],
+                    s0 = s0[i], s1 = s1[j],
+                    ss.cv.ij.a$measures))
+              )
             } else {
-              ss.mp.ij.a <- as.data.frame(t(c(alpha = alpha[a],
-                                             s0 = s0[i], s1 = s1[j],
-                                             ss.cv.ij.a$measures[1, ])))
+              ss.mp.ij.a <- as.data.frame(
+                t(c(alpha = alpha[a],
+                    s0 = s0[i], s1 = s1[j],
+                    ss.cv.ij.a$measures[1, ]))
+                )
             }
           }
           # varaible selection performance
           if (variable_selection == TRUE) {
             ss.rej.ij.a <- rep(0, ncol(x))
-            ss.est.ij.a = ss.fit.ij.a$coefficients[-1]
-            ss.rej.ij.a[ss.est.ij.a != 0] = 1
-            ss.vs.ij.a <- sim2Dpredictr::sample_FP_Power(rejections = ss.rej.ij.a, B = B, B.incl.B0 = FALSE)
-            ss.mp.ij.a <- cbind(ss.mp.ij.a, ss.vs.ij.a)
+            ss.est.ij.a <- ss.fit.ij.a$coefficients[-1]
+            ss.rej.ij.a[ss.est.ij.a != 0] <- 1
+            ss.vs.ij.a <- sim2Dpredictr::sample_FP_Power(
+              rejections = ss.rej.ij.a,
+              B = B,
+              B.incl.B0 = FALSE
+            )
+            ss.mp.ij.a <- cbind(
+              ss.mp.ij.a,
+              ss.vs.ij.a
+            )
           }
-          ss.mp <- rbind(ss.mp, ss.mp.ij.a)
+          ss.mp <- rbind(
+            ss.mp,
+            ss.mp.ij.a
+          )
         }
       }
     }
 
-    ss.mp <- data.frame(model = rep("ss", nrow(ss.mp)), ss.mp)
+    ss.mp <- data.frame(
+      model = rep("ss", nrow(ss.mp)),
+      ss.mp
+    )
     #ss.mp$model <- "ss"
     row.names(ss.mp) <- NULL
 
@@ -348,10 +467,16 @@ compare_ssnet <- function(models = c("glmnet", "ss", "ss_iar"),
     if (is.null(out) == FALSE) {
       # print(head(out))
       # print(head(ss.mp))
-      out <- rbind(out, ss.mp)
+      out <- rbind(
+        out,
+        ss.mp
+      )
       if (output_param_est == TRUE) {
         names(ss.params) <- c("model", "alpha", "s0", "s1", xi)
-        param.est <- rbind(glmnet.params, ss.params)
+        param.est <- rbind(
+          glmnet.params,
+          ss.params
+        )
       }
     } else {
       out <- ss.mp
@@ -368,87 +493,139 @@ compare_ssnet <- function(models = c("glmnet", "ss", "ss_iar"),
     ssiar.mp <- NULL
     ssiar.params <- NULL
 
-    for (i in 1:length(s0)) {
-      for (j in 1:length(s1)) {
+    for (i in seq_len(length(s0))) {
+      for (j in seq_len(length(s1))) {
         ss <- c(s0[i], s1[j])
-        for (a in 1:length(alpha)) {
-          ssiar.fit.ij.a <- ssnet::ssnet(x = x, y = y, family = family, ss = ss,
-                                         offset = offset, init = init,
-                                         group = group, alpha = alpha[a],
-                                         iar.prior = TRUE,
-                                         verbose = verbose,
-                                         iar.data = iar.data, p.bound = p.bound,
-                                         tau.prior = tau.prior,
-                                         stan_manual = stan_manual,
-                                         im.res = im.res)
+        for (a in seq_len(length(alpha))) {
+          ssiar.fit.ij.a <- ssnet::ssnet(
+            x = x,
+            y = y,
+            family = family,
+            ss = ss,
+            offset = offset,
+            init = init,
+            group = group,
+            alpha = alpha[a],
+            iar.prior = TRUE,
+            verbose = verbose,
+            iar.data = iar.data,
+            p.bound = p.bound,
+            tau.prior = tau.prior,
+            stan_manual = stan_manual,
+            im.res = im.res
+            )
           if(output_param_est == TRUE) {
-            ssiar.params.a <- data.frame(model = "ss_iar",
-                                         alpha = alpha[a],
-                                         s0 = s0[i], s1 = s1[j],
-                                         t(ssiar.fit.ij.a$coefficients))
-            ssiar.params <- rbind(ssiar.params, ssiar.params.a)
+            ssiar.params.a <- data.frame(
+              model = "ss_iar",
+              alpha = alpha[a],
+              s0 = s0[i],
+              s1 = s1[j],
+              t(ssiar.fit.ij.a$coefficients)
+            )
+            ssiar.params <- rbind(
+              ssiar.params,
+              ssiar.params.a
+            )
           }
 
           # model fit measures
           if (type_error == "training") {
-            ssiar.mp.ij.a <- as.data.frame(t(c(alpha = alpha[a],
-                                               s0 = s0[i], s1 = s1[j],
-                                               measure_bh_raw(ssiar.fit.ij.a)[model_fit])))
+            ssiar.mp.ij.a <- as.data.frame(
+              t(c(alpha = alpha[a],
+                  s0 = s0[i],
+                  s1 = s1[j],
+                  measure_bh_raw(ssiar.fit.ij.a)[model_fit]))
+            )
           } else {
-            ssiar.cv.ij.a <- cv.bh3(ssiar.fit.ij.a,
-                                    nfolds = nfolds,
-                                    ncv = ncv,
-                                    foldid = foldid,
-                                    fold.seed = fold.seed,
-                                    classify = classify,
-                                    classify.rule = classify.rule,
-                                    verbose = verbose)
+            ssiar.cv.ij.a <- cv.bh3(
+              ssiar.fit.ij.a,
+              nfolds = nfolds,
+              ncv = ncv,
+              foldid = foldid,
+              fold.seed = fold.seed,
+              classify = classify,
+              classify.rule = classify.rule,
+              verbose = verbose
+            )
             if(output_cv == TRUE) {
-              ssiar.cv.ij.a.lab <- paste0("ssiar_s0=", s0[i], "_s1=", s1[j], "_alpha=", alpha[a])
+              ssiar.cv.ij.a.lab <- paste0(
+                "ssiar_s0=", s0[i],
+                "_s1=", s1[j],
+                "_alpha=", alpha[a]
+              )
 
               # extract output
-              y.obs.ssiar.ij.a <- data.frame(y.obs = ssiar.cv.ij.a$y.obs)
-              y.fitted.ssiar.ij.a <- data.frame(ssiar.cv.ij.a$y.fitted)
+              y.obs.ssiar.ij.a <- data.frame(
+                y.obs = ssiar.cv.ij.a$y.obs
+              )
+              y.fitted.ssiar.ij.a <- data.frame(
+                ssiar.cv.ij.a$y.fitted
+              )
               names(y.fitted.ssiar.ij.a) <- y.fitted.lab
-              lp.ssiar.ij.a <- data.frame(ssiar.cv.ij.a$lp)
+              lp.ssiar.ij.a <- data.frame(
+                ssiar.cv.ij.a$lp
+              )
               names(lp.ssiar.ij.a) <- lp.lab
-              foldid.ssiar.ij.a <- data.frame(ssiar.cv.ij.a$foldid)
+              foldid.ssiar.ij.a <- data.frame(
+                ssiar.cv.ij.a$foldid
+              )
               names(foldid.ssiar.ij.a) <- foldid.lab
 
               # merge into data frame
-              ssiar.cv.ij.a.red <- list(measures = ssiar.cv.ij.a[[1]],
-                                        cv.estimates = data.frame(
-                                          y.obs.ssiar.ij.a,
-                                          y.fitted.ssiar.ij.a,
-                                          lp.ssiar.ij.a,
-                                          foldid.ssiar.ij.a
-                                        ))
+              ssiar.cv.ij.a.red <- list(
+                measures = ssiar.cv.ij.a[[1]],
+                cv.estimates = data.frame(
+                  y.obs.ssiar.ij.a,
+                  y.fitted.ssiar.ij.a,
+                  lp.ssiar.ij.a,
+                  foldid.ssiar.ij.a
+                  )
+                )
               cv_bh3_out[[ssiar.cv.ij.a.lab]] <- ssiar.cv.ij.a.red
             }
             if (ncv == 1) {
-              ssiar.mp.ij.a <- as.data.frame(t(c(alpha = alpha[a],
-                                                 s0 = s0[i], s1 = s1[j],
-                                                 ssiar.cv.ij.a$measures)))
+              ssiar.mp.ij.a <- as.data.frame(
+                t(c(alpha = alpha[a],
+                    s0 = s0[i],
+                    s1 = s1[j],
+                    ssiar.cv.ij.a$measures))
+              )
             } else {
-              ssiar.mp.ij.a <- as.data.frame(t(c(alpha = alpha[a],
-                                                 s0 = s0[i], s1 = s1[j],
-                                                 ssiar.cv.ij.a$measures[1, ])))
+              ssiar.mp.ij.a <- as.data.frame(
+                t(c(alpha = alpha[a],
+                    s0 = s0[i],
+                    s1 = s1[j],
+                    ssiar.cv.ij.a$measures[1, ]))
+                )
             }
           }
           # varaible selection performance
           if (variable_selection == TRUE) {
             ssiar.rej.ij.a <- rep(0, ncol(x))
-            ssiar.est.ij.a = ssiar.fit.ij.a$coefficients[-1]
-            ssiar.rej.ij.a[ssiar.est.ij.a != 0] = 1
-            ssiar.vs.ij.a <- sim2Dpredictr::sample_FP_Power(rejections = ssiar.rej.ij.a, B = B, B.incl.B0 = FALSE)
-            ssiar.mp.ij.a <- cbind(ssiar.mp.ij.a, ssiar.vs.ij.a)
+            ssiar.est.ij.a <- ssiar.fit.ij.a$coefficients[-1]
+            ssiar.rej.ij.a[ssiar.est.ij.a != 0] <- 1
+            ssiar.vs.ij.a <- sim2Dpredictr::sample_FP_Power(
+              rejections = ssiar.rej.ij.a,
+              B = B,
+              B.incl.B0 = FALSE
+            )
+            ssiar.mp.ij.a <- cbind(
+              ssiar.mp.ij.a,
+              ssiar.vs.ij.a
+            )
           }
-          ssiar.mp <- rbind(ssiar.mp, ssiar.mp.ij.a)
+          ssiar.mp <- rbind(
+            ssiar.mp,
+            ssiar.mp.ij.a
+          )
         }
       }
     }
 
-    ssiar.mp <- data.frame(model = rep("ss_iar", nrow(ssiar.mp)), ssiar.mp)
+    ssiar.mp <- data.frame(
+      model = rep("ss_iar", nrow(ssiar.mp)),
+      ssiar.mp
+    )
     #ssiar.mp$model <- "ss"
     row.names(ssiar.mp) <- NULL
 
@@ -458,7 +635,10 @@ compare_ssnet <- function(models = c("glmnet", "ss", "ss_iar"),
       out <- rbind(out, ssiar.mp)
       if (output_param_est == TRUE) {
         names(ssiar.params) <- c("model", "alpha", "s0", "s1", xi)
-        param.est <- rbind(param.est, ssiar.params)
+        param.est <- rbind(
+          param.est,
+          ssiar.params
+        )
       }
     } else {
       out <- ssiar.mp
@@ -476,11 +656,11 @@ compare_ssnet <- function(models = c("glmnet", "ss", "ss_iar"),
     out <- list(inference = out)
 
     if(output_param_est == TRUE) {
-      out$estimates = param.est
+      out$estimates <- param.est
     }
 
     if(output_cv == TRUE) {
-      out$cv = cv_bh3_out
+      out$cv <- cv_bh3_out
     }
 
     return(out)

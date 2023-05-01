@@ -141,6 +141,8 @@ parameter estimates for the fitted model. Defaults is \code{FALSE}.}
 \item{output_probs}{Logical. When \code{TRUE} and \code{family = "multinomial"} adds an element to
 the output list that contains the probabilties of being a member of each category for each subject,
 in addition to their classification. Default is \code{FALSE}.}
+
+\item{print_check}{Logical. When \code{TRUE}, prints intermediate results.}
 }
 \value{
 A list or a data frame. When \code{output_param_est = FALSE}, returns a data frame with a

@@ -1,40 +1,46 @@
 #' Obtain Measures of Model Performance for Mutliclass Classification
 #'
-#' Compare observed and predicted classes in cases where there are more than 2 classes.
+#' Compare observed and predicted classes in cases where there are more than
+#' 2 classes.
 #'
-#' @param y Scalar response variable denoting class membership. It is preferred that \code{y} is a
-#' factor with two or more levels, but will modify internally for numeric or character variables.
-#' @param pr_yi A data frame or matrix where each row is a subject observation where columns indicate
-#' the probability the subjects belongs to the respective class. The column names should match the
-#' factor levels for \code{y}. This information can be obtained using \code{prob_multinomial()}.
-#' @param y_hat A vector of predicted classes that should have the same factor levels as \code{y}.
-#' When \code{y_hat} is supplied it supercedes \code{pr_yi} for classification. However, \code{pr_yi}
-#' will still be used to calculate the deviance.
+#' @param y Scalar response variable denoting class membership. It is preferred
+#' that \code{y} is a factor with two or more levels, but will modify
+#' internally for numeric or character variables.
+#' @param pr_yi A data frame or matrix where each row is a subject observation
+#' where columns indicate the probability the subjects belongs to the
+#' respective class. The column names should match the factor levels for
+#' \code{y}. This information can be obtained using \code{prob_multinomial()}.
+#' @param y_hat A vector of predicted classes that should have the same factor
+#' levels as \code{y}. When \code{y_hat} is supplied it supersedes
+#' \code{pr_yi} for classification. However, \code{pr_yi} will still be used
+#' to calculate the deviance.
 #' @param print_check Logical. When \code{TRUE}, prints intermediate results.
-#' @note While this function will work when there are only 2 classes, it is recommended to use
-#' \code{eval_classify()} when there are only 2 classes.
-#' @return A data frame with a single row containing columns for average accuracy (avg_acc), average
-#' per-class classification error (pce), micro-averaged positive predictive value (ppv_micro),
-#' sensitivity (sn_micro), F1 score (f1_micro), and macro-averaged positive predictive value (ppv_macro),
+#' @note While this function will work when there are only 2 classes, it is
+#' recommended to use \code{eval_classify()} when there are only 2 classes.
+#' @return A data frame with a single row containing columns for average
+#' accuracy (avg_acc), average per-class classification error (pce),
+#' micro-averaged positive predictive value (ppv_micro), sensitivity (sn_micro),
+#' F1 score (f1_micro), and macro-averaged positive predictive value (ppv_macro),
 #' sensitivity (sn_macro), F1 score (f1_macro).
-#' @details Multiclass measures are calculated according to Sokolova & Lapalme (2009). We give brief
-#' details here, but refer users to Table 3 of Sokolova & Lapalme (2009) for precise definitions.
+#' @details Multiclass measures are calculated according to Sokolova and
+#' Lapalme (2009). We give brief details here, but refer users to Table 3 of
+#' Sokolova & Lapalme (2009) for precise definitions.
 #' @examples
 #'
 #' n <- 500
 #' y <- sample(c("ack", "eek", "ahh"), size = n, replace = TRUE)
 #' x <- matrix(rnorm(n*5), nrow = n, ncol = 5)
-#' colnames(x) <- paste0("x", 1:ncol(x))
+#' colnames(x) <- paste0("x", seq_len(ncol(x)))
 #' mfit <- glmnet::glmnet(x = x, y = y, family = "multinomial",
 #'                        type.multinomial = "grouped",
 #'                        lambda = 0.01)
 #' xnew <- matrix(rnorm(n*5), nrow = n, ncol = 5)
 #' b <- list()
-#' for (i in 1:length(mfit$beta)) {
+#' for (i in seq_len(length(mfit$beta))) {
 #'   b[[i]] <- as.numeric(mfit$beta[[i]])
 #' }
 #' names(b) <- names(mfit$beta)
-#' for (i in 1:length(b)) {
+#' for (i in seq_len(length(b))) {
 #'     names(b[[i]]) <- colnames(x)
 #' }
 #' pm <- prob_multinomial(x = xnew, b = b, a0 = mfit$a0)
@@ -44,8 +50,12 @@
 #' @references
 #' \insertRef{Sokolova+Lapalme:2009}{ssnet}
 #' @export
-measures_multiclass <- function(y, pr_yi = NULL, y_hat = NULL,
-                                print_check = FALSE) {
+measures_multiclass <- function(
+    y,
+    pr_yi = NULL,
+    y_hat = NULL,
+    print_check = FALSE
+){
 
   ##########
   # Checks #
@@ -67,7 +77,8 @@ measures_multiclass <- function(y, pr_yi = NULL, y_hat = NULL,
   if (is.null(y_hat) == FALSE) {
     # y_hat supercedes pr_yi
     if (is.null(pr_yi) == FALSE) {
-      warning("Recommended to supply either y_hat or pr_yi. Using y_hat and ignoring pr_yi.")
+      warning("Recommended to supply either y_hat or pr_yi. \n
+              Using y_hat and ignoring pr_yi.")
       pr_yi <- NULL
     }
 
@@ -79,16 +90,20 @@ measures_multiclass <- function(y, pr_yi = NULL, y_hat = NULL,
 
   if (is.null(pr_yi) == FALSE) {
     if (any(levels(y) != colnames(pr_yi))) {
-      stop("Column names for predicted probabilties should correspond to factor levels of y.")
+      stop(
+        "Column names for predicted probabilties must correspond \n
+         to factor levels of y."
+        )
     }
 
     y_hat <- c()
-    for (i in 1:nrow(pr_yi)) {
+    for (i in seq_len(nrow(pr_yi))) {
       pc.i <- which(pr_yi[i, ] == max(pr_yi[i, ]))
       if (length(pc.i) > 1) {
         print(pr_yi[i, ])
         pc.i <- sample(pc.i, size = 1, replace = FALSE)
-        warning("Multiple categories have maximum probability. Class selected randomly.")
+        warning("Multiple categories have maximum probability. \n
+                Class selected randomly.")
       }
       y_hat[i] <- colnames(pr_yi)[pc.i]
     }
@@ -113,7 +128,7 @@ measures_multiclass <- function(y, pr_yi = NULL, y_hat = NULL,
 
   # confusion.matrices <- list()
   out_pn <- list()
-  for (i in 1:length(levels(y))) {
+  for (i in seq_len(length(levels(y)))) {
     y_i <- ifelse(y == levels(y)[i], 1, 0)
     y_hat_i <- ifelse(y_hat == levels(y)[i], 1, 0)
     tp_i <- sum(ifelse(y_i == 1 & y_hat_i == 1, 1, 0))
@@ -174,7 +189,7 @@ measures_multiclass <- function(y, pr_yi = NULL, y_hat = NULL,
   }
 
   measurements <- list()
-  for (i in 1:length(levels(y))) {
+  for (i in seq_len(length(levels(y)))) {
     pn_i <- out_pn_df[i, ]
     measurements[[i]] <- data.frame(
       accuracy = accuracy(
@@ -200,7 +215,9 @@ measures_multiclass <- function(y, pr_yi = NULL, y_hat = NULL,
     )
   }
   names(measurements) <- levels(y)
-  measurements_df <- data.frame(dplyr::bind_rows(measurements))
+  measurements_df <- data.frame(
+    dplyr::bind_rows(measurements)
+    )
   rownames(measurements_df) <- levels(y)
   # print(measurements_df)
   macro <- data.frame(t(apply(measurements_df, 2, mean)))
@@ -209,7 +226,10 @@ measures_multiclass <- function(y, pr_yi = NULL, y_hat = NULL,
   pce <- macro$error_rate
   ppv_macro <- macro$ppv
   sn_macro <- macro$sensitivity
-  f1_macro <- f1_v2(ppv = ppv_macro, sn = sn_macro)
+  f1_macro <- f1_v2(
+    ppv = ppv_macro,
+    sn = sn_macro
+  )
 
   micro <- data.frame(t(apply(out_pn_df, 2, sum)))
   ppv_micro <- micro$tp / (micro$tp + micro$fp)
@@ -226,11 +246,11 @@ measures_multiclass <- function(y, pr_yi = NULL, y_hat = NULL,
   # calculate multinomial deviance
   if (is.null(pr_yi) == FALSE) {
     lp <- c()
-    for (i in 1:nrow(pr_yi)) {
+    for (i in seq_len(nrow(pr_yi))) {
       lp[i] <- pr_yi[i, y[i]]
     }
     logL <- log(lp)
-    deviance = -2 * sum(logL)
+    deviance <- -2 * sum(logL)
     return(
       data.frame(
         deviance = deviance,

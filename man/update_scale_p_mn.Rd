@@ -16,6 +16,8 @@ should be a vector of parameter estimates corresponding to each}
 
 \item{alpha}{A scalar value between 0 and 1 determining the compromise between the Ridge and Lasso models. When
 \code{alpha = 1} reduces to the Lasso, and when \code{alpha = 0} reduces to Ridge.}
+
+\item{print_out}{When TRUE prints intermediate output.}
 }
 \value{
 A list whose first element is a vector of updated scale parameters for each

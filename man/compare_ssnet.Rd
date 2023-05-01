@@ -80,8 +80,8 @@ large datasets. Smallest value allowable is \code{nfolds=3}}
   repeated number of cross-validation.  
   }
 
-\item{foldid}{an optional vector of values between 1 and \code{nfold}
-identifying what fold each observation is in. If supplied, \code{nfold} can
+\item{foldid}{an optional vector of values between 1 and \code{nfolds}
+identifying what fold each observation is in. If supplied, \code{nfolds} can
 be missing.}
 
 \item{fold.seed}{A scalar seed value for cross validation; ensures the folds are the same upon re-running

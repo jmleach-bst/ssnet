@@ -148,6 +148,10 @@ parameter estimates for the fitted model. Defaults is \code{FALSE}.}
 used on the multinomial coefficients for a variable. This ensures they are
 all in our out together. The default is \code{"ungrouped"}}
 }
+\value{
+Either a data frame of model fitness measures or a list whose elements are data frames of
+model fitness measures and parameter estimates, respectively, depending on the value of output_param_ets.
+}
 \description{
 Perform k-fold cross validation for spike-and-slab elastic net models.
 }

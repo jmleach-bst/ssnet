@@ -3,25 +3,34 @@
 #' TBD
 #'
 #' @param y A vector containing responses/outcome values..
-#' @param y.fitted A vector containing predicted outcome/response values obtain from some model.
-#' @param inverse.link.y Logical. When \code{TRUE}, \code{y.fitted} is assumed to have had the inverse link
-#' link function applied to the values. When \code{FALSE}, \code{y.fitted} is assumed to be the linear
-#' predictor \eqn{XB}, and the inverse link function is internally applied to \code{y.fitted}.
-#' @param classify Logical. When \code{TRUE} and \code{family = "binomial"} applies a classification
-#' rule given by the argument \code{classify.rule}, and outputs accuracy, sensitivity, specificity,
-#' positive predictive value (ppv), and negative predictive value (npv).
-#' @param classify.rule A value between 0 and 1. For a given predicted value from a logistic regression,
-#' if the value is above \code{classify.rule}, then the predicted class is 1; otherwise the predicted
-#' class is 0. The default is 0.5.
-#' @param dispersion A scalar defining the dispersion parameter from a GLM, or \eqn{theta}
-#' for negative binomial.
+#' @param y.fitted A vector containing predicted outcome/response values
+#' obtain from some model.
+#' @param inverse.link.y Logical. When \code{TRUE}, \code{y.fitted} is assumed
+#' to have had the inverse link function applied to the values. When
+#' \code{FALSE}, \code{y.fitted} is assumed to be the linear predictor
+#' \eqn{XB}, and the inverse link function is internally applied to
+#' \code{y.fitted}.
+#' @param classify Logical. When \code{TRUE} and \code{family = "binomial"}
+#' applies a classification rule given by the argument \code{classify.rule},
+#' and outputs accuracy, sensitivity, specificity, positive predictive value
+#' (ppv), and negative predictive value (npv).
+#' @param classify.rule A value between 0 and 1. For a given predicted value
+#' from a logistic regression, if the value is above \code{classify.rule},
+#' then the predicted class is 1; otherwise the predicted class is 0. The
+#' default is 0.5.
+#' @param dispersion A scalar defining the dispersion parameter from a GLM,
+#' or \eqn{theta} for negative binomial.
 #' @inheritParams ssnet
-#' @return A data frame consisting of a single row and a column for each model fitness measure.
-#' @note This function is set to replace \code{measure_glm_raw} and \code{measure_bh_raw}.
-#' @details When the family is treated as Gaussian, returns deviance, R2, mean squared error (MSE),
-#' and mean absolute error (MAE). Additionally, when the outcome is binary, returns misclassification,
-#' and if \code{classify = TRUE}, then returns accuracy, sensitivity, specificity, positive predictive
-#' value (PPV), negative predictive value (NPV), Matthews correlation coefficient (MCC), and F1 score.
+#' @return A data frame consisting of a single row and a column for each model
+#' fitness measure.
+#' @note This function is set to replace \code{measure_glm_raw} and
+#' \code{measure_bh_raw}.
+#' @details When the family is treated as Gaussian, returns deviance, R2, mean
+#' squared error (MSE), and mean absolute error (MAE). Additionally, when the
+#' outcome is binary, returns misclassification, and if \code{classify = TRUE},
+#' then returns accuracy, sensitivity, specificity, positive predictive value
+#' (PPV), negative predictive value (NPV), Matthews correlation coefficient
+#' (MCC), and F1 score.
 #' @examples
 #'
 #' ## binary data
@@ -29,19 +38,34 @@
 #' yb.f <- yb
 #' yb.f[c(2, 5, 6, 7, 13, 17)] <- abs(1 - yb[c(2, 5, 6, 7, 13, 17)])
 #'
-#' measures_model_fitness(y = yb, y.fitted = yb.f, family = "binomial", classify = TRUE)
+#' measures_model_fitness(
+#'   y = yb,
+#'   y.fitted = yb.f,
+#'   family = "binomial",
+#'   classify = TRUE
+#'   )
 #'
 #' ## gaussian data
 #' yg <- rnorm(20)
 #' yg.f <- yg + rnorm(20, 0, 2/3)
 #'
-#' measures_model_fitness(y = yg, y.fitted = yg.f, family = "gaussian", dispersion = 1)
+#' measures_model_fitness(
+#'   y = yg,
+#'   y.fitted = yg.f,
+#'   family = "gaussian",
+#'   dispersion = 1
+#'  )
 #'
 #' @export
 measures_model_fitness <- function(
-  y, y.fitted, family, dispersion = NULL,
-  inverse.link.y = TRUE,  classify = FALSE, classify.rule = 0.5) {
-
+  y,
+  y.fitted,
+  family,
+  dispersion = NULL,
+  inverse.link.y = TRUE,
+  classify = FALSE,
+  classify.rule = 0.5
+){
   if (length(y) != length(y.fitted)) {
     stop("y and y.fitted should be of equal length")
   }
@@ -54,7 +78,10 @@ measures_model_fitness <- function(
     if (family %in% c("binomial", "poisson")) {
       dispersion <- 1
     } else {
-      warning("No dispersion parameter provided - cannot estimate loglikelihood or deviance.")
+      warning(
+        "No dispersion parameter provided. \n
+         Cannot estimate loglikelihood or deviance."
+        )
     }
   }
 
@@ -63,7 +90,12 @@ measures_model_fitness <- function(
     if (is.null(dispersion)) {
       logL <- NULL
     } else {
-      logL <- stats::dnorm(y, mean = y.fitted, sd = sqrt(dispersion), log = TRUE)
+      logL <- stats::dnorm(
+        y,
+        mean = y.fitted,
+        sd = sqrt(dispersion),
+        log = TRUE
+      )
     }
   }
   if (family == "binomial") {
@@ -73,7 +105,12 @@ measures_model_fitness <- function(
     if (inverse.link.y == FALSE) {
       y.fitted <- exp(y.fitted) / (1 + exp(y.fitted))
     }
-    L <- stats::dbinom(y, size = 1, prob = y.fitted, log = FALSE)
+    L <- stats::dbinom(
+      y,
+      size = 1,
+      prob = y.fitted,
+      log = FALSE
+    )
     L <- ifelse(L == 0, 1e-04, L)
     logL <- log(L)
   }
@@ -81,14 +118,23 @@ measures_model_fitness <- function(
     if (inverse.link.y == FALSE) {
       y.fitted <- exp(y.fitted)
     }
-    logL <- stats::dpois(y, lambda = y.fitted, log = TRUE)
+    logL <- stats::dpois(
+      y,
+      lambda = y.fitted,
+      log = TRUE
+    )
   }
 
   if (family == "NegBin") {
     if (inverse.link.y == FALSE) {
       y.fitted <- exp(y.fitted)
     }
-    logL <- stats::dbinom(y, size = dispersion, mu = y.fitted, log = TRUE)
+    logL <- stats::dbinom(
+      y,
+      size = dispersion,
+      mu = y.fitted,
+      log = TRUE
+    )
   }
 
   logL <- sum(logL, na.rm = TRUE)
@@ -110,8 +156,11 @@ measures_model_fitness <- function(
   if (family == "gaussian") {
     R2 <- (stats::var(y, na.rm = TRUE) - mse) / stats::var(y, na.rm = TRUE)
     measures <- data.frame(
-      deviance = deviance, R2 = R2, mse = mse, mae = mae
-      )
+      deviance = deviance,
+      R2 = R2,
+      mse = mse,
+      mae = mae
+    )
   }
 
   # Additional measures of Binomial data
@@ -132,8 +181,12 @@ measures_model_fitness <- function(
     }
     misclassification <- mean(abs(y - y.fitted) >= 0.5, na.rm = TRUE)
     measures <- data.frame(
-      deviance = deviance, auc = AUC, mse = mse,
-      mae = mae, misclassification = misclassification)
+      deviance = deviance,
+      auc = AUC,
+      mse = mse,
+      mae = mae,
+      misclassification = misclassification
+    )
 
     if (classify == TRUE) {
       predicted.class <- rep(0, length(y))
@@ -180,15 +233,27 @@ measures_model_fitness <- function(
       specificity <- sum(tn) / on
       ppv <- sum(tp) / pp
       npv <- sum(tn) / pn
-      mcc.obs <- mcc(tp = sum(tp), tn = sum(tn),
-                     fp = sum(fp), fn = sum(fn))
-      f1.obs <- f1.score(tp = sum(tp), tn = sum(tn),
-                         fp = sum(fp), fn = sum(fn))
+      mcc.obs <- mcc(
+        tp = sum(tp),
+        tn = sum(tn),
+        fp = sum(fp),
+        fn = sum(fn))
+      f1.obs <- f1.score(
+        tp = sum(tp),
+        tn = sum(tn),
+        fp = sum(fp),
+        fn = sum(fn)
+      )
 
       predm <- data.frame(
         accuracy = accuracy,
-        sensitivity = sensitivity, specificity = specificity,
-        ppv = ppv, npv = npv, mcc = mcc.obs, f1 = f1.obs)
+        sensitivity = sensitivity,
+        specificity = specificity,
+        ppv = ppv,
+        npv = npv,
+        mcc = mcc.obs,
+        f1 = f1.obs
+      )
 
       measures <- cbind(measures, predm)
     }

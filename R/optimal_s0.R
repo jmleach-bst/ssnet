@@ -1,23 +1,29 @@
 #' Select the Optimal Model from Each Simulation
 #'
-#' For a set of simulations that used multiple spike scale parameters this function selects the optimal
-#' model based on user-selected criteria and creates a new data frame of statistics for the optimal models.
-#' If desired, outputs summaries from the new data frame.
+#' For a set of simulations that used multiple spike scale parameters this
+#' function selects the optimal model based on user-selected criteria and
+#' creates a new data frame of statistics for the optimal models. If desired,
+#' outputs summaries from the new data frame.
 #'
-#' @param sim.data A data frame containing simulation results. The data is intended to be generated
-#'  from stacking multiple \code{compare_ssnet()} outputs in a single data frame.
-#' @param criteria Specifies the criteria for model selection. Options are \code{"deviance"}, \code{"mse"},
-#' \code{"mae"} for deviance, mean-square error, and mean absolute error, respectively. When
-#' \code{family = "binomial"}, additional options are \code{"auc"} and \code{"misclassification"}, for
-#' Area under the ROC curve and the percentage of cases where the difference between the observed and
-#' predicted values is greater than 1/2.
-#' @param tie.breaker This argument decides how to break ties when multiple values of spike scale
-#' minimize \code{criteria}. The default is \code{"min"}, which selects the smallest spike scale that
-#' minimizes \code{criteria}; alternatively, \code{"max"}, which selects the largest spike scale that
+#' @param sim.data A data frame containing simulation results. The data is
+#' intended to be generated from stacking multiple \code{compare_ssnet()}
+#' outputs in a single data frame.
+#' @param criteria Specifies the criteria for model selection. Options are
+#' \code{"deviance"}, \code{"mse"}, \code{"mae"} for deviance, mean-square
+#' error, and mean absolute error, respectively. When \code{family = "binomial"},
+#' additional options are \code{"auc"} and \code{"misclassification"}, for Area
+#' under the ROC curve and the percentage of cases where the difference between
+#' the observed and predicted values is greater than 1/2.
+#' @param tie.breaker This argument decides how to break ties when multiple
+#' values of spike scale minimize \code{criteria}. The default is \code{"min"},
+#' which selects the smallest spike scale that minimizes \code{criteria};
+#' alternatively, \code{"max"}, which selects the largest spike scale that
 #' minimizes \code{criteria}.
 #' @param print.details Logical. Determines whether to print periodic output.
-#' @param suppress.warnings Logical. When \code{TRUE} suppresses warning output. Default is \code{FALSE}.
-#' @return A data frame containing where each row is an optimal model from a set of models.
+#' @param suppress.warnings Logical. When \code{TRUE} suppresses warning output.
+#' Default is \code{FALSE}.
+#' @return A data frame containing where each row is an optimal model from a
+#' set of models.
 #' @examples
 #' sdt <- data.frame(model = rep("mystery", 12),
 #'                   s0 = rep(c(0.01, 0.02, 0.03), 4),
@@ -28,10 +34,13 @@
 #' optimal_s0(sdt, criteria = "deviance")
 #'
 #' @export
-optimal_s0 <- function(sim.data, criteria,
-                       tie.breaker = "min",
-                       print.details = FALSE,
-                       suppress.warnings = FALSE) {
+optimal_s0 <- function(
+    sim.data,
+    criteria,
+    tie.breaker = "min",
+    print.details = FALSE,
+    suppress.warnings = FALSE
+){
 
   # number of spike scale values fit
   n.s0 <- length(unique(sim.data$s0))
@@ -58,7 +67,12 @@ optimal_s0 <- function(sim.data, criteria,
 
     if (nrow(mod.m) > 1) {
       if (suppress.warnings == FALSE) {
-        warning(cat("Simulation run ", m, " has multiple optimal models; selecting model with ", tie.breaker, "s0. \n"))
+        warning(
+          cat("Simulation run ", m,
+              " has multiple optimal models; selecting model with ",
+              tie.breaker, "s0. \n"
+            )
+          )
       }
       if (tie.breaker == "min") {
         mod.m <- mod.m[1, ]
@@ -71,9 +85,17 @@ optimal_s0 <- function(sim.data, criteria,
     # if (print.details == TRUE) {
     #   cat("Optimal model for dataset ", m, " has s0 = ", mod.m$s0, "\n")
     # }
-    if (print.details == TRUE & (mod.m$s0 == max(sim.data.m$s0) | mod.m$s0 == min(sim.data.m$s0))) {
+    if (print.details == TRUE &
+        (mod.m$s0 == max(sim.data.m$s0) |
+         mod.m$s0 == min(sim.data.m$s0))
+        ){
       if (suppress.warnings == FALSE) {
-        warning(cat("Simulation run ", m, "selected minimum or maximum allowable s0 = ", mod.m$s0, ". \n "))
+        warning(
+          cat("Simulation run ", m,
+              "selected minimum or maximum allowable s0 = ", mod.m$s0,
+              ". \n "
+              )
+          )
         print(sim.data.m)
       }
     }
