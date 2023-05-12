@@ -28,7 +28,8 @@ Imports:
 	ggplot2,
 	magrittr,
 	purrr,
-	tidyr
+	tidyr,
+	matrixStats
 LinkingTo: 
     BH (>= 1.66.0),
     Rcpp (>= 0.12.0),
@@ -41,4 +42,4 @@ Suggests:
 Remotes: nyiuab/BhGLM
 SystemRequirements: GNU make
 RdMacros: Rdpack
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3

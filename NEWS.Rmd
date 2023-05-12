@@ -15,5 +15,5 @@ knitr::opts_chunk$set(
 This is the first release of `ssnet`.
 
 # ssnet 0.2.0
-Major update to include multinomial regression.
+- Major update to include multinomial regression.
 - Note (May 1, 2023): R CMD CHECK passes for `R` 4.3.0.

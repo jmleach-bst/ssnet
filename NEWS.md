@@ -1,16 +1,11 @@
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-# ssnet
+# ssnet 0.1.0
 
-This is ssnet version 0.2.0.
+This is the first release of `ssnet`.
 
-# Updates
+# ssnet 0.2.0
 
-## June 11, 2021
-
-Note : R CMD check passes for R 4.1.0.
-
-## November 12, 2021
-
-Note: Option for multinomial outcomes pushed.
+- Major update to include multinomial regression.
+- Note (May 1, 2023): R CMD CHECK passes for `R` 4.3.0.
