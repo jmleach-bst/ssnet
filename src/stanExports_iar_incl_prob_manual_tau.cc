@@ -7,7 +7,7 @@ using namespace Rcpp ;
 RCPP_MODULE(stan_fit4iar_incl_prob_manual_tau_mod) {
 
 
-    class_<rstan::stan_fit<stan_model, boost::random::ecuyer1988> >("model_iar_incl_prob_manual_tau")
+    class_<rstan::stan_fit<stan_model, boost::random::ecuyer1988> >("rstantools_model_iar_incl_prob_manual_tau")
 
     .constructor<SEXP,SEXP,SEXP>()
 
