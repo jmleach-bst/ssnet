@@ -54,6 +54,7 @@
 #'   nfolds = 3, ncv = 2
 #' )
 #'
+#' \dontrun{
 #' cv_ssnet(
 #'   model = "ss", family = "binomial",
 #'   x = rbind(xtr, xte), y = c(ybtr, ybte),
@@ -69,6 +70,7 @@
 #'   nfolds = 3, ncv = 2, classify = FALSE,
 #'   output_param_est = TRUE
 #' )
+#'}
 #'
 #' @export
 cv_ssnet <- function(
@@ -131,9 +133,7 @@ cv_ssnet <- function(
         nfolds.b[nf] <- length(unique(foldid[ , nf]))
       }
       if (any(nfolds.b != nfolds.b[1])) {
-        stop(
-          "Each column of foldid must have the same number of unique folds."
-          )
+        stop("Each column of foldid must have the same number of unique folds.")
       } else {
         nfolds <- nfolds.b[1]
       }

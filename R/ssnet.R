@@ -105,9 +105,7 @@ ssnet <- function(
 
   # picked a family?
   if (length(family) != 1){
-    stop(
-      "user must select a family: \n
-      gaussian, binomial, multinomial, poisson, or cox"
+    stop("user must select a family: gaussian, binomial, multinomial, poisson, or cox"
       )
   }
 
