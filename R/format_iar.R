@@ -26,6 +26,7 @@
 #' specify a common precision parameter.
 #' @return A list containing data formatted for using IAR priors.
 #'
+#' @export
 format_iar <- function(
     adjmat = NULL,
     im.res = NULL,

@@ -35,6 +35,8 @@
 #' \insertRef{Morris:2019}{ssnet}
 #'
 #' \insertRef{Tang:2017}{ssnet}
+#'
+#' @export
 max_q2_iar <- function(
     iar.data,
     p,

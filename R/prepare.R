@@ -41,6 +41,8 @@
 #' @references
 #'
 #' \insertRef{Friedman:2010}{ssnet}
+#'
+#' @export
 prepare <- function(
     x,
     intercept,
@@ -160,7 +162,7 @@ prepare <- function(
   }
 
   if (multinomial == TRUE) {
-    if (is.integer(outcome.cats)) {
+    if (is.integer(outcome.cats) & length(outcome.cats) == 1) {
       num.cats <- outcome.cats
     } else {
       num.cats <- length(unique(outcome.cats))
