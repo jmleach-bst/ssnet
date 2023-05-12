@@ -2,31 +2,38 @@
 % Please edit documentation in R/update_ptheta_group2.R
 \name{update_ptheta_group2}
 \alias{update_ptheta_group2}
-\title{Update conditional expectation of prior probabilities of inclusion at each iteration.}
+\title{Update conditional expectation of prior probabilities of inclusion at each
+iteration.}
 \usage{
 update_ptheta_group2(group.vars, p, p.bound = c(0.01, 0.99))
 }
 \arguments{
 \item{group.vars}{A vector containing grouping information.}
 
-\item{p}{The current estimate of conditional prior probabilities of inclusion.}
+\item{p}{The current estimate of conditional prior probabilities of
+inclusion.}
 
-\item{p.bound}{A vector defining the lower and upper boundaries for the probabilities of inclusion
-in the model, respectively. Defaults to \code{c(0.01, 0.99)}.}
+\item{p.bound}{A vector defining the lower and upper boundaries for the
+probabilities of inclusion in the model, respectively. Defaults to
+\code{c(0.01, 0.99)}.}
 }
 \value{
-A list whose first element is a vector of updated scale parameters for each
-parameter and whose second element is a vector of updated conditional expectations
-of prior probabilities of model inclusion.
+A list whose first element is a vector of updated scale parameters
+for each parameter and whose second element is a vector of updated
+conditional expectations of prior probabilities of model inclusion.
 
-A single numeric value between 0 and 1 that estimates the overall inclusion probability.
+A single numeric value between 0 and 1 that estimates the overall
+inclusion probability.
 }
 \description{
-Update conditional expectation of prior probabilities of inclusion at each iteration.
+Update conditional expectation of prior probabilities of inclusion at each
+iteration.
 }
 \note{
-This function is taken unchanged from the R package \code{BhGLM}, except that bounds
-for theta are now able to be specified by the user rather than assumed to be 0.01 and 0.99.
+This function is taken unchanged from the R package \code{BhGLM},
+except that bounds for theta are now able to be specified by the user
+rather than assumed to be 0.01 and 0.99.
 
-This is a modified version of the function \code{update_ptheta_group} from the package \code{BhGLM}.
+This is a modified version of the function \code{update_ptheta_group}
+from the package \code{BhGLM}.
 }

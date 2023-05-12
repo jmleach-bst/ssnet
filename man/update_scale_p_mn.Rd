@@ -2,33 +2,38 @@
 % Please edit documentation in R/update_scale_p_mn.R
 \name{update_scale_p_mn}
 \alias{update_scale_p_mn}
-\title{Update conditional expectation of prior probabilities of inclusion at each iteration.}
+\title{Update conditional expectation of prior probabilities of inclusion at each
+iteration.}
 \usage{
 update_scale_p_mn(b0, ss, theta, alpha, print_out = FALSE)
 }
 \arguments{
-\item{b0}{A list. The length of the list should be equal to the total number of predictors, and each element
-should be a vector of parameter estimates corresponding to each}
+\item{b0}{A list. The length of the list should be equal to the total
+number of predictors, and each element should be a vector of parameter
+estimates corresponding to each.}
 
 \item{ss}{A vector of spike and slab prior scales, respectively.}
 
 \item{theta}{The current estimate of prior probabilities of inclusion.}
 
-\item{alpha}{A scalar value between 0 and 1 determining the compromise between the Ridge and Lasso models. When
-\code{alpha = 1} reduces to the Lasso, and when \code{alpha = 0} reduces to Ridge.}
+\item{alpha}{A scalar value between 0 and 1 determining the compromise
+between the Ridge and Lasso models. When \code{alpha = 1} reduces to the
+Lasso, and when \code{alpha = 0} reduces to Ridge.}
 
 \item{print_out}{When TRUE prints intermediate output.}
 }
 \value{
-A list whose first element is a vector of updated scale parameters for each
-parameter and whose second element is a vector of updated conditional expectations
-of prior probabilities of model inclusion.
+A list whose first element is a vector of updated scale parameters
+for each parameter and whose second element is a vector of updated
+conditional expectations of prior probabilities of model inclusion.
 }
 \description{
-Specifically adresses group selection where conditional expecation depends on vector of parameters, not
-a single scalar parameter value, i.e., this was specifically developed for our multinomial extension of
-spike-and-slab EN GLMs.
+Specifically adresses group selection where conditional expecation depends
+on vector of parameters, not a single scalar parameter value, i.e., this
+was specifically developed for our multinomial extension of spike-and-slab
+EN GLMs.
 }
 \note{
-This function is a modified version of \code{update_scale_p()} from the R package \code{BhGLM}.
+This function is a modified version of \code{update_scale_p()} from
+the R package \code{BhGLM}.
 }

@@ -17,39 +17,48 @@ measures_model_fitness(
 \arguments{
 \item{y}{A vector containing responses/outcome values..}
 
-\item{y.fitted}{A vector containing predicted outcome/response values obtain from some model.}
+\item{y.fitted}{A vector containing predicted outcome/response values
+obtain from some model.}
 
 \item{family}{Response type (see above).}
 
-\item{dispersion}{A scalar defining the dispersion parameter from a GLM, or \eqn{theta}
-for negative binomial.}
+\item{dispersion}{A scalar defining the dispersion parameter from a GLM,
+or \eqn{theta} for negative binomial.}
 
-\item{inverse.link.y}{Logical. When \code{TRUE}, \code{y.fitted} is assumed to have had the inverse link
-link function applied to the values. When \code{FALSE}, \code{y.fitted} is assumed to be the linear
-predictor \eqn{XB}, and the inverse link function is internally applied to \code{y.fitted}.}
+\item{inverse.link.y}{Logical. When \code{TRUE}, \code{y.fitted} is assumed
+to have had the inverse link function applied to the values. When
+\code{FALSE}, \code{y.fitted} is assumed to be the linear predictor
+\eqn{XB}, and the inverse link function is internally applied to
+\code{y.fitted}.}
 
-\item{classify}{Logical. When \code{TRUE} and \code{family = "binomial"} applies a classification
-rule given by the argument \code{classify.rule}, and outputs accuracy, sensitivity, specificity,
-positive predictive value (ppv), and negative predictive value (npv).}
+\item{classify}{Logical. When \code{TRUE} and \code{family = "binomial"}
+applies a classification rule given by the argument \code{classify.rule},
+and outputs accuracy, sensitivity, specificity, positive predictive value
+(ppv), and negative predictive value (npv).}
 
-\item{classify.rule}{A value between 0 and 1. For a given predicted value from a logistic regression,
-if the value is above \code{classify.rule}, then the predicted class is 1; otherwise the predicted
-class is 0. The default is 0.5.}
+\item{classify.rule}{A value between 0 and 1. For a given predicted value
+from a logistic regression, if the value is above \code{classify.rule},
+then the predicted class is 1; otherwise the predicted class is 0. The
+default is 0.5.}
 }
 \value{
-A data frame consisting of a single row and a column for each model fitness measure.
+A data frame consisting of a single row and a column for each model
+fitness measure.
 }
 \description{
 TBD
 }
 \details{
-When the family is treated as Gaussian, returns deviance, R2, mean squared error (MSE),
-and mean absolute error (MAE). Additionally, when the outcome is binary, returns misclassification,
-and if \code{classify = TRUE}, then returns accuracy, sensitivity, specificity, positive predictive
-value (PPV), negative predictive value (NPV), Matthews correlation coefficient (MCC), and F1 score.
+When the family is treated as Gaussian, returns deviance, R2, mean
+squared error (MSE), and mean absolute error (MAE). Additionally, when the
+outcome is binary, returns misclassification, and if \code{classify = TRUE},
+then returns accuracy, sensitivity, specificity, positive predictive value
+(PPV), negative predictive value (NPV), Matthews correlation coefficient
+(MCC), and F1 score.
 }
 \note{
-This function is set to replace \code{measure_glm_raw} and \code{measure_bh_raw}.
+This function is set to replace \code{measure_glm_raw} and
+\code{measure_bh_raw}.
 }
 \examples{
 
@@ -58,12 +67,22 @@ yb <- rbinom(20, size = 1, prob = 0.5)
 yb.f <- yb
 yb.f[c(2, 5, 6, 7, 13, 17)] <- abs(1 - yb[c(2, 5, 6, 7, 13, 17)])
 
-measures_model_fitness(y = yb, y.fitted = yb.f, family = "binomial", classify = TRUE)
+measures_model_fitness(
+  y = yb,
+  y.fitted = yb.f,
+  family = "binomial",
+  classify = TRUE
+  )
 
 ## gaussian data
 yg <- rnorm(20)
 yg.f <- yg + rnorm(20, 0, 2/3)
 
-measures_model_fitness(y = yg, y.fitted = yg.f, family = "gaussian", dispersion = 1)
+measures_model_fitness(
+  y = yg,
+  y.fitted = yg.f,
+  family = "gaussian",
+  dispersion = 1
+ )
 
 }

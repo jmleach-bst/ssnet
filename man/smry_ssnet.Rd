@@ -7,12 +7,14 @@
 smry_ssnet(sim.data, output = "raw")
 }
 \arguments{
-\item{sim.data}{A data frame containing simulation resuls. The data is intended to be generated
-from stacking multiple \code{compare_ssnet()} outputs in a single data frame.}
+\item{sim.data}{A data frame containing simulation resuls. The data is
+intended to be generated from stacking multiple \code{compare_ssnet()}
+outputs in a single data frame.}
 
-\item{output}{When \code{"raw"} outputs the nested data frame along with data frames
-contiaining means and standard deviations of model fit statistics. When \code{"mean"} or \code{"sd"}
-outputs a data frame of the means or standard deviations, respectively, of model fit statistics.
+\item{output}{When \code{"raw"} outputs the nested data frame along with
+data frames contiaining means and standard deviations of model fit
+statistics. When \code{"mean"} or \code{"sd"} outputs a data frame of the
+means or standard deviations, respectively, of model fit statistics.
 Defaults to \code{"raw"}.}
 }
 \value{
@@ -44,13 +46,15 @@ for (m in 1:M) {
                                      L = L$L, S = L$S,
                                      B = betas$B)
 
-  mod.out.m <- compare_ssnet(x = as.matrix(datm[, grep("X.*", names(datm), perl = TRUE)]),
-                             y = datm$Y, models = c("glmnet", "ss"),
-                             s0 = seq(0.01, 0.05), nfolds = 3,
-                             family = "gaussian", model_fit = "all",
-                             variable_selection = TRUE,
-                             B = betas$B[-1],
-                             iar.data = model_info)
+  mod.out.m <- compare_ssnet(
+    x = as.matrix(datm[, grep("X.*", names(datm), perl = TRUE)]),
+    y = datm$Y, models = c("glmnet", "ss"),
+   s0 = seq(0.01, 0.05), nfolds = 3,
+   family = "gaussian", model_fit = "all",
+   variable_selection = TRUE,
+   B = betas$B[-1],
+   iar.data = model_info
+   )
   if (m > 1) {
     mod.out <- rbind(mod.out, mod.out.m)
   } else {

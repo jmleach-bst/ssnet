@@ -14,25 +14,30 @@ measure_bh_raw(
 )
 }
 \arguments{
-\item{object}{A fitted object..}
+\item{object}{A fitted object.}
 
-\item{new.x}{A data frame or matrix of new values for variables used in object.
-For an object from \code{bglm}, \code{bpolr} or \code{bcoxph}, it is data frame;
-for object from \code{glmNet} or \code{bmlasso}, it is matrix.}
+\item{new.x}{A data frame or matrix of new values for variables used in
+object. For an object from \code{bglm}, \code{bpolr} or \code{bcoxph}, it
+is data frame; for object from \code{glmNet} or \code{bmlasso}, it is
+matrix.}
 
-\item{new.y}{A vector of new response values corresponding to new.x. If \code{new.x}
-or \code{new.y} are omitted, the fitted linear predictors are used for prediction.}
+\item{new.y}{A vector of new response values corresponding to new.x. If
+\code{new.x} or \code{new.y} are omitted, the fitted linear predictors are
+used for prediction.}
 
-\item{new.offset}{A data frame or vector of offset values for new data points.
-If \code{new.x} includes offset, do not need to set \code{new.offset}.}
+\item{new.offset}{A data frame or vector of offset values for new data
+points. If \code{new.x} includes offset, do not need to set
+\code{new.offset}.}
 
-\item{classify}{Logical. When \code{TRUE} and \code{family = "binomial"} applies a classification
-rule given by the argument \code{classify.rule}, and outputs accuracy, sensitivity, specificity,
-positive predictive value (ppv), and negative predictive value (npv).}
+\item{classify}{Logical. When \code{TRUE} and \code{family = "binomial"}
+applies a classification rule given by the argument \code{classify.rule},
+and outputs accuracy, sensitivity, specificity, positive predictive value
+(ppv), and negative predictive value (npv).}
 
-\item{classify.rule}{A value between 0 and 1. For a given predicted value from a logistic regression,
-if the value is above \code{classify.rule}, then the predicted class is 1; otherwise the predicted
-class is 0. The default is 0.5.}
+\item{classify.rule}{A value between 0 and 1. For a given predicted value
+from a logistic regression, if the value is above \code{classify.rule},
+then the predicted class is 1; otherwise the predicted class is 0. The
+default is 0.5.}
 }
 \value{
 A vector.
@@ -41,6 +46,7 @@ A vector.
 Obtain Measures of Model Fitness
 }
 \note{
-This function is taken directly from \code{measure.bh} in \code{BhGLM}, with the modification that
-measures are no longer rounded, and classification evaluation is possible for binary outcomes..
+This function is taken directly from \code{measure.bh} in
+\code{BhGLM}, with the modification that measures are no longer rounded,
+and classification evaluation is possible for binary outcomes.
 }

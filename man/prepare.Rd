@@ -17,47 +17,59 @@ prepare(
 )
 }
 \arguments{
-\item{x}{The design, or input, matrix, of dimension nobs x nvars; each row is an observation vector.}
+\item{x}{The design, or input, matrix, of dimension nobs x nvars; each row
+is an observation vector.}
 
-\item{intercept}{Logical. When \code{intercept = TRUE}, an intercept is included in the model.}
+\item{intercept}{Logical. When \code{intercept = TRUE}, an intercept is
+included in the model.}
 
-\item{prior.mean}{A vector of prior means for the parameters. If \code{length(prior.mean) = 1}, then
-all parameters are assumed to have a common prior mean.}
+\item{prior.mean}{A vector of prior means for the parameters. If
+\code{length(prior.mean) = 1}, then all parameters are assumed to have a
+common prior mean.}
 
-\item{prior.sd}{A vector defining prior standard deviations in the normal priors of the coefficients.
-If provided, they are starting values of the prior standard deviations for the iterative algorithms.
-This argument is used within the function \code{bglm()}.If \code{length(prior.sd) = 1}, then
+\item{prior.sd}{A vector defining prior standard deviations in the normal
+priors of the coefficients. If provided, they are starting values of the
+prior standard deviations for the iterative algorithms. This argument is
+used within the function \code{bglm()}.If \code{length(prior.sd) = 1}, then
 all parameters are assumed to have a common prior standard deviation.}
 
-\item{prior.scale}{A vector containing the prior scale values for double exponential or t prior.
-In the spike-and-slab lasso model, this is generally only the slab prior scale.}
+\item{prior.scale}{A vector containing the prior scale values for double
+exponential or t prior. In the spike-and-slab lasso model, this is
+generally only the slab prior scale.}
 
-\item{prior.df}{A scalar defining the prior degrees of freedom when the t-distribution is used
-as a prior for the parameters.}
+\item{prior.df}{A scalar defining the prior degrees of freedom when the
+t-distribution is used as a prior for the parameters.}
 
-\item{group}{A numeric vector, or an integer, or a list indicating the groups of predictors.
-If \code{group = NULL}, all the predictors form a single group. If \code{group = K}, the
-predictors are evenly divided into groups each with K predictors. If group is a numberic vector,
-it defines groups as follows: Group 1: \code{(group[1]+1):group[2]}, Group 2: \code{(group[2]+1):group[3]},
-Group 3: \code{(group[3]+1):group[4]}, ... If group is a list of variable names, \code{group[[k]]}
-includes variables in the k-th group. The mixture double-exponential prior is only used for grouped
-predictors. For ungrouped predictors, the prior is double-exponential with scale \code{ss[2]} and mean 0.}
+\item{group}{A numeric vector, or an integer, or a list indicating the
+groups of predictors. If \code{group = NULL}, all the predictors form a
+single group. If \code{group = K}, the predictors are evenly divided into
+groups each with K predictors. If group is a numberic vector, it defines
+groups as follows: Group 1: \code{(group[1]+1):group[2]}, Group 2:
+\code{(group[2]+1):group[3]}, Group 3: \code{(group[3]+1):group[4]}, ...
+If group is a list of variable names, \code{group[[k]]} includes variables
+in the k-th group. The mixture double-exponential prior is only used for
+grouped predictors. For ungrouped predictors, the prior is
+double-exponential with scale \code{ss[2]} and mean 0.}
 
-\item{multinomial}{Logical. When \code{TRUE}, prepare the data for analysis of multinomial outcome
-according to parameterization in \code{glmnet}, i.e., a unique set of parameters is associated with
-each outcome category. See section 4 of \insertCite{Friedman:2010}{ssnet} for details.}
+\item{multinomial}{Logical. When \code{TRUE}, prepare the data for analysis
+of multinomial outcome according to parameterization in \code{glmnet}, i.e.,
+a unique set of parameters is associated with each outcome category. See
+section 4 of \insertCite{Friedman:2010}{ssnet} for details.}
 
-\item{outcome.cats}{Either an integer denoting the number of response categories, or a vector containing
-outcome categories. Only used when \code{multinomial = TRUE}.}
+\item{outcome.cats}{Either an integer denoting the number of response
+categories, or a vector containing outcome categories. Only used when
+\code{multinomial = TRUE}.}
 }
 \value{
-A list containing necessary elements for Bayesian analysis in the package \code{BhGLM}.
+A list containing necessary elements for Bayesian analysis in the
+package \code{BhGLM}.
 }
 \description{
 Prepare the model for analysis.
 }
 \note{
-This function is a modified version the function \code{prepare} from the R package \code{BhGLM}.
+This function is a modified version the function \code{prepare} from
+the R package \code{BhGLM}.
 }
 \references{
 \insertRef{Friedman:2010}{ssnet}

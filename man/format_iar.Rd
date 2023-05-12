@@ -13,30 +13,37 @@ format_iar(
 )
 }
 \arguments{
-\item{adjmat}{A data.frame or matrix containing a "sparse" representation of the neighbor relationships. The first
-column should contain a numerical index for a given location. Each index will be repeated in this column for
-every neighbor it has. The indices for the location's neighbors are then specified in the second column. An optional
-third column specifies weights. If no third column is specified, then equal weights are assumed.}
+\item{adjmat}{A data.frame or matrix containing a "sparse" representation
+of the neighbor relationships. The first column should contain a numerical
+index for a given location. Each index will be repeated in this column for
+every neighbor it has. The indices for the location's neighbors are then
+specified in the second column. An optional third column specifies weights.
+If no third column is specified, then equal weights are assumed.}
 
-\item{im.res}{A 2-element vector where the first argument is the number of "rows" and the second argument
-is the number of "columns" in each subject's "image". Default is \code{NULL}.}
+\item{im.res}{A 2-element vector where the first argument is the number of
+"rows" and the second argument is the number of "columns" in each subject's
+"image". Default is \code{NULL}.}
 
-\item{x}{Design, or input, matrix, of dimension nobs x nvars; each row is an observation vector. It is recommended that
-\code{x} have user-defined column names for ease of identifying variables.}
+\item{x}{Design, or input, matrix, of dimension nobs x nvars; each row is
+an observation vector. It is recommended that \code{x} have user-defined
+column names for ease of identifying variables.}
 
-\item{tau.prior}{One of \code{c("none", "manual", "cauchy")}. This argument determines the precision
-parameter in the Conditional Autoregressive model for the (logit of) prior inclusion probabilities.
-When \code{"none"}, the precision is set to 1; when "manual", the precision is manually entered by the
-user; when \code{"cauchy"}, the inverse precision is assumed to follow a Cauchy distribution with mean 0 and
-scale 2.5.}
+\item{tau.prior}{One of \code{c("none", "manual", "cauchy")}. This argument
+determines the precision parameter in the Conditional Autoregressive model
+for the (logit of) prior inclusion probabilities. When \code{"none"}, the
+precision is set to 1; when "manual", the precision is manually entered by
+the user; when \code{"cauchy"}, the inverse precision is assumed to follow
+a Cauchy distribution with mean 0 and scale 2.5.}
 
-\item{tau.manual}{When \code{tau.prior = "manual"}, use this argument to specify a common precision parameter.}
+\item{tau.manual}{When \code{tau.prior = "manual"}, use this argument to
+specify a common precision parameter.}
 }
 \value{
 A list containing data formatted for using IAR priors.
 }
 \description{
-Given an adjacency matrix, formats data for using IAR priors to model spatial structure. Otherwise, assumes
-default structure where neighbors are defined as variables directly above or to the side of a specified
+Given an adjacency matrix, formats data for using IAR priors to model
+spatial structure. Otherwise, assumes default structure where neighbors
+are defined as variables directly above or to the side of a specified
 variable location.
 }

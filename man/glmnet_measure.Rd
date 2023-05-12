@@ -35,10 +35,12 @@ a \code{Surv} object from the survival package: see Details section for
 more information. For \code{family="mgaussian"}, \code{y} is a matrix
 of quantitative responses.}
 
-\item{lambda.criteria}{Determines the model selection criteria. When \code{"lambda.min"} the
-final model is selected based on the penalty that minimizes the measure given in \code{type.measure}.
-When \code{"lambda.1se"} the final model is selected based on the smallest value of lambda that
-is within one standard error of the minimal measure given in \code{type.measure}.}
+\item{lambda.criteria}{Determines the model selection criteria. When
+\code{"lambda.min"} the final model is selected based on the penalty that
+minimizes the measure given in \code{type.measure}. When \code{"lambda.1se"}
+the final model is selected based on the smallest value of lambda that is
+within one standard error of the minimal measure given in
+\code{type.measure}.}
 
 \item{type.measure}{loss to use for cross-validation. Currently five
 options, not all available for all models. The default is
@@ -71,7 +73,8 @@ A data frame containing measures of model fitness.
 Extracts measures of model fitness from a \code{glmnet} object.
 }
 \note{
-This function is primarily used within \code{\link[ssnet]{compare_ssnet}}, but perhaps could be useful elsewhere.
+This function is primarily used within
+\code{\link[ssnet]{compare_ssnet}}, but perhaps could be useful elsewhere.
 }
 \examples{
 ## generate data (no intercept)

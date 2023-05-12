@@ -15,25 +15,30 @@ max_q2_iar(
 )
 }
 \arguments{
-\item{iar.data}{A list of output from \code{\link{mungeCARdata4stan}} that contains the necessary
-inputs for the IAR prior.}
+\item{iar.data}{A list of output from \code{\link{mungeCARdata4stan}} that
+contains the necessary inputs for the IAR prior.}
 
-\item{p}{A vector containing the prior probabilities of inclusion for each parameter at the current iteration.}
+\item{p}{A vector containing the prior probabilities of inclusion for each
+parameter at the current iteration.}
 
-\item{opt.algorithm}{One of the optimization algorithms available from \code{optimizing}.}
+\item{opt.algorithm}{One of the optimization algorithms available from
+\code{optimizing}.}
 
-\item{tau.prior}{One of \code{c("none", "manual", "cauchy")}. This argument determines the precision
-parameter in the Conditional Autoregressive model for the (logit of) prior inclusion probabilities.
-When \code{"none"}, the precision is set to 1; when "manual", the precision is manually entered by the
-user (and still not random); when \code{"cauchy"}, the inverse precision is assumed to follow a Cauchy
-distribution with mean 0 and scale 2.5. Note that at this stage of development, only the \code{"none"} option
-has been extensively tested, so the other options should be used with caution.}
+\item{tau.prior}{One of \code{c("none", "manual", "cauchy")}. This argument
+determines the precision parameter in the Conditional Autoregressive model
+for the (logit of) prior inclusion probabilities. When \code{"none"}, the
+precision is set to 1; when "manual", the precision is manually entered by
+the user (and still not random); when \code{"cauchy"}, the inverse precision
+is assumed to follow a Cauchy distribution with mean 0 and scale 2.5. Note
+that at this stage of development, only the \code{"none"} option has been
+extensively tested, so the other options should be used with caution.}
 
-\item{tau.manual}{When \code{tau.prior = "manual"}, use this argument to specify a common precision
-parameter.}
+\item{tau.manual}{When \code{tau.prior = "manual"}, use this argument to
+specify a common precision parameter.}
 
-\item{p.bound}{A vector defining the lower and upper boundaries for the probabilities of inclusion
-in the model, respectively. Defaults to \code{c(0.01, 0.99)}.}
+\item{p.bound}{A vector defining the lower and upper boundaries for the
+probabilities of inclusion in the model, respectively. Defaults to
+\code{c(0.01, 0.99)}.}
 
 \item{stan_manual}{A \code{stan_model} that is manually specified.}
 }
@@ -41,12 +46,13 @@ in the model, respectively. Defaults to \code{c(0.01, 0.99)}.}
 A vector containing updated probabilities of inclusion.
 }
 \description{
-Uses \code{stan} to optimize the term in the EM algorithm that depends on the prior probabilities
-of inclusion in the model, \eqn{p_j}.
+Uses \code{stan} to optimize the term in the EM algorithm that depends on
+the prior probabilities of inclusion in the model, \eqn{p_j}.
 }
 \note{
-This function borrows from the work of Mitzi Morris, who describes how to fit an intrinsic autoregression
-in \code{stan} \insertCite{Morris:2017,Morris:2019}{ssnet}.
+This function borrows from the work of Mitzi Morris, who describes
+how to fit an intrinsic autoregression in
+\code{stan} \insertCite{Morris:2017,Morris:2019}{ssnet}.
 }
 \references{
 \insertRef{Morris:2017}{ssnet}

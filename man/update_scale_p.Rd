@@ -2,7 +2,8 @@
 % Please edit documentation in R/update_scale_p.R
 \name{update_scale_p}
 \alias{update_scale_p}
-\title{Update conditional expectation of prior probabilities of inclusion at each iteration.}
+\title{Update conditional expectation of prior probabilities of inclusion at each
+iteration.}
 \usage{
 update_scale_p(b0, ss, theta, alpha)
 }
@@ -13,17 +14,20 @@ update_scale_p(b0, ss, theta, alpha)
 
 \item{theta}{The current estimate of prior probabilities of inclusion.}
 
-\item{alpha}{A scalar value between 0 and 1 determining the compromise between the Ridge and Lasso models. When
-\code{alpha = 1} reduces to the Lasso, and when \code{alpha = 0} reduces to Ridge.}
+\item{alpha}{A scalar value between 0 and 1 determining the compromise
+between the Ridge and Lasso models. Whenv\code{alpha = 1} reduces to the
+Lasso, and when \code{alpha = 0} reduces to Ridge.}
 }
 \value{
-A list whose first element is a vector of updated scale parameters for each
-parameter and whose second element is a vector of updated conditional expectations
-of prior probabilities of model inclusion.
+A list whose first element is a vector of updated scale parameters
+for eachvparameter and whose second element is a vector of updated
+conditional expectationsvof prior probabilities of model inclusion.
 }
 \description{
-Update conditional expectation of prior probabilities of inclusion at each iteration.
+Update conditional expectation of prior probabilities of inclusion at each
+iteration.
 }
 \note{
-This function is a modified version of \code{update_scale_p()} from the R package \code{BhGLM}.
+This function is a modified version of \code{update_scale_p()} from
+the R package \code{BhGLM}.
 }

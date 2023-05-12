@@ -40,115 +40,146 @@ validate_ssnet(
 )
 }
 \arguments{
-\item{model}{Specify which model to fit. Options include \code{c("glmnet", "ss", "ss_iar")}.}
+\item{model}{Specify which model to fit. Options include
+\code{c("glmnet", "ss", "ss_iar")}.}
 
-\item{alpha}{A scalar value between 0 and 1 determining the compromise between the Ridge and Lasso
-models. When \code{alpha = 1} reduces to the Lasso, and when \code{alpha = 0} reduces to Ridge.}
+\item{alpha}{A scalar value between 0 and 1 determining the compromise
+between the Ridge and Lasso models. When \code{alpha = 1} reduces to the
+Lasso, and when \code{alpha = 0} reduces to Ridge.}
 
-\item{classify}{Logical. When \code{TRUE} and \code{family = "binomial"} applies a classification
-rule given by the argument \code{classify.rule}, and outputs accuracy, sensitivity, specificity,
-positive predictive value (ppv), and negative predictive value (npv).}
+\item{classify}{Logical. When \code{TRUE} and \code{family = "binomial"}
+applies a classification rule given by the argument \code{classify.rule},
+and outputs accuracy, sensitivity, specificity, positive predictive value
+(ppv), and negative predictive value (npv).}
 
-\item{classify.rule}{A value between 0 and 1. For a given predicted value from a logistic regression,
-if the value is above \code{classify.rule}, then the predicted class is 1; otherwise the predicted
-class is 0. The default is 0.5.}
+\item{classify.rule}{A value between 0 and 1. For a given predicted value
+from a logistic regression, if the value is above \code{classify.rule},
+then the predicted class is 1; otherwise the predicted class is 0. The
+default is 0.5.}
 
 \item{type.multinomial}{If \code{"grouped"} then a grouped lasso penalty is
 used on the multinomial coefficients for a variable. This ensures they are
 all in our out together. The default is \code{"ungrouped"}}
 
-\item{s0, s1}{A numeric value. When fitting a spike-and-slab model, \code{s0} is the spike scale and
-\code{s1} is the slab scale. Default is \code{s0 = 0.01} and \code{s1 = 1}. When \code{model = "glmnet"},
-only \code{s0} is used.}
+\item{s0, s1}{A numeric value. When fitting a spike-and-slab model,
+\code{s0} is the spike scale and \code{s1} is the slab scale. Default is
+\code{s0 = 0.01} and \code{s1 = 1}. When \code{model = "glmnet"}, only
+ \code{s0} is used.}
 
-\item{x.train, x.test}{Design matrices for training and test data, respectively.}
+\item{x.train, x.test}{Design matrices for training and test data,
+respectively.}
 
-\item{y.train, y.test}{Response/outcome vectors for training and testing, respectively.}
+\item{y.train, y.test}{Response/outcome vectors for training and testing,
+respectively.}
 
 \item{family}{Response type (see above).}
 
-\item{offset}{A vector of length \code{nobs} that is included in the linear predictor.}
+\item{offset}{A vector of length \code{nobs} that is included in the linear
+predictor.}
 
-\item{epsilon}{A positive convergence tolerance; the iterations converge when \eqn{|dev - dev_old|/(|dev| + 0.1) < e}.}
+\item{epsilon}{A positive convergence tolerance; the iterations converge
+when \eqn{|dev - dev_old|/(|dev| + 0.1) < e}.}
 
 \item{maxit}{An integer giving the maximal number of EM iterations.}
 
-\item{init}{A vector of initial values for all coefficients (not for intercept). If not given, it
-will be internally produced. If \code{family = "multinomial"} and the same initializations are
-desired for each response/outcome category then \code{init} can be a vector. If different initializations
-are desired, then \code{init} should be a list, each element of which contains a vector of initializations.
-The list should be named according the response/outcome category as they appear in \code{y}.}
+\item{init}{A vector of initial values for all coefficients (not for
+intercept). If not given, it will be internally produced. If
+\code{family = "multinomial"} and the same initializations are desired for
+each response/outcome category then \code{init} can be a vector. If
+different initializations are desired, then \code{init} should be a list,
+each element of which contains a vector of initializations. The list should
+be named according the response/outcome category as they appear in \code{y}.}
 
-\item{group}{A numeric vector, or an integer, or a list indicating the groups of predictors.
-If \code{group = NULL}, all the predictors form a single group. If \code{group = K}, the
-predictors are evenly divided into groups each with K predictors. If group is a numberic vector,
-it defines groups as follows: Group 1: \code{(group[1]+1):group[2]}, Group 2: \code{(group[2]+1):group[3]},
-Group 3: \code{(group[3]+1):group[4]}, ... If group is a list of variable names, \code{group[[k]]}
-includes variables in the k-th group. The mixture double-exponential prior is only used for grouped
-predictors. For ungrouped predictors, the prior is double-exponential with scale \code{ss[2]} and
-mean 0. Note that grouped predictors when \code{family = "multinomial"} is still experimental, so
+\item{group}{A numeric vector, or an integer, or a list indicating the
+groups of predictors. If \code{group = NULL}, all the predictors form a
+single group. If \code{group = K}, the predictors are evenly divided into
+groups each with K predictors. If group is a numberic vector, it defines
+groups as follows: Group 1: \code{(group[1]+1):group[2]}, Group 2:
+\code{(group[2]+1):group[3]}, Group 3: \code{(group[3]+1):group[4]}, ...
+If group is a list of variable names, \code{group[[k]]} includes variables
+in the k-th group. The mixture double-exponential prior is only used for
+grouped predictors. For ungrouped predictors, the prior is
+double-exponential with scale \code{ss[2]} and mean 0. Note that grouped
+predictors when \code{family = "multinomial"} is still experimental, so
 use with caution.}
 
-\item{Warning}{Logical. If \code{TRUE}, shows the error messages of not convergence and identifiability.}
+\item{Warning}{Logical. If \code{TRUE}, shows the error messages of not
+convergence and identifiability.}
 
-\item{verbose}{Logical. If \code{TRUE}, prints out the number of iterations and computational time.}
+\item{verbose}{Logical. If \code{TRUE}, prints out the number of iterations
+and computational time.}
 
-\item{opt.algorithm}{One of \code{c("LBFGS", "BFGS", "Newton")}. This argument determines which
-argument is used to optimize the term in the EM algorithm that estimates the probabilities of
-inclusion for each parameter. Optimization is performed by \code{optimizing}.}
+\item{opt.algorithm}{One of \code{c("LBFGS", "BFGS", "Newton")}. This
+argument determines which argument is used to optimize the term in the EM
+algorithm that estimates the probabilities of inclusion for each parameter.
+Optimization is performed by \code{optimizing}.}
 
-\item{iar.data}{A list of output from \code{\link{mungeCARdata4stan}} that contains the necessary
-inputs for the IAR prior. When unspecified, this is built internally assuming that neighbors are those
-variables directly above, below, left, and  right of a given variable location. \code{im.res} must be
-specified when allowing this argument to be built internally. It is not recommended to use this
-argument directly, even when specifying a more complicated neighborhood stucture; this can be specified
-with the \code{adjmat} argument, and then internally converted to the correct format.}
+\item{iar.data}{A list of output from \code{\link{mungeCARdata4stan}} that
+contains the necessary inputs for the IAR prior. When unspecified, this is
+built internally assuming that neighbors are those variables directly above,
+below, left, and  right of a given variable location. \code{im.res} must be
+specified when allowing this argument to be built internally. It is not
+recommended to use this argument directly, even when specifying a more
+complicated neighborhood stucture; this can be specified with the
+\code{adjmat} argument, and then internally converted to the correct format.}
 
-\item{iar.prior}{Logical. When \code{TRUE}, imposes intrinsic autoregressive prior on logit of the
-probabilities of inclusion. When \code{FALSE}, treats probabilities of inclusion as unstructured.}
+\item{iar.prior}{Logical. When \code{TRUE}, imposes intrinsic autoregressive
+prior on logit of the probabilities of inclusion. When \code{FALSE}, treats
+probabilities of inclusion as unstructured.}
 
-\item{adjmat}{A data.frame or matrix containing a "sparse" representation of the neighbor relationships.
-The first column should contain a numerical index for a given location. Each index will be repeated in
-this column for every neighbor it has. The indices for the location's neighbors are then specified in
-the second column. Any additional columns are ignored.}
+\item{adjmat}{A data.frame or matrix containing a "sparse" representation
+of the neighbor relationships. The first column should contain a numerical
+index for a given location. Each index will be repeated in this column for
+every neighbor it has. The indices for the location's neighbors are then
+specified in the second column. Any additional columns are ignored.}
 
-\item{p.bound}{A vector defining the lower and upper boundaries for the probabilities of inclusion
-in the model, respectively. Defaults to \code{c(0.01, 0.99)}.}
+\item{p.bound}{A vector defining the lower and upper boundaries for the
+probabilities of inclusion in the model, respectively. Defaults to
+\code{c(0.01, 0.99)}.}
 
-\item{tau.prior}{One of \code{c("none", "manual", "cauchy")}. This argument determines the precision
-parameter in the Conditional Autoregressive model for the (logit of) prior inclusion probabilities.
-When \code{"none"}, the precision is set to 1; when "manual", the precision is manually entered by the
-user; when \code{"cauchy"}, the inverse precision is assumed to follow a Cauchy distribution with
-mean 0 and scale 2.5. Note that at this stage of development, only the \code{"none"} option
-has been extensively tested, so the other options should be used with caution.}
+\item{tau.prior}{One of \code{c("none", "manual", "cauchy")}. This argument
+determines the precision parameter in the Conditional Autoregressive model
+for the (logit of) prior inclusion probabilities. When \code{"none"}, the
+precision is set to 1; when "manual", the precision is manually entered by
+the user; when \code{"cauchy"}, the inverse precision is assumed to follow
+a Cauchy distribution with mean 0 and scale 2.5. Note that at this stage of
+development, only the \code{"none"} option has been extensively tested, so
+the other options should be used with caution.}
 
-\item{tau.manual}{When \code{tau.prior = "manual"}, use this argument to specify a common precision
-parameter.}
+\item{tau.manual}{When \code{tau.prior = "manual"}, use this argument to
+specify a common precision parameter.}
 
-\item{stan_manual}{A \code{stan_model} that is manually specified. Especially when fitting multiple
-models in succession, specifying the the \code{stan} model outside this "loop" may avoid errors.}
+\item{stan_manual}{A \code{stan_model} that is manually specified.
+Especially when fitting multiple models in succession, specifying the
+\code{stan} model outside this "loop" may avoid errors.}
 
 \item{nlambda}{The number of \code{lambda} values - default is 100.}
 
-\item{lambda.criteria}{Determines the model selection criteria. When \code{"lambda.min"} the
-final model is selected based on the penalty that minimizes the measure given in \code{type.measure}.
-When \code{"lambda.1se"} the final model is selected based on the smallest value of lambda that
-is within one standard error of the minimal measure given in \code{type.measure}.}
+\item{lambda.criteria}{Determines the model selection criteria. When
+\code{"lambda.min"} the final model is selected based on the penalty that
+minimizes the measure given in \code{type.measure}. When \code{"lambda.1se"}
+the final model is selected based on the smallest value of lambda that is
+within one standard error of the minimal measure given in
+\code{type.measure}.}
 
-\item{output_param_est}{Logical. When \code{TRUE} adds an element to the output list that includes
-parameter estimates for the fitted model. Defaults is \code{FALSE}.}
+\item{output_param_est}{Logical. When \code{TRUE} adds an element to the
+output list that includes parameter estimates for the fitted model.
+Defaults is \code{FALSE}.}
 
-\item{output_probs}{Logical. When \code{TRUE} and \code{family = "multinomial"} adds an element to
-the output list that contains the probabilties of being a member of each category for each subject,
-in addition to their classification. Default is \code{FALSE}.}
+\item{output_probs}{Logical. When \code{TRUE} and
+\code{family = "multinomial"} adds an element to the output list that
+contains the probabilties of being a member of each category for each
+subject, in addition to their classification. Default is \code{FALSE}.}
 
 \item{print_check}{Logical. When \code{TRUE}, prints intermediate results.}
 }
 \value{
-A list or a data frame. When \code{output_param_est = FALSE}, returns a data frame with a
-single row containing measures of model fitness. Otherwise, returns a list with 2 elements. The
-first element, \code{model_fitness}, contains a data frame with a single row containing measures of
-model fitness, and the second element, \code{param_est}, contains a data frame of parameter estimates.
+A list or a data frame. When \code{output_param_est = FALSE},
+returns a data frame with a single row containing measures of model fitness.
+Otherwise, returns a list with 2 elements. The first element,
+\code{model_fitness}, contains a data frame with a single row containing
+measures of model fitness, and the second element, \code{param_est},
+contains a data frame of parameter estimates.
 }
 \description{
 Fit a model using ssnet with training data and evaluate using test data.

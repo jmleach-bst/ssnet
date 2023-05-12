@@ -17,41 +17,53 @@ eval_classify(
 )
 }
 \arguments{
-\item{num.class}{A scalar value defining the number of classes. Default value is two.}
+\item{num.class}{A scalar value defining the number of classes. Default
+value is two.}
 
 \item{classify.rule}{A vector of thresholds that determine assigned classes.}
 
 \item{beta.hat}{A vector of parameter estimates from some model fit.}
 
-\item{x}{A (numeric) design matrix whose number of columns is equal to \code{length(beta.hat) - 1} and whose number
-of rows is equal to \code{length(y)}. Strictly speaking, \code{x} may be a data frame, but categorical variables
-must have already been transformed into alternative coding schemes; e.g., dummy coding.}
+\item{x}{A (numeric) design matrix whose number of columns is equal to
+\code{length(beta.hat) - 1} and whose number of rows is equal to
+\code{length(y)}. Strictly speaking, \code{x} may be a data frame, but
+categorical variables must have already been transformed into alternative
+coding schemes; e.g., dummy coding.}
 
-\item{y}{A numeric vector of outcome measurements. The length of this vector must equal \code{nrow(x)}.}
+\item{y}{A numeric vector of outcome measurements. The length of this
+vector must equal \code{nrow(x)}.}
 
-\item{family}{One of \code{"gaussian", "gamma", "poisson", "binomial"}, which determines the distribution
-from which \code{y} is assumed to be drawn.}
+\item{family}{One of \code{"gaussian", "gamma", "poisson", "binomial"},
+which determines the distribution from which \code{y} is assumed to be
+drawn.}
 
-\item{make.x0}{Logical. When \code{TRUE}, creates a column of ones for the intercept. Default is \code{TRUE}.}
+\item{make.x0}{Logical. When \code{TRUE}, creates a column of ones for the
+intercept. Default is \code{TRUE}.}
 
-\item{gamma.link}{Defines the link function in gamma GLM's. One of \code{c("inverse", "log", "identity")}.
-The default is \code{"log"}.}
+\item{gamma.link}{Defines the link function in gamma GLM's. One of
+\code{c("inverse", "log", "identity")}. The default is \code{"log"}.}
 
-\item{extra.measures}{Logical. When \code{TRUE}, also returns mean squared error (mse) and mean absolute error (mae),
-and when \code{family = "binomial"}, returns AUC and misclassification. Default is \code{FALSE}.}
+\item{extra.measures}{Logical. When \code{TRUE}, also returns mean squared
+error (mse) and mean absolute error (mae), and when
+\code{family = "binomial"}, returns AUC and misclassification. Default is
+\code{FALSE}.}
 }
 \value{
-A data frame with a single row containing columns for sensitivity, specificity, ppv, npv, and accuracy,
-where ppv is positive predictive value and npv is negative predictive value. When there are 3 or more classes,
+A data frame with a single row containing columns for sensitivity,
+specificity, ppv, npv, and accuracy, where ppv is positive predictive value
+and npv is negative predictive value. When there are 3 or more classes,
 only accuracy, and possibly mse and mae, are returned.
 }
 \description{
-After fitting GLM's with, set a classification  rule, and obtain measures for classification effectiveness.
+After fitting GLM's with, set a classification  rule, and obtain measures
+for classification effectiveness.
 }
 \details{
-Note that \code{y} and \code{x} may be the same outcomes/design matrix used to generate \code{beta.hat},
-but they may also, and perhaps more appropriately, be a held-out/independent data set on which to test the
-classification performance of whatever model was used to obtain \code{beta.hat}.
+Note that \code{y} and \code{x} may be the same outcomes/design
+matrix used to generate \code{beta.hat}, but they may also, and perhaps
+more appropriately, be a held-out/independent data set on which to test the
+classification performance of whatever model was used to obtain
+\code{beta.hat}.
 }
 \examples{
 set.seed(72874)

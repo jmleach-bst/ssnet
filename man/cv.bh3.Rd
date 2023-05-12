@@ -40,26 +40,31 @@ cv.bh3(
   logical. If \code{TRUE}, print out computational time and progress.
   }
 
-\item{classify}{Logical. When \code{TRUE} and \code{family = "binomial"} applies a classification
-rule given by the argument \code{classify.rule}, and outputs accuracy, sensitivity, specificity,
-positive predictive value (ppv), and negative predictive value (npv).}
+\item{classify}{Logical. When \code{TRUE} and \code{family = "binomial"}
+applies a classification rule given by the argument \code{classify.rule},
+and outputs accuracy, sensitivity, specificity, positive predictive value
+(ppv), and negative predictive value (npv).}
 
-\item{classify.rule}{A value between 0 and 1. For a given predicted value from a logistic regression,
-if the value is above \code{classify.rule}, then the predicted class is 1; otherwise the predicted
-class is 0. The default is 0.5.}
+\item{classify.rule}{A value between 0 and 1. For a given predicted value
+from a logistic regression, if the value is above \code{classify.rule},
+then the predicted class is 1; otherwise the predicted class is 0. The
+default is 0.5.}
 }
 \description{
-Several alterations to \code{cv.bh()} were necessary to ensure that \code{update()} works in
-the functions \code{compare_ssnet()}. Many arguments and functionality are the same as \code{cv.bh()}.
-See \code{\link[BhGLM]{cv.bh}} for details. An addition in this version is also that for binary
-outcomes classification and observed accuracy, sensitivity, specificity, and positive and negative
-predictive values can be output as well as the orginally included measures.
+Several alterations to \code{cv.bh()} were necessary to ensure that
+\code{update()} works in the functions \code{compare_ssnet()}. Many
+arguments and functionality are the same as \code{cv.bh()}. See
+\code{\link[BhGLM]{cv.bh}} for details. An addition in this version is
+also that for binary outcomes classification and observed accuracy,
+sensitivity, specificity, and positive and negative predictive values can
+be output as well as the orginally included measures.
 }
 \note{
-The package \code{pROC} will not calculate the AUC when a fold does does not have
-at least one observation of each level. This can largely be avoided by selecting the number
-of folds so that such circumstances are rare. When such does occur, the current result is
-to assign AUC <- NA. Note that during cross validation, the initialization values for the
-algorithm to re-fit the model are the initial estimates for the \code{object}. This follows
-\code{\link[BhGLM]{cv.bh}}.
+The package \code{pROC} will not calculate the AUC when a fold does
+does not have at least one observation of each level. This can largely be
+avoided by selecting the number of folds so that such circumstances are
+rare. When such does occur, the current result is to assign AUC <- NA.
+Note that during cross validation, the initialization values for the
+algorithm to re-fit the model are the initial estimates for the
+\code{object}. This follows \code{\link[BhGLM]{cv.bh}}.
 }

@@ -16,21 +16,24 @@ measure_glm_raw(
 \arguments{
 \item{y}{This is an outcome/response vector.}
 
-\item{y.fitted}{This predicted (estimated) response values for GLMs or probabilties of
-response values for ordinal models from a fitted model or cross-validation.}
+\item{y.fitted}{This predicted (estimated) response values for GLMs or
+probabilties of response values for ordinal models from a fitted model or
+cross-validation.}
 
 \item{family}{A character stating to which family the model belongs.}
 
-\item{dispersion}{A scalar defining the dispersion parameter from a GLM, or \eqn{theta}
-for negative binomial.}
+\item{dispersion}{A scalar defining the dispersion parameter from a GLM,
+or \eqn{theta} for negative binomial.}
 
-\item{classify}{Logical. When \code{TRUE} and \code{family = "binomial"} applies a classification
-rule given by the argument \code{classify.rule}, and outputs accuracy, sensitivity, specificity,
-positive predictive value (ppv), and negative predictive value (npv).}
+\item{classify}{Logical. When \code{TRUE} and \code{family = "binomial"}
+applies a classification rule given by the argument \code{classify.rule},
+and outputs accuracy, sensitivity, specificity, positive predictive value
+(ppv), and negative predictive value (npv).}
 
-\item{classify.rule}{A value between 0 and 1. For a given predicted value from a logistic regression,
-if the value is above \code{classify.rule}, then the predicted class is 1; otherwise the predicted
-class is 0. The default is 0.5.}
+\item{classify.rule}{A value between 0 and 1. For a given predicted value
+from a logistic regression, if the value is above \code{classify.rule},
+then the predicted class is 1; otherwise the predicted class is 0. The
+default is 0.5.}
 }
 \value{
 A vector.
@@ -39,15 +42,18 @@ A vector.
 Obtain measures of model performance for fitted models.
 }
 \details{
-When the family is treated as Gaussian, returns deviance, R2, mean squared error (MSE),
-and mean absolute error (MAE). Additionally, when the outcome is binary, returns misclassification,
-and if \code{classify = TRUE}, then returns accuracy, sensitivity, specificity, positive predictive
-value (PPV), negative predictive value (NPV), Matthews correlation coefficient (MCC), and F1 score.
+When the family is treated as Gaussian, returns deviance, R2,
+mean squared error (MSE), and mean absolute error (MAE). Additionally,
+when the outcome is binary, returns misclassification, and if
+\code{classify = TRUE}, then returns accuracy, sensitivity, specificity,
+positive predictive value (PPV), negative predictive value (NPV), Matthews
+correlation coefficient (MCC), and F1 score.
 }
 \note{
-This function is a modified version of \code{measure.glm} from \code{BhGLM}, with
-the modification that measures are no longer rounded, and classification evaluation is
-possible for binary outcomes, along with measures of classification performance.
+This function is a modified version of \code{measure.glm} from
+\code{BhGLM}, with the modification that measures are no longer rounded,
+and classification evaluation is possible for binary outcomes, along with
+measures of classification performance.
 }
 \examples{
 

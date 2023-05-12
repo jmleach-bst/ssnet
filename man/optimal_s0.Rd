@@ -13,31 +13,37 @@ optimal_s0(
 )
 }
 \arguments{
-\item{sim.data}{A data frame containing simulation results. The data is intended to be generated
-from stacking multiple \code{compare_ssnet()} outputs in a single data frame.}
+\item{sim.data}{A data frame containing simulation results. The data is
+intended to be generated from stacking multiple \code{compare_ssnet()}
+outputs in a single data frame.}
 
-\item{criteria}{Specifies the criteria for model selection. Options are \code{"deviance"}, \code{"mse"},
-\code{"mae"} for deviance, mean-square error, and mean absolute error, respectively. When
-\code{family = "binomial"}, additional options are \code{"auc"} and \code{"misclassification"}, for
-Area under the ROC curve and the percentage of cases where the difference between the observed and
-predicted values is greater than 1/2.}
+\item{criteria}{Specifies the criteria for model selection. Options are
+\code{"deviance"}, \code{"mse"}, \code{"mae"} for deviance, mean-square
+error, and mean absolute error, respectively. When \code{family = "binomial"},
+additional options are \code{"auc"} and \code{"misclassification"}, for Area
+under the ROC curve and the percentage of cases where the difference between
+the observed and predicted values is greater than 1/2.}
 
-\item{tie.breaker}{This argument decides how to break ties when multiple values of spike scale
-minimize \code{criteria}. The default is \code{"min"}, which selects the smallest spike scale that
-minimizes \code{criteria}; alternatively, \code{"max"}, which selects the largest spike scale that
+\item{tie.breaker}{This argument decides how to break ties when multiple
+values of spike scale minimize \code{criteria}. The default is \code{"min"},
+which selects the smallest spike scale that minimizes \code{criteria};
+alternatively, \code{"max"}, which selects the largest spike scale that
 minimizes \code{criteria}.}
 
 \item{print.details}{Logical. Determines whether to print periodic output.}
 
-\item{suppress.warnings}{Logical. When \code{TRUE} suppresses warning output. Default is \code{FALSE}.}
+\item{suppress.warnings}{Logical. When \code{TRUE} suppresses warning output.
+Default is \code{FALSE}.}
 }
 \value{
-A data frame containing where each row is an optimal model from a set of models.
+A data frame containing where each row is an optimal model from a
+set of models.
 }
 \description{
-For a set of simulations that used multiple spike scale parameters this function selects the optimal
-model based on user-selected criteria and creates a new data frame of statistics for the optimal models.
-If desired, outputs summaries from the new data frame.
+For a set of simulations that used multiple spike scale parameters this
+function selects the optimal model based on user-selected criteria and
+creates a new data frame of statistics for the optimal models. If desired,
+outputs summaries from the new data frame.
 }
 \examples{
 sdt <- data.frame(model = rep("mystery", 12),

@@ -12,14 +12,16 @@ mungeCARdata4stan(adjBUGS, numBUGS)
 \item{numBUGS}{A vector containing the number of neighbors for each point.}
 }
 \value{
-Returns a list where \code{J} is the number predictors, \code{J_edges} is the number
-of edges in connected graph representing the spatial data, and \code{node1, node2} are required
-to fit the model without explicitly specifying an adjacency matrix. This function is essentially
+Returns a list where \code{J} is the number predictors,
+\code{J_edges} is the number of edges in connected graph representing the
+spatial data, and \code{node1, node2} are required to fit the model without
+explicitly specifying an adjacency matrix. This function is essentially
 unchanged from Mitzi Morris's code \insertCite{Morris:2017,Morris:2019}{ssnet}.
 }
 \description{
-The underlying `stan` code can work without explicitly calling or building the adjacency
-matrix, but to do so requires some processing, which is done here.
+The underlying `stan` code can work without explicitly calling or building
+the adjacency matrix, but to do so requires some processing, which is done
+here.
 }
 \references{
 \insertRef{Morris:2017}{ssnet}

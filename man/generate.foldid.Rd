@@ -11,7 +11,8 @@ generate.foldid(nobs, nfolds = 10, foldid = NULL, ncv = 1, fold.seed = NULL)
 
 \item{nfolds}{The number of folds to generate.}
 
-\item{foldid}{An array of fold identifiers. If not supplied by the user, generated within function.}
+\item{foldid}{An array of fold identifiers. If not supplied by the user,
+generated within function.}
 
 \item{ncv}{
   repeated number of cross-validation.  
