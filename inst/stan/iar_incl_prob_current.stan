@@ -27,5 +27,5 @@ transformed parameters{
 model {
   p ~ real_bernoulli(theta, J); // for conditional probabilities of inclusion
   sigma ~ cauchy(0, 2.5); // prior for variance
-  psi ~ icar_normal_lpdf(J, node1, node2, tau);
+  psi ~ icar_normal(J, node1, node2, tau);
 }

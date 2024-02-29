@@ -15,6 +15,6 @@ transformed data{
   vector[J] psi = logit(p);
 }
 model {
-  psi ~ icar_normal_lpdf(J, node1, node2);
+  psi ~ icar_normal(J, node1, node2);
 }
 
